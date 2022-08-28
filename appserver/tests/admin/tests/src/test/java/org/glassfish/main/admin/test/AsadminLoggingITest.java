@@ -35,20 +35,16 @@ import static org.apache.commons.lang3.StringUtils.replaceChars;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.glassfish.main.admin.test.tool.AsadminResultMatcher.asadminOK;
 import static org.glassfish.main.admin.test.tool.asadmin.GlassFishTestEnvironment.getDomain1Directory;
-import static org.glassfish.tests.utils.junit.matcher.TextFileMatchers.getterMatches;
 import static org.glassfish.tests.utils.junit.matcher.TextFileMatchers.hasLineCount;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -88,13 +84,17 @@ public class AsadminLoggingITest {
     }
 
 
+    /**
+     * See LoggerInfoMetadataService class, it uses a HK2 registry based on generated
+     * META-INF/loggerinfo/LoggerInfoMetadata.properties files.
+     */
     @Test
     public void listLoggers() {
         AsadminResult result = ASADMIN.exec("list-loggers");
         assertThat(result, asadminOK());
         String[] lines = substringBefore(result.getStdOut(), "Command list-loggers executed successfully.").split("\n");
         assertAll(
-            () -> assertThat(lines, arrayWithSize(equalTo(63))),
+            () -> assertThat(lines, arrayWithSize(equalTo(62))),
             () -> assertThat(lines[0], matchesPattern("Logger Name[ ]+Subsystem[ ]+Logger Description[ ]+"))
         );
         Map<String, String[]> loggers = Arrays.stream(lines).skip(1).map(line -> line.split("\\s{2,}"))
