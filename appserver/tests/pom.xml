@@ -34,6 +34,11 @@
 
     <name>GlassFish Tests</name>
 
+    <properties>
+        <test.logManager>org.glassfish.main.jul.GlassFishLogManager</test.logManager>
+        <testcontainers.version>1.17.6</testcontainers.version>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -122,6 +127,7 @@
                 <module>application</module>
                 <module>appserv-tests</module>
                 <module>embedded</module>
+                <module>testcontainers</module>
             </modules>
         </profile>
         <profile>
@@ -149,8 +155,33 @@
                 <module>application</module>
                 <module>appserv-tests</module>
                 <module>embedded</module>
+                <module>testcontainers</module>
                 <module>tck</module>
             </modules>
         </profile>
     </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Watch TestContainers dependencies for 2.x -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>1.7.36</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
