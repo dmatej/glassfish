@@ -37,8 +37,10 @@ public class GlassFishContainer extends GenericContainer<GlassFishContainer> {
 
     private static final Consumer<OutputFrame> LOG_CONSUMER = log -> System.out.print("GF_D1: " + log.getUtf8String());
     private static final String GF_DIR = "/home/tck/gf";
-    private static final String GF_ADMIN_USER = "admin";
-    private static final String GF_ADMIN_PASSWORD_FILE = "/admin-password.txt";
+    static final String GF_ADMIN_USER = "admin";
+    static final String GF_ADMIN_PASSWORD_FILE = "/admin-password.txt";
+    private static final String[] ASADMIN_ARGS = new String[] {"--user", GF_ADMIN_USER, "--passwordfile",
+        GF_ADMIN_PASSWORD_FILE};
 
     /**
      * Creates an instance.
@@ -56,8 +58,6 @@ public class GlassFishContainer extends GenericContainer<GlassFishContainer> {
             .withEnv("JAVA_HOME", "/opt/jdk17")
             .withEnv("TZ", TimeZone.getDefault().getID())
             .withEnv("LC_ALL", "en_US.UTF-8")
-//            .withEnv("AS_TRACE", "true")
-//            .withNetworkMode("host")
             .withCommand("/bin/bash", "-c", "true"
                 + " && id && (env | sort) && cat /etc/hosts"
                 + " && mkdir " + GF_DIR
@@ -85,6 +85,16 @@ public class GlassFishContainer extends GenericContainer<GlassFishContainer> {
     }
 
 
+    public GlassFishContainer withAsadminTerse(boolean terse) {
+        return withEnv("AS_ADMIN_TERSE", terse ? "true" : "");
+    }
+
+
+    public GlassFishContainer withAsadminTrace(boolean trace) {
+        return withEnv("AS_TRACE", trace ? "true" : "");
+    }
+
+
     /**
      * Executes asadmin without need to access to a running domain.
      *
@@ -95,9 +105,7 @@ public class GlassFishContainer extends GenericContainer<GlassFishContainer> {
      *             error output
      */
     public String asLocalAdmin(final String command, final String... arguments) throws AsadminCommandException {
-        // FIXME: --echo breaks change-admin-password
-        final String[] defaultArgs = new String[] {"--terse"};
-        final AsadminCommandExecutor executor = new AsadminCommandExecutor(this, defaultArgs);
+        final AsadminCommandExecutor executor = new AsadminCommandExecutor(this);
         return executor.exec(command, arguments).trim();
     }
 
@@ -113,9 +121,7 @@ public class GlassFishContainer extends GenericContainer<GlassFishContainer> {
      *             error output
      */
     public String asAdmin(final String command, final String... arguments) throws AsadminCommandException {
-        final String[] defaultArgs = new String[] {"--terse", "--user", GF_ADMIN_USER, "--passwordfile",
-            GF_ADMIN_PASSWORD_FILE};
-        final AsadminCommandExecutor executor = new AsadminCommandExecutor(this, defaultArgs);
+        final AsadminCommandExecutor executor = new AsadminCommandExecutor(this, ASADMIN_ARGS);
         return executor.exec(command, arguments).trim();
     }
 
