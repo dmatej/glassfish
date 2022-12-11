@@ -993,7 +993,7 @@ public class RemoteRestAdminCommand extends AdminCommandEventBrokerImpl<GfSseInb
                 final AuthenticationInfo authInfo = authenticationInfo();
                 if (logger.isLoggable(Level.FINER)) {
                     logger.log(Level.FINER, "URI: {0}", uriString);
-                    logger.log(Level.FINER, "URL: {0}", url.toURL(uriString).toString());
+                    logger.log(Level.FINER, "URL: {0}", url.toURL(uriString));
                     logger.log(Level.FINER, "Method: {0}", httpMethod);
                     logger.log(Level.FINER, "Password options: {0}", passwordOptions);
                     logger.log(Level.FINER, "Using auth info: {0}", authInfo);

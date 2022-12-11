@@ -653,8 +653,8 @@ public class RemoteAdminCommand {
             try {
                 if (logger.isLoggable(Level.FINER)) {
                     logger.log(Level.FINER, "URI: {0}", uriString);
-                    logger.log(Level.FINER, "URL: {0}", url.toString());
-                    logger.log(Level.FINER, "URL: {0}", url.toURL(uriString).toString());
+                    logger.log(Level.FINER, "URL: {0}", url);
+                    logger.log(Level.FINER, "URL: {0}", url.toURL(uriString));
                     logger.log(Level.FINER, "Password options: {0}", passwordOptions);
                     logger.log(Level.FINER, "Using auth info: User: {0}, Password: {1}",
                             new Object[] { user, (password != null && password.length > 0) ? "<non-null>" : "<null>" });
