@@ -25,7 +25,7 @@
         <groupId>org.eclipse.ee4j</groupId>
         <artifactId>project</artifactId>
         <version>1.0.8</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>org.glassfish.main</groupId>
@@ -150,7 +150,7 @@
         <jackson-databind.version>2.14.2</jackson-databind.version>
         <fasterxml.classmate.version>1.5.1</fasterxml.classmate.version>
         <stax-api.version>1.0-2</stax-api.version>
-        <jettison.version>1.5.3</jettison.version>
+        <jettison.version>1.5.4</jettison.version>
         <mimepull.version>1.10.0</mimepull.version>
 
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
@@ -167,21 +167,21 @@
         <findbugs.skip>false</findbugs.skip>
         <findbugs.threshold>High</findbugs.threshold>
         <findbugs.common>exclude-common.xml</findbugs.common>
-        <findbugs.exclude />
+        <findbugs.exclude/>
         <findbugs.version>3.0.5</findbugs.version>
         <findbugs.glassfish.logging.validLoggerPrefixes>jakarta.enterprise</findbugs.glassfish.logging.validLoggerPrefixes>
         <nucleus.install.dir.name>nucleus</nucleus.install.dir.name>
         <javadoc.skip>false</javadoc.skip>
         <deploy.skip>false</deploy.skip>
         <!-- Overrides the value from parent and enables the one we generate. -->
-        <project.build.outputTimestamp></project.build.outputTimestamp>
+        <project.build.outputTimestamp/>
 
         <maven.test.jvmoptions.add-opens>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens=java.naming/javax.naming.spi=ALL-UNNAMED</maven.test.jvmoptions.add-opens>
         <maven.test.jvmoptions.memory.sizes>-Xss512k -Xms256m -Xmx1g -XX:MaxDirectMemorySize=512m</maven.test.jvmoptions.memory.sizes>
         <maven.test.jvmoptions.memory.gc>-verbose:gc -XX:+UseG1GC -XX:+UseStringDeduplication</maven.test.jvmoptions.memory.gc>
         <maven.test.jvmoptions.display>-Djava.awt.headless=true</maven.test.jvmoptions.display>
         <maven.test.jvmoptions.locale>-Duser.language=en -Duser.region=US</maven.test.jvmoptions.locale>
-        <maven.test.jvmoptions.custom></maven.test.jvmoptions.custom>
+        <maven.test.jvmoptions.custom/>
         <maven.test.jvmoptions>
             ${maven.test.jvmoptions.memory.sizes}
             ${maven.test.jvmoptions.memory.gc}
@@ -1293,8 +1293,7 @@
                                 <echo file="${basedir}/target/MANIFEST.MF">Manifest-Version: 1.0</echo>
                                 <copy toDir="${project.build.outputDirectory}/META-INF" overwrite="false">
                                     <fileset dir="${basedir}/target" includes="MANIFEST.MF">
-                                        <present targetdir="${project.build.outputDirectory}/META-INF"
-                                            present="srconly" />
+                                        <present targetdir="${project.build.outputDirectory}/META-INF" present="srconly"/>
                                     </fileset>
                                 </copy>
                             </target>
