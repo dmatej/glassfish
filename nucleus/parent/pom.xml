@@ -82,14 +82,14 @@
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
 
         <!-- Jakarta Web Services -->
-        
+
         <!-- Jakarta XML Web Services -->
         <jakarta.xml.ws-api.version>4.0.0</jakarta.xml.ws-api.version>
 
         <!-- Jakarta SOAP (with Attachments)
        <jakarta.xml.soap-api.version>3.0.0-RC2</jakarta.xml.soap-api.version>
         -->
-        <webservices.version>4.0.2</webservices.version>
+        <webservices.version>4.0.3-SNAPSHOT</webservices.version>
 
         <!-- Jakarta Inject -->
         <jakarta.inject-api.version>2.0.1.MR</jakarta.inject-api.version>
