@@ -157,7 +157,7 @@
                 <module>tck</module>
             </modules>
             <properties>
-                <testcontainers.version>1.19.0</testcontainers.version>
+                <testcontainers.version>1.19.3</testcontainers.version>
             </properties>
             <dependencyManagement>
               <dependencies>
