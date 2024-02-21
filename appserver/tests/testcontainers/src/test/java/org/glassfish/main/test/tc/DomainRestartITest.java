@@ -35,6 +35,7 @@ import static org.glassfish.main.test.tc.GlassFishContainer.GF_ADMIN_PASSWORD_FI
 import static org.glassfish.main.test.tc.GlassFishContainer.GF_ADMIN_USER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 /**
@@ -66,10 +67,8 @@ public class DomainRestartITest {
     @Test
     @Timeout(threadMode = ThreadMode.SEPARATE_THREAD, unit = TimeUnit.SECONDS, value = 10)
     public void stopDomainWithWrongHostname() throws Exception {
-        String stdout = server.asAdmin("--host", "nonexisting.glassfish.ee", "--port", "4848", "stop-domain");
-        assertThat(stdout,
-            stringContainsInOrder("It appears that server has started, but the communication with it failed.",
-                "No remote server named nonexisting.glassfish.ee.", " Is that the correct host name?"));
+        assertThrows(AsadminCommandException.class,
+            () -> server.asAdmin("--host", "nonexisting.glassfish.ee", "--port", "4848", "stop-domain"));
     }
 
 
