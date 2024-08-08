@@ -25,7 +25,7 @@
         <groupId>org.eclipse.ee4j</groupId>
         <artifactId>project</artifactId>
         <version>1.0.9</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>org.glassfish.main</groupId>
@@ -74,7 +74,7 @@
         <expressly.version>5.0.0</expressly.version>
 
         <!-- Jakarta Servlet -->
-        <jakarta.servlet-api.version>6.0.0</jakarta.servlet-api.version>
+        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
 
         <!-- Jakarta Validation -->
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
@@ -157,14 +157,14 @@
         <jmh.version>1.37</jmh.version>
         <osgi-resource-locator.version>1.0.3</osgi-resource-locator.version>
 
-        <file.executable.suffix></file.executable.suffix>
+        <file.executable.suffix/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.commonResourcesDirectory>${project.build.directory}/common-resources</project.build.commonResourcesDirectory>
         <legal.doc.source>${project.build.commonResourcesDirectory}/legal</legal.doc.source>
         <findbugs.skip>false</findbugs.skip>
         <findbugs.threshold>High</findbugs.threshold>
         <findbugs.common>exclude-common.xml</findbugs.common>
-        <findbugs.exclude />
+        <findbugs.exclude/>
         <findbugs.version>3.0.5</findbugs.version>
         <findbugs.glassfish.logging.validLoggerPrefixes>jakarta.enterprise</findbugs.glassfish.logging.validLoggerPrefixes>
         <nucleus.install.dir.name>nucleus</nucleus.install.dir.name>
@@ -178,7 +178,7 @@
         <maven.test.jvmoptions.memory.gc>-verbose:gc -XX:+UseG1GC -XX:+UseStringDeduplication</maven.test.jvmoptions.memory.gc>
         <maven.test.jvmoptions.display>-Djava.awt.headless=true</maven.test.jvmoptions.display>
         <maven.test.jvmoptions.locale>-Duser.language=en -Duser.region=US</maven.test.jvmoptions.locale>
-        <maven.test.jvmoptions.custom></maven.test.jvmoptions.custom>
+        <maven.test.jvmoptions.custom/>
         <maven.test.jvmoptions>
             ${maven.test.jvmoptions.memory.sizes}
             ${maven.test.jvmoptions.memory.gc}
@@ -1338,8 +1338,7 @@
                                 <echo file="${basedir}/target/MANIFEST.MF">Manifest-Version: 1.0</echo>
                                 <copy toDir="${project.build.outputDirectory}/META-INF" overwrite="false">
                                     <fileset dir="${basedir}/target" includes="MANIFEST.MF">
-                                        <present targetdir="${project.build.outputDirectory}/META-INF"
-                                            present="srconly" />
+                                        <present targetdir="${project.build.outputDirectory}/META-INF" present="srconly"/>
                                     </fileset>
                                 </copy>
                             </target>
@@ -1451,7 +1450,7 @@
                 <artifactId>cyclonedx-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase></phase>
+                        <phase/>
                         <goals>
                             <goal>makeAggregateBom</goal>
                         </goals>
