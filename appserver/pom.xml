@@ -93,7 +93,7 @@
         <concurrent.version>3.0.0</concurrent.version>
 
         <!-- Jakarta Interceptors -->
-        <jakarta.interceptor-api.version>2.1.0</jakarta.interceptor-api.version>
+        <jakarta.interceptor-api.version>2.2.0</jakarta.interceptor-api.version>
 
         <!-- Jakarta Security + Authentication/Authorization -->
         <soteria.version>3.0.3</soteria.version>
