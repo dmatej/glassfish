@@ -13,4 +13,11 @@
         <Class name="org.glassfish.main.jul.record.GlassFishLogRecordTest" />
         <Bug pattern="OBJECT_DESERIALIZATION" />
     </Match>
+    <Match>
+        <Or>
+            <!-- False positive, it is a constant used on more places -->
+            <Class name="org.glassfish.security.common.SharedSecureRandom" />
+        </Or>
+        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+    </Match>
 </FindBugsFilter>
