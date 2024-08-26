@@ -8,16 +8,24 @@
     <Match>
         <Package name="~.*\.generated\..+" />
     </Match>
+    <Match>
+        <!-- GC is the only trick for Windows here -->
+        <Class name="com.sun.enterprise.util.io.FileUtils" />
+        <Bug pattern="DM_GC" />
+    </Match>
+    <Match>
+        <!-- False positive, it is a constant used on more places -->
+        <Class name="org.glassfish.security.common.SharedSecureRandom" />
+        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
+    </Match>
+    <Match>
+        <!-- False positive -->
+        <Class name="org.glassfish.security.common.FileRealmHelper" />
+        <Bug pattern="HARD_CODE_PASSWORD"/>
+    </Match>
     <!-- We do a lot of serialization/deserialization -->
     <Match>
         <Class name="org.glassfish.main.jul.record.GlassFishLogRecordTest" />
         <Bug pattern="OBJECT_DESERIALIZATION" />
-    </Match>
-    <Match>
-        <Or>
-            <!-- False positive, it is a constant used on more places -->
-            <Class name="org.glassfish.security.common.SharedSecureRandom" />
-        </Or>
-        <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
     </Match>
 </FindBugsFilter>
