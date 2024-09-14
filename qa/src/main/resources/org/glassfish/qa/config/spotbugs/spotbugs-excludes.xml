@@ -19,8 +19,12 @@
         <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
     </Match>
     <Match>
-        <!-- False positive -->
-        <Class name="org.glassfish.security.common.FileRealmHelper" />
+        <Or>
+            <!-- False positive -->
+            <Class name="org.glassfish.security.common.FileRealmHelper" />
+            <!-- Saving passwords used just by tests should be ok -->
+            <Class name="org.glassfish.security.services.impl.PasswordAliasTest" />
+        </Or>
         <Bug pattern="HARD_CODE_PASSWORD"/>
     </Match>
     <!-- We do a lot of serialization/deserialization -->
