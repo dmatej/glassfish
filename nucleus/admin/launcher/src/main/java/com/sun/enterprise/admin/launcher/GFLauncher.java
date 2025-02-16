@@ -794,10 +794,10 @@ public abstract class GFLauncher {
         final boolean useScript = !getInfo().isVerboseOrWatchdog() && isSurviveWinUserSession();
         final CommandLine cmdLine = new CommandLine(useScript ? CommandFormat.Script : CommandFormat.ProcessBuilder);
         cmdLine.append(javaExe);
-        if (getModulepath() != null) {
+        if (modulepath.length > 0) {
             cmdLine.appendModulePath(getModulepath());
         }
-        if (getClasspath() != null) {
+        if (classpath.length > 0) {
             cmdLine.appendClassPath(getClasspath());
         }
         addIgnoreNull(cmdLine, domainXMLjavaConfigDebugOptions);
