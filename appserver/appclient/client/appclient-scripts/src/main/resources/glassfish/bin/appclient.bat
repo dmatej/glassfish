@@ -1,6 +1,6 @@
 @echo off
 REM
-REM  Copyright (c) 2024 Contributors to the Eclipse Foundation
+REM  Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
 REM  Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
 REM
 REM  This program and the accompanying materials are made available under the
@@ -71,5 +71,5 @@ set AS_INSTALL=%~dp0..
 call "%AS_INSTALL%\config\asenv.bat"
 call :chooseJava
 
-FOR /F "delims=" %i IN (%JAVA% --module-path "%AS_INSTALL%\lib\bootstrap" --add-modules ALL-MODULE-PATH -classpath "%AS_INSTALL%\lib\gf-client.jar" org.glassfish.appclient.client.acc.agent.CLIBootstrap %*) DO set CMD=%i
+FOR /F "delims=" %i IN ("%JAVA%" --module-path "%AS_INSTALL%\lib\bootstrap" --add-modules ALL-MODULE-PATH -classpath "%AS_INSTALL%\lib\gf-client.jar" org.glassfish.appclient.client.acc.agent.CLIBootstrap %*) DO set CMD=%i
 %CMD% %ARGS%

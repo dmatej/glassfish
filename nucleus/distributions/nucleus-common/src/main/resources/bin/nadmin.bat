@@ -1,6 +1,6 @@
 @echo off
 REM
-REM  Copyright (c) 2024 Contributors to the Eclipse Foundation
+REM  Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
 REM  Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
 REM
 REM  This program and the accompanying materials are made available under the
@@ -33,4 +33,4 @@ goto run
 set JAVA=java
 
 :run
-%JAVA% %ASADMIN_JVM_OPTIONS% --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" com.sun.enterprise.admin.cli.AdminMain %*
+"%JAVA%" %ASADMIN_JVM_OPTIONS% --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" com.sun.enterprise.admin.cli.AdminMain %*

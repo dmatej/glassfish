@@ -35,4 +35,4 @@ set JAVA=java
 :run
 set AS_MODULES=%AS_INSTALL%\modules
 set WS_CLASSPATH=%AS_MODULES%\webservices-api-osgi.jar;%AS_MODULES%\webservices-osgi.jar:%AS_MODULES%\jakarta.xml.bind-api.jar:%AS_MODULES%\jaxb-osgi.jar:%AS_MODULES%\jakarta.activation-api.jar:%AS_MODULES%\angus-activation.jar
-%JAVA% %WSIMPORT_OPTS% --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%WS_CLASSPATH%" com.sun.tools.ws.WsImport %*
+"%JAVA%" %WSIMPORT_OPTS% --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%WS_CLASSPATH%" com.sun.tools.ws.WsImport %*

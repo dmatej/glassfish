@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2024 Contributors to the Eclipse Foundation
+# Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
 # Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
@@ -61,8 +61,7 @@ seekJavaOnPath() {
         JAVA=`which java`
 }
 
-
-export AS_INSTALL="$(dirname $(realpath -s $0))/.."
+export AS_INSTALL="$(dirname "$(realpath -s "$0")")/.."
 case "`uname`" in
   CYGWIN*) AS_INSTALL=`cygpath --windows $AS_INSTALL`
            cygwinProp=-Dorg.glassfish.isCygwin=true

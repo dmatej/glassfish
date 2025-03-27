@@ -1,6 +1,6 @@
 @echo off
 REM
-REM  Copyright (c) 2024 Contributors to the Eclipse Foundation
+REM  Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
 REM  Copyright (c) 2020 Oracle and/or its affiliates. All rights reserved.
 REM
 REM  This program and the accompanying materials are made available under the
@@ -34,4 +34,4 @@ set JAVA=java
 
 :run
 set ASADMIN_CLASSPATH=%AS_INSTALL%\appserver-cli.jar:%ASADMIN_CLASSPATH%
-%JAVA% %ASADMIN_JVM_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9008 --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" org.glassfish.admin.cli.AsadminMain %*
+"%JAVA%" %ASADMIN_JVM_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9008 --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" org.glassfish.admin.cli.AsadminMain %*

@@ -1,6 +1,6 @@
 @echo off
 REM
-REM  Copyright (c) 2024 Contributors to the Eclipse Foundation
+REM  Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
 REM  Copyright (c) 2018, 2021 Oracle and/or its affiliates. All rights reserved.
 REM
 REM  This program and the accompanying materials are made available under the
@@ -35,4 +35,4 @@ set JAVA=java
 :run
 set AS_MODULES=%AS_INSTALL%\modules
 set WS_CLASSPATH=%AS_MODULES%\webservices-api-osgi.jar;%AS_MODULES%\webservices-osgi.jar:%AS_MODULES%\jakarta.xml.bind-api.jar:%AS_MODULES%\jaxb-osgi.jar:%AS_MODULES%\jakarta.activation-api.jar:%AS_MODULES%\angus-activation.jar
-%JAVA%  --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%WS_CLASSPATH%" com.sun.tools.jxc.SchemaGeneratorFacade %*
+"%JAVA%"  --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%WS_CLASSPATH%" com.sun.tools.jxc.SchemaGeneratorFacade %*
