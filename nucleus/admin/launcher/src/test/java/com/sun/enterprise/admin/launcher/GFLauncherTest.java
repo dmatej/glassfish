@@ -23,6 +23,9 @@ import org.glassfish.api.admin.RuntimeType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -85,6 +88,7 @@ public class GFLauncherTest {
      * Let's fake-launch domain1  -- which DOES have the jvm logging args
      */
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     public void domain1WithDiagOptions() throws Exception {
         info.setDomainName("domain1");
         launcher.launch();
@@ -95,14 +99,42 @@ public class GFLauncherTest {
     }
 
     /**
+     * Let's fake-launch domain1  -- which DOES have the jvm logging args
+     */
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    public void domain1WithDiagOptionsWindows() throws Exception {
+        info.setDomainName("domain1");
+        launcher.launch();
+        CommandLine cmdline = launcher.getCommandLine();
+        // 0 --> java, 1 --> "-cp" 2 --> the classpath, 3 -->first arg
+        assertThat(cmdline, hasItems(matchesPattern(".*java(.exe)?(\\^\")?"), is("-cp"),
+            is("-XX:+UnlockDiagnosticVMOptions"), is("-verbose")));
+    }
+
+    /**
      * Let's fake-launch domain2 -- which does NOT have the jvm logging args
      */
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     public void domain2WithoutDiagOptions() throws Exception {
         info.setDomainName("domain2");
         launcher.launch();
         CommandLine cmdline = launcher.getCommandLine();
         assertThat(cmdline, hasItems(matchesPattern(".*java(.exe)?(\")?"), is("-cp"),
+            not(is("-XX:+UnlockDiagnosticVMOptions")), is("-verbose")));
+    }
+
+    /**
+     * Let's fake-launch domain2 -- which does NOT have the jvm logging args
+     */
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    public void domain2WithoutDiagOptionsWindows() throws Exception {
+        info.setDomainName("domain2");
+        launcher.launch();
+        CommandLine cmdline = launcher.getCommandLine();
+        assertThat(cmdline, hasItems(matchesPattern(".*java(.exe)?(\\^\")?"), is("-cp"),
             not(is("-XX:+UnlockDiagnosticVMOptions")), is("-verbose")));
     }
 

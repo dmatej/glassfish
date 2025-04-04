@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 2011, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -111,7 +111,7 @@ public class EmbeddedOSGiGlassFishRuntime extends GlassFishRuntime {
 
             final ServiceLocator serviceLocator = hk2Main.createServiceLocator(mr, startupContext, null, null);
             final ModuleStartup gfKernel = hk2Main.findStartupService(mr, serviceLocator, null, startupContext);
-            final GlassFish glassFish = createGlassFish(gfKernel, serviceLocator, gfProps.getProperties());
+            final GlassFish glassFish = createGlassFish(gfKernel, serviceLocator);
             glassFishes.add(glassFish);
 
             return glassFish;
@@ -258,9 +258,9 @@ public class EmbeddedOSGiGlassFishRuntime extends GlassFishRuntime {
     }
 
 
-    private GlassFish createGlassFish(ModuleStartup gfKernel, ServiceLocator locator, Properties gfProps)
+    private GlassFish createGlassFish(ModuleStartup gfKernel, ServiceLocator locator)
         throws GlassFishException {
-        GlassFish gf = new GlassFishImpl(gfKernel, locator, gfProps);
+        GlassFish gf = new GlassFishImpl(gfKernel, locator);
         return new EmbeddedOSGiGlassFishImpl(gf, context);
     }
 

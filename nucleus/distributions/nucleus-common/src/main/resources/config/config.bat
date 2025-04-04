@@ -15,6 +15,8 @@ REM
 REM SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 
 REM Resolve AS_INSTALL from script location
+
+endlocal
 call :resolveAsInstall "%~dp0.."
 call :loadAsenv
 call :chooseJava
@@ -43,7 +45,7 @@ if defined AS_JAVA (
     set "javaSearchType=JAVA_HOME"
     set "javaSearchTarget=%JAVA_HOME%"
 ) else (
-    for %%i in (java.exe) do set "JAVA=%%~$PATH:i"
+    for %%i in (java.exe) do set "JAVA=%%~$PATH;i"
     set "javaSearchType=PATH"
     set "javaSearchTarget=%PATH%"
 )

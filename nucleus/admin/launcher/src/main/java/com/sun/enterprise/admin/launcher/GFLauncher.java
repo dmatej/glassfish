@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -822,8 +821,7 @@ public abstract class GFLauncher {
     }
 
     void initCommandLine() throws GFLauncherException {
-        boolean batRequired = isWindows() && !getInfo().isVerboseOrWatchdog();
-        CommandLine cmdLine = new CommandLine(batRequired ? CommandFormat.BatFile : CommandFormat.ProcessBuilder);
+        CommandLine cmdLine = new CommandLine(CommandFormat.ProcessBuilder);
         cmdLine.append(javaExe);
         if (modulepath.length > 0) {
             cmdLine.appendModulePath(getModulepath());
@@ -1128,36 +1126,11 @@ public abstract class GFLauncher {
     private static List<String> prepareWindowsEnvironment(final CommandLine command, final Path configDir,
             final boolean stdinPreloaded) throws GFLauncherException {
         Path psFile;
-        Path batFile;
         try {
-            batFile = configDir.resolve("gfstart.bat");
             psFile = configDir.resolve("gfstart.ps1");
-            StringBuilder batContent = new StringBuilder(8192);
-            batContent.append("@echo off\n");
-            batContent.append("set CMD=");
-            ListIterator<String> itemsOfCommand = command.listIterator();
-            while (itemsOfCommand.hasNext()) {
-                String line = itemsOfCommand.next();
-                if (!itemsOfCommand.hasPrevious()) {
-                    batContent.append("  ");
-                }
-                batContent.append(line);
-                if (itemsOfCommand.hasNext()) {
-                    batContent.append(" ^");
-                }
-                batContent.append('\n');
-            }
-            batContent.append("call %CMD% ");
-            if (stdinPreloaded) {
-                batContent.append("< %1\n");
-            }
-            Files.writeString(batFile, batContent, UTF_8, TRUNCATE_EXISTING, CREATE);
 
             StringBuilder psContent = new StringBuilder(8192);
-            psContent.append("param(\n");
-            psContent.append("    [Parameter(Mandatory=$true)]\n");
-            psContent.append("    [string]$BatchFilePath\n");
-            psContent.append(")\n");
+            psContent.append("$ErrorActionPreference = \"Stop\"\n\n");
 
             psContent.append("$pidFile = \"").append(new File(configDir.toFile(), "pid").getAbsolutePath()).append("\"\n");
             psContent.append("if (Test-Path $pidFile) {\n");
@@ -1168,16 +1141,29 @@ public abstract class GFLauncher {
                 psContent.append("$tempFile = [System.IO.Path]::GetTempFileName()\n");
                 psContent.append("[System.IO.File]::WriteAllText($tempFile, $stdin)\n");
             }
+            List<String> cmd = command.toList();
             if (!isSSHSession()) {
-                psContent.append("Start-Process -FilePath \"$BatchFilePath\" -NoNewWindow -PassThru");
+                psContent.append("Start-Process -NoNewWindow -PassThru -FilePath ").append(cmd.get(0)).append(" -ArgumentList \"");
+                for (int i = 1; i < cmd.size(); i++) {
+                    if (i > 1) {
+                        psContent.append(' ');
+                    }
+                    psContent.append(cmd.get(i).replace("\"", "\\\""));
+                }
                 if (stdinPreloaded) {
-                    psContent.append(" < $tempFile");
+                    psContent.append("\" < $tempFile");
                 }
                 psContent.append('\n');
             } else {
-                psContent.append("$action = New-ScheduledTaskAction -Execute \"cmd.exe\" -Argument \"/c $BatchFilePath");
+                psContent.append("$action = New-ScheduledTaskAction -Execute ").append(cmd.get(0)).append("\" -ArgumentList \"");
+                for (int i = 1; i < cmd.size(); i++) {
+                    if (i > 1) {
+                        psContent.append(' ');
+                    }
+                    psContent.append(cmd.get(i).replace("\"", "\\\""));
+                }
                 if (stdinPreloaded) {
-                    psContent.append(" < $tempFile");
+                    psContent.append("\" < $tempFile");
                 }
                 psContent.append("\"\n");
                 psContent.append("$taskName = \"GlassFishInstance_\" + [System.Guid]::NewGuid().ToString()\n");
@@ -1211,8 +1197,6 @@ public abstract class GFLauncher {
         }
         cmds.add("-File");
         cmds.add("\"" + psFile.toFile().getAbsolutePath() + "\"");
-        cmds.add("-BatchFilePath");
-        cmds.add("\"" + batFile.toFile().getAbsolutePath() + "\"");
         return cmds;
     }
 }

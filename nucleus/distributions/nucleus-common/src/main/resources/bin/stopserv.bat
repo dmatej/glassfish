@@ -17,16 +17,17 @@ REM  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 REM
 
 VERIFY OTHER 2>nul
-setlocal EnableExtensions EnableDelayedExpansion
 if ERRORLEVEL 0 goto ok
 echo "Unable to enable extensions"
 exit /B 1
 
 :ok
+endlocal
 set "AS_CONFIG=%~dp0..\config"
 set "AS_CONFIG_BAT=%AS_CONFIG%\config.bat"
 call "%AS_CONFIG_BAT%" || (
     echo Error: Cannot load config file
     exit /B 1
 )
-"%JAVA%" "-Djava.util.logging.manager=org.glassfish.main.jul.GlassFishLogManager" -jar "%AS_INSTALL%\admin-cli.jar" stop-domain %*
+setlocal EnableExtensions EnableDelayedExpansion
+"%JAVA%" %ASADMIN_JVM_OPTIONS% --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" com.sun.enterprise.admin.cli.AdminMain stop-domain %*

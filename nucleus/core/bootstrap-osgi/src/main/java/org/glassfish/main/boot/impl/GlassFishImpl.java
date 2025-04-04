@@ -19,11 +19,6 @@ package org.glassfish.main.boot.impl;
 
 import com.sun.enterprise.module.bootstrap.ModuleStartup;
 
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import org.glassfish.embeddable.CommandResult;
 import org.glassfish.embeddable.CommandRunner;
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
@@ -36,16 +31,11 @@ import org.glassfish.hk2.extras.ExtrasUtilities;
  */
 public class GlassFishImpl implements GlassFish {
 
-    private static final String GENERAL_CONFIG_PROP_PREFIX = "embedded-glassfish-config.";
-    private static final String SERVER_CONFIG_PROP_PREFIX = "server.";
-    private static final String RESOURCES_CONFIG_PROP_PREFIX = "resources.";
-
     private ModuleStartup gfKernel;
     private ServiceLocator serviceLocator;
     private volatile Status status;
 
-    public GlassFishImpl(ModuleStartup gfKernel, ServiceLocator serviceLocator, Properties gfProps)
-            throws GlassFishException {
+    public GlassFishImpl(ModuleStartup gfKernel, ServiceLocator serviceLocator) throws GlassFishException {
         this.gfKernel = gfKernel;
         this.serviceLocator = serviceLocator;
         this.status = Status.INIT;
@@ -53,36 +43,6 @@ public class GlassFishImpl implements GlassFish {
         // We enable a temporary distribution service until the HK2 Extras package is fixed so that
         // we can enable the topic distribution service provided by HK2.
         ExtrasUtilities.enableTopicDistribution(serviceLocator);
-
-        // If there are custom configurations like http.port, https.port, jmx.port then configure them.
-        CommandRunner commandRunner = null;
-        Set<String> knownPropertyPrefixes = new HashSet<>();
-        for (String key : gfProps.stringPropertyNames()) {
-            String propertyName = key;
-            if (key.startsWith(GENERAL_CONFIG_PROP_PREFIX)) {
-                propertyName = key.substring(GENERAL_CONFIG_PROP_PREFIX.length());
-            }
-            String propertyValue = gfProps.getProperty(key);
-            if (commandRunner == null) {
-                // only create the CommandRunner if needed
-                commandRunner = serviceLocator.getService(CommandRunner.class);
-            }
-            String propertyPrefix = propertyName.split("\\.")[0];
-            if (!knownPropertyPrefixes.contains(propertyPrefix)) {
-                CommandResult resultList = commandRunner.run("list", propertyPrefix);
-                if (resultList.getExitStatus() == CommandResult.ExitStatus.SUCCESS
-                        && resultList.getOutput().contains(propertyPrefix)) {
-                    knownPropertyPrefixes.add(propertyPrefix);
-                } else {
-                    // unknown property prefix, skip it
-                    continue;
-                }
-            }
-            CommandResult result = commandRunner.run("set", propertyName + "=" + propertyValue);
-            if (result.getExitStatus() != CommandResult.ExitStatus.SUCCESS) {
-                throw new GlassFishException(result.getOutput(), result.getFailureCause());
-            }
-        }
     }
 
     @Override

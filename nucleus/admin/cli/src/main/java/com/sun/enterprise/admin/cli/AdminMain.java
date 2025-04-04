@@ -153,6 +153,8 @@ public class AdminMain {
         }
         final String envClasspath = System.getenv("ASADMIN_CLASSPATH");
         if (envClasspath == null) {
+            System.err.println(
+                "The ASADMIN_CLASSPATH environment variable is not set. Adding whole modules directory as a default.");
             final File modules = getInstallRoot().resolve("modules").toFile();
             if (modules.isDirectory()) {
                 locations.add(modules);

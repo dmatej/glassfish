@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -17,6 +17,8 @@
 
 package com.sun.enterprise.v3.server;
 
+import com.sun.enterprise.util.io.FileUtils;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
@@ -30,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -158,12 +159,7 @@ public class CommonClassLoaderServiceImpl {
     }
 
     private static String urlsToClassPath(Stream<URL> urls) {
-        return urls
-                .map(URL::getFile)
-                .filter(Predicate.not(String::isBlank))
-                .map(File::new)
-                .map(File::getAbsolutePath)
-                .collect(Collectors.joining(File.pathSeparator));
+        return urls.map(FileUtils::toFile).map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
     }
 
     private List<File> findDerbyJars(File installDir) {

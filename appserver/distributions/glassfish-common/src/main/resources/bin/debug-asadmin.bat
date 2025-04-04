@@ -17,17 +17,18 @@ REM  SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 REM
 
 VERIFY OTHER 2>nul
-setlocal EnableExtensions EnableDelayedExpansion
 if ERRORLEVEL 0 goto ok
 echo "Unable to enable extensions"
 exit /B 1
 
 :ok
+endlocal
 set "AS_CONFIG=%~dp0..\glassfish\config"
 set "AS_CONFIG_BAT=%AS_CONFIG%\config.bat"
 call "%AS_CONFIG_BAT%" || (
     echo Error: Cannot load config file
     exit /B 1
 )
-set ASADMIN_CLASSPATH="%AS_INSTALL%\appserver-cli.jar:%ASADMIN_CLASSPATH%"
+set "ASADMIN_CLASSPATH=%AS_INSTALL%\appserver-cli.jar;%ASADMIN_CLASSPATH%"
+setlocal EnableExtensions EnableDelayedExpansion
 "%JAVA%" %ASADMIN_JVM_OPTIONS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9008 --module-path "%ASADMIN_MODULEPATH%" --add-modules ALL-MODULE-PATH -cp "%ASADMIN_CLASSPATH%" org.glassfish.admin.cli.AsadminMain %*
