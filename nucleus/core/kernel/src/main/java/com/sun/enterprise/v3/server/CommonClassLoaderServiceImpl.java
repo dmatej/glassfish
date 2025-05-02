@@ -101,9 +101,7 @@ public class CommonClassLoaderServiceImpl {
             LOG.logp(Level.FINE, "CommonClassLoaderManager",
                 "Skipping creation of CommonClassLoader as there are no libraries available", "urls = {0}", urls);
         } else {
-            // Skip creation of an unnecessary classloader in the hierarchy,
-            // when all it would have done was to delegate up.
-            this.commonClassLoader = new GlassfishUrlClassLoader(urls.toArray(URL[]::new), apiClassLoader);
+            this.commonClassLoader = new GlassfishUrlClassLoader("CommonLibs", urls.toArray(URL[]::new), apiClassLoader);
             LOG.log(Level.FINE, "Created common classloader: {0}", commonClassLoader);
         }
     }
@@ -125,7 +123,7 @@ public class CommonClassLoaderServiceImpl {
     public void addToClassPath(URL url) {
         validateUrl(url);
         if (commonClassLoader == null) {
-            commonClassLoader = new GlassfishUrlClassLoader(new URL[] {url}, apiClassLoader);
+            commonClassLoader = new GlassfishUrlClassLoader("CommonLibs", new URL[] {url}, apiClassLoader);
         } else {
             commonClassLoader.addURL(url);
         }
