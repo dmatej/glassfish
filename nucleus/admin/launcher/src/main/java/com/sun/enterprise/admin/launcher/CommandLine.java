@@ -79,7 +79,7 @@ public final class CommandLine implements Iterable<String> {
      */
     public void appendModulePath(File... paths) {
         command.add("--module-path");
-        String value = Stream.of(paths).map(File::toPath).map(CommandLine::toJavaPath)
+        String value = Stream.of(paths).map(File::toPath).map(CommandLine::toAbsoluteStringPath)
             .collect(Collectors.joining(File.pathSeparator));
         command.add(toQuotedIfNeeded(value));
         command.add("--add-modules");

@@ -29,4 +29,4 @@ call "%AS_CONFIG_BAT%" || (
     echo Error: Cannot load config file
     exit /B 1
 )
-"%JAVA%" -classpath "%AS_INSTALL%\lib\gf-client.jar" org.glassfish.appclient.client.packageappclient.PackageAppClient %*
+"%JAVA%" --module-path "%AS_INSTALL%\lib\bootstrap" --add-modules ALL-MODULE-PATH -classpath "%AS_INSTALL%\lib\gf-client.jar" org.glassfish.appclient.client.packageappclient.PackageAppClient %*
