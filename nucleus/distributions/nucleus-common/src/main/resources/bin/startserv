@@ -56,7 +56,6 @@ startAsMainProcess () {
 AS_CONFIG="$(dirname "$(realpath "$0")")/../config"
 AS_CONFIG_SH="${AS_CONFIG}/config.sh"
 source "${AS_CONFIG_SH}" "$AS_CONFIG" || { echo "${AS_CONFIG_SH} not found" >&2; exit 1; }
-ASADMIN_CLASSPATH="$AS_INSTALL/admin-cli.jar:$AS_INSTALL/modules/*"
 startAsMainProcess "$@"
 
 # Alternatively, run the following:
