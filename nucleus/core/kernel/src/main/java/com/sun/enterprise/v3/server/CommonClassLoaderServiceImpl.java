@@ -94,7 +94,7 @@ public class CommonClassLoaderServiceImpl {
 
 
     @PostConstruct
-    public void postConstruct() {
+    void postConstruct() {
         this.apiClassLoader = Objects.requireNonNull(acls.getAPIClassLoader(), "API ClassLoader is null!");
         final List<URL> urls = toUrls(createClasspathElements(env));
         this.commonClassPath = urlsToClassPath(urls.stream());
