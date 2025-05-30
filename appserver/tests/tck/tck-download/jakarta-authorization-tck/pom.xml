@@ -47,13 +47,13 @@
                         <goals>
                             <goal>wget</goal>
                         </goals>
+                        <configuration>
+                            <url>${tck.tests.authorization.url}</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <url>${tck.tests.authorization.url}</url>
-                    <unpack>false</unpack>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>

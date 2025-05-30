@@ -33,7 +33,7 @@
 
     <properties>
         <!-- Be patient, it is over 500 MB -->
-        <tck.test.jee.file>jakarta-jakartaeetck-10.0.4.zip</tck.test.jee.file>
+        <tck.test.jee.file>jakarta-jakartaeetck-10.0.6.zip</tck.test.jee.file>
         <tck.test.jee.url>https://download.eclipse.org/jakartaee/platform/10/${tck.test.jee.file}</tck.test.jee.url>
     </properties>
 
@@ -49,15 +49,13 @@
                         <goals>
                             <goal>wget</goal>
                         </goals>
+                        <configuration>
+                            <url>${tck.test.jee.url}</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <skipCache>true</skipCache>
-                    <overwrite>true</overwrite>
-                    <url>${tck.test.jee.url}</url>
-                    <unpack>false</unpack>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
