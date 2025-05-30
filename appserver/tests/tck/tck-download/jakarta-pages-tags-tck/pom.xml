@@ -29,12 +29,11 @@
 
     <artifactId>jakarta-pages-tags-tck</artifactId>
     <packaging>pom</packaging>
-    <name>TCK: Install Jakarta Pages Tags TCK</name>
-
+    <name>TCK: Install Jakarta Tags TCK</name>
 
     <properties>
-        <tck.test.pages.file>jakarta-tags-tck-3.0.0.zip</tck.test.pages.file>
-        <tck.test.pages.url>https://download.eclipse.org/jakartaee/tags/3.0/${tck.test.pages.file}</tck.test.pages.url>
+        <tck.test.pages.file>jakarta-tags-tck-3.0.1.zip</tck.test.pages.file>
+        <tck.test.pages.url>https://download.eclipse.org/ee4j/jakartaee-tck/jakartaee10/staged/eftl/${tck.test.pages.file}</tck.test.pages.url>
     </properties>
 
     <build>
@@ -49,15 +48,13 @@
                         <goals>
                             <goal>wget</goal>
                         </goals>
+                        <configuration>
+                            <url>${tck.test.pages.url}</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <skipCache>true</skipCache>
-                    <overwrite>true</overwrite>
-                    <url>${tck.test.pages.url}</url>
-                    <unpack>false</unpack>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
@@ -81,5 +78,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

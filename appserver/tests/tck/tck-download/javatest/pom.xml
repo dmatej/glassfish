@@ -49,6 +49,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-javatest-src</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>${javatest.source.url}</url>
+                            <outputDirectory>${project.build.downloadedSources}</outputDirectory>
+                            <unpack>true</unpack>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -65,24 +83,6 @@
                             <fileMappers>
                                 <org.codehaus.plexus.components.io.filemappers.FlattenFileMapper/>
                             </fileMappers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>download-javatest-src</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>${javatest.source.url}</url>
-                            <outputDirectory>${project.build.downloadedSources}</outputDirectory>
-                            <unpack>true</unpack>
                         </configuration>
                     </execution>
                 </executions>

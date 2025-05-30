@@ -49,15 +49,15 @@
                         <goals>
                             <goal>wget</goal>
                         </goals>
+                        <configuration>
+                            <skipCache>true</skipCache>
+                            <overwrite>true</overwrite>
+                            <url>${tck.test.pages.url}</url>
+                            <unpack>false</unpack>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <skipCache>true</skipCache>
-                    <overwrite>true</overwrite>
-                    <url>${tck.test.pages.url}</url>
-                    <unpack>false</unpack>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
