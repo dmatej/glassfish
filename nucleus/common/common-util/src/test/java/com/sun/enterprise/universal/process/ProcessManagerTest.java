@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 2010, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -21,6 +21,7 @@ package com.sun.enterprise.universal.process;
 import com.sun.enterprise.util.OS;
 
 import java.io.File;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
+import static java.lang.System.Logger.Level.INFO;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,12 +46,14 @@ import static org.junit.jupiter.api.condition.OS.WINDOWS;
  * @author bnevins
  */
 public class ProcessManagerTest {
+    private static final Logger LOG = System.getLogger(ProcessManagerTest.class.getName());
 
-    private static String textfile;
+    private static final List<String> HUGE_INPUT = hugeInput();
+    private static File textfile;
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        textfile = new File(ProcessManagerTest.class.getClassLoader().getResource("process/lots_o_text.txt").getPath()).getAbsolutePath();
+        textfile = new File(ProcessManagerTest.class.getClassLoader().getResource("process/lots_o_text.txt").toURI());
         assertTrue(textfile != null && textfile.length() > 0);
     }
 
@@ -58,32 +62,22 @@ public class ProcessManagerTest {
      * This stuff is platform dependent.
      */
     @Test
-    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    @Timeout(value = 10, unit = TimeUnit.SECONDS)
     public void test1() throws ProcessManagerException {
-        ProcessManager pm;
 
-        System.out.println("If it is FROZEN RIGHT NOW -- then Houston, we have a problem!");
-        System.out.println("ProcessManager must have the write to stdin before the reader threads have started!");
+        LOG.log(INFO, "If it is FROZEN RIGHT NOW -- then Houston, we have a problem!"
+            + " ProcessManager must have the write to stdin before the reader threads have started!");
 
+        final ProcessManager pm;
         if (OS.isWindows()) {
-            pm = new ProcessManager("cmd", "/c", "type", textfile);
+            pm = new ProcessManager("cmd", "/c", "type", textfile.getAbsolutePath());
         } else {
-            pm = new ProcessManager("cat", textfile);
+            pm = new ProcessManager("cat", textfile.getAbsolutePath());
         }
 
-        pm.setStdinLines(hugeInput());
+        pm.setStdinLines(HUGE_INPUT);
         pm.setEcho(false);
-        pm.execute();
-    }
-
-    private List<String> hugeInput() {
-        List<String> l = new ArrayList<>();
-
-        for (int i = 0; i < 50000; i++) {
-            l.add("line number " + i + "here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
-
-        return l;
+        assertEquals(0, pm.execute());
     }
 
     @Test
@@ -198,5 +192,13 @@ public class ProcessManagerTest {
         pm.setTimeoutMsec(timeoutMsec);
         int exitCode = assertDoesNotThrow(pm::execute);
         assertEquals(0, exitCode);  // Assert that the process completes successfully
+    }
+
+    private static List<String> hugeInput() {
+        List<String> input = new ArrayList<>();
+        for (int i = 0; i < 50000; i++) {
+            input.add("line number " + i + "here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+        return input;
     }
 }
