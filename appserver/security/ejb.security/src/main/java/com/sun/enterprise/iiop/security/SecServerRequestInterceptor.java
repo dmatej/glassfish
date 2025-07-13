@@ -56,7 +56,7 @@ import java.util.logging.Logger;
 import javax.security.auth.Subject;
 import javax.security.auth.x500.X500Principal;
 
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.internal.api.ORBLocator;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.NO_PERMISSION;
 import org.omg.CORBA.ORB;
@@ -103,8 +103,7 @@ public class SecServerRequestInterceptor extends org.omg.CORBA.LocalObject imple
     private final String name;
     private final Codec codec;
     private final SecurityContextUtil secContextUtil;
-    private final GlassFishORBHelper orbHelper;
-    private final SecurityMechanismSelector smSelector;
+    private final ORBLocator orbLocator;
 
     // Not required
     // SecurityService secsvc = null; // Security Service
@@ -112,9 +111,8 @@ public class SecServerRequestInterceptor extends org.omg.CORBA.LocalObject imple
         this.name = name;
         this.codec = codec;
         this.prname = name + "::";
-        secContextUtil = Lookups.getSecurityContextUtil();
-        orbHelper = Lookups.getGlassFishORBHelper();
-        smSelector = Lookups.getSecurityMechanismSelector();
+        this.secContextUtil = Lookups.getSecurityContextUtil();
+        this.orbLocator = Lookups.getOrbLocator();
     }
 
     @Override
@@ -359,7 +357,7 @@ public class SecServerRequestInterceptor extends org.omg.CORBA.LocalObject imple
         LOG.log(Level.FINE, "Entered {0} receive_request", prname);
 
         // secsvc = Csiv2Manager.getSecurityService();
-        ORB orb = orbHelper.getORB();
+        ORB orb = orbLocator.getORB();
 
         try {
             sc = ri.get_request_service_context(SECURITY_ATTRIBUTE_SERVICE_ID);

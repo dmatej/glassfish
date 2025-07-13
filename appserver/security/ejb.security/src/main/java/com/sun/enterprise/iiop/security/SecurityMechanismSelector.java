@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -80,7 +80,7 @@ import org.glassfish.api.admin.ProcessEnvironment;
 import org.glassfish.api.admin.ProcessEnvironment.ProcessType;
 import org.glassfish.api.invocation.ComponentInvocation;
 import org.glassfish.api.invocation.InvocationManager;
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.enterprise.iiop.api.GlassFishORBLocator;
 import org.glassfish.enterprise.iiop.api.ProtocolManager;
 import org.glassfish.hk2.api.PostConstruct;
 import org.glassfish.internal.api.ORBLocator;
@@ -126,7 +126,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
     @Inject
     private SSLUtils sslUtils;
 
-    private GlassFishORBHelper orbHelper;
+    private GlassFishORBLocator orbLocator;
 
     // private CompoundSecMech mechanism = null;
     private ORB orb;
@@ -147,10 +147,9 @@ public final class SecurityMechanismSelector implements PostConstruct {
     @Override
     public void postConstruct() {
         try {
-            orbHelper = Lookups.getGlassFishORBHelper();
+            orbLocator = Lookups.getOrbLocator();
             // Initialize client security config
-            String s = (orbHelper.getCSIv2Props()).getProperty(ORBLocator.ORB_SSL_CLIENT_REQUIRED);
-            if (s != null && s.equals("true")) {
+            if ("true".equals(orbLocator.getCSIv2Props().getProperty(ORBLocator.ORB_SSL_CLIENT_REQUIRED))) {
                 sslRequired = true;
             }
 
@@ -158,14 +157,14 @@ public final class SecurityMechanismSelector implements PostConstruct {
             corbaIORDescSet = new HashSet<>();
             EjbIORConfigurationDescriptor iorDesc = new EjbIORConfigurationDescriptor();
             EjbIORConfigurationDescriptor iorDesc2 = new EjbIORConfigurationDescriptor();
-            String serverSslReqd = (orbHelper.getCSIv2Props()).getProperty(ORBLocator.ORB_SSL_SERVER_REQUIRED);
+            String serverSslReqd = orbLocator.getCSIv2Props().getProperty(ORBLocator.ORB_SSL_SERVER_REQUIRED);
             if (serverSslReqd != null && serverSslReqd.equals("true")) {
                 iorDesc.setIntegrity(EjbIORConfigurationDescriptor.REQUIRED);
                 iorDesc.setConfidentiality(EjbIORConfigurationDescriptor.REQUIRED);
                 iorDesc2.setIntegrity(EjbIORConfigurationDescriptor.REQUIRED);
                 iorDesc2.setConfidentiality(EjbIORConfigurationDescriptor.REQUIRED);
             }
-            String clientAuthReq = (orbHelper.getCSIv2Props()).getProperty(ORBLocator.ORB_CLIENT_AUTH_REQUIRED);
+            String clientAuthReq = orbLocator.getCSIv2Props().getProperty(ORBLocator.ORB_CLIENT_AUTH_REQUIRED);
             if (clientAuthReq != null && clientAuthReq.equals("true")) {
                 // Need auth either by SSL or username-password.
                 // This sets SSL clientauth to required.
@@ -217,7 +216,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
                 // Attempt to create SSL connection to host, ORBInitialPort
                 IIOPProfileTemplate templ = (IIOPProfileTemplate) ior.getProfile().getTaggedProfileTemplate();
                 IIOPAddress addr = templ.getPrimaryAddress();
-                info = IORToSocketInfoImpl.createSocketInfo("SecurityMechanismSelector1", "SSL", addr.getHost(), orbHelper.getORBPort(orbHelper.getORB()));
+                info = IORToSocketInfoImpl.createSocketInfo("SecurityMechanismSelector1", "SSL", addr.getHost(), orbLocator.getORBPort(orbLocator.getORB()));
                 return info;
             } else {
                 return null;
@@ -281,7 +280,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
 
     public synchronized CSIV2TaggedComponentInfo getCtc() {
         if (ctc == null) {
-            this.ctc = new CSIV2TaggedComponentInfo(orbHelper.getORB());
+            this.ctc = new CSIV2TaggedComponentInfo(orbLocator.getORB());
         }
         return ctc;
     }
@@ -307,7 +306,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
                 IIOPProfileTemplate templ = (IIOPProfileTemplate) ior.getProfile().getTaggedProfileTemplate();
                 IIOPAddress addr = templ.getPrimaryAddress();
                 SocketInfo info = IORToSocketInfoImpl.createSocketInfo("SecurityMechanismSelector1", "SSL", addr.getHost(),
-                        orbHelper.getORBPort(orbHelper.getORB()));
+                        orbLocator.getORBPort(orbLocator.getORB()));
                 // SocketInfo[] sInfos = new SocketInfo[]{info};
                 List<SocketInfo> sInfos = new ArrayList<>();
                 sInfos.add(info);
@@ -1099,7 +1098,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
         }
 
         if (protocolMgr == null) {
-            protocolMgr = orbHelper.getProtocolManager();
+            protocolMgr = orbLocator.getProtocolManager();
         }
 
         // Check to make sure protocolMgr is not null.
@@ -1352,7 +1351,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
     }
 
     public static String getSecurityMechanismString(CSIV2TaggedComponentInfo tCI, CompoundSecMech[] list, String name) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append("\ntypeId: " + name);
         try {
             for (int i = 0; list != null && i < list.length; i++) {

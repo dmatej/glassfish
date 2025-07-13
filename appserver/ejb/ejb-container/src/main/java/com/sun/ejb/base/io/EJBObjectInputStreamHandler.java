@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -25,7 +26,7 @@ import java.rmi.Remote;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.enterprise.iiop.api.GlassFishORBLocator;
 import org.glassfish.enterprise.iiop.api.ProtocolManager;
 import org.glassfish.internal.api.Globals;
 
@@ -75,8 +76,7 @@ public class EJBObjectInputStreamHandler
      * this runtime.
      */
     private ProtocolManager getProtocolManager() {
-    GlassFishORBHelper orbHelper = Globals.getDefaultHabitat().getService(GlassFishORBHelper.class);
-    return orbHelper.isORBInitialized() ? orbHelper.getProtocolManager() : null;
+        GlassFishORBLocator orbLocator = Globals.getDefaultHabitat().getService(GlassFishORBLocator.class);
+        return orbLocator.isORBInitialized() ? orbLocator.getProtocolManager() : null;
     }
-
 }

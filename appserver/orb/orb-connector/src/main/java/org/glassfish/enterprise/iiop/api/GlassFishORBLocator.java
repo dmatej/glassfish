@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -49,9 +49,9 @@ import static com.sun.logging.LogDomains.CORBA_LOGGER;
  */
 @Service
 @Singleton
-public class GlassFishORBHelper implements ORBLocator {
+public class GlassFishORBLocator implements ORBLocator {
 
-    private static final Logger LOG = LogDomains.getLogger(GlassFishORBHelper.class, CORBA_LOGGER, false);
+    private static final Logger LOG = LogDomains.getLogger(GlassFishORBLocator.class, CORBA_LOGGER, false);
 
     @Inject
     private ServiceLocator services;
