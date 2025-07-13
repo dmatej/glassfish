@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -13,7 +14,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
-
 package org.glassfish.enterprise.iiop.impl;
 
 import jakarta.inject.Inject;
@@ -29,27 +29,23 @@ import org.omg.CORBA.ORB;
 import org.omg.PortableInterceptor.ServerRequestInfo;
 
 /**
- * @author Mahesh Kannan
- *         Date: Jan 15, 2009
+ * @author Mahesh Kannan 2009
  */
 @Service
-public class GlassFishORBFactoryImpl
-        implements GlassFishORBFactory, PostConstruct {
+public class GlassFishORBFactoryImpl implements GlassFishORBFactory, PostConstruct {
 
     @Inject
-    private ServiceLocator habitat;
+    private ServiceLocator serviceLocator;
 
     @Inject
     private IIOPUtils iiopUtils;
 
-    private GlassFishORBManager gfORBManager = null;
+    private GlassFishORBManager gfORBManager;
 
     @Override
     public void postConstruct() {
-        gfORBManager = new GlassFishORBManager(habitat);
-
+        this.gfORBManager = new GlassFishORBManager(serviceLocator);
         IIOPUtils.setInstance(iiopUtils);
-        //iiopUtils.setGlassFishORBManager(gfORBManager);
     }
 
     @Override
@@ -64,8 +60,7 @@ public class GlassFishORBFactoryImpl
 
     @Override
     public ORB createORB(Properties props) {
-        // TODO change this to a create call
-       return gfORBManager.getORB(props);
+        return gfORBManager.createOrb(props);
     }
 
     @Override
@@ -103,13 +98,12 @@ public class GlassFishORBFactoryImpl
      * method calls as new request starts.
      */
     @Override
-    public boolean isEjbCall (ServerRequestInfo sri) {
-        return (gfORBManager.isEjbAdapterName(sri.adapter_name()) &&
-                (!gfORBManager.isIsACall(sri.operation())));
+    public boolean isEjbCall(ServerRequestInfo sri) {
+        return gfORBManager.isEjbAdapterName(sri.adapter_name()) && !"_is_a".equals(sri.operation());
     }
 
     @Override
     public String getIIOPEndpoints() {
-        return gfORBManager.getIIOPEndpoints() ;
+        return gfORBManager.getIIOPEndpoints();
     }
 }

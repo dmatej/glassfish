@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,7 +22,7 @@ import jakarta.inject.Provider;
 
 import java.lang.ref.WeakReference;
 
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.enterprise.iiop.api.GlassFishORBLocator;
 import org.glassfish.gms.bootstrap.GMSAdapterService;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.internal.api.Globals;
@@ -38,7 +38,7 @@ public class Lookups {
     private Provider<SecurityMechanismSelector> securityMechanismSelectorProvider;
 
     @Inject
-    private Provider<GlassFishORBHelper> glassFishORBHelperProvider;
+    private Provider<GlassFishORBLocator> glassFishORBHelperProvider;
 
     @Inject
     private Provider<SecurityContextUtil> securityContextUtilProvider;
@@ -58,7 +58,7 @@ public class Lookups {
     private static Lookups singleton;
 
     private static WeakReference<SecurityMechanismSelector> sms = new WeakReference<>(null);
-    private static WeakReference<GlassFishORBHelper> orb = new WeakReference<>(null);
+    private static WeakReference<GlassFishORBLocator> orbLocator = new WeakReference<>(null);
     private static WeakReference<SecurityContextUtil> sc = new WeakReference<>(null);
 
     private Lookups() {
@@ -100,22 +100,22 @@ public class Lookups {
     }
 
     /**
-     * Get the {@link GlassFishORBHelper}.
+     * Get the {@link GlassFishORBLocator}.
      *
-     * @return the {@link GlassFishORBHelper}; null if not available
+     * @return the {@link GlassFishORBLocator}; null if not available
      */
-    static GlassFishORBHelper getGlassFishORBHelper() {
-        if (orb.get() != null) {
-            return orb.get();
+    static GlassFishORBLocator getOrbLocator() {
+        if (orbLocator.get() != null) {
+            return orbLocator.get();
         }
         return _getGlassFishORBHelper();
     }
 
-    private static synchronized GlassFishORBHelper _getGlassFishORBHelper() {
-        if (orb.get() == null && checkSingleton()) {
-            orb = new WeakReference<>(singleton.glassFishORBHelperProvider.get());
+    private static synchronized GlassFishORBLocator _getGlassFishORBHelper() {
+        if (orbLocator.get() == null && checkSingleton()) {
+            orbLocator = new WeakReference<>(singleton.glassFishORBHelperProvider.get());
         }
-        return orb.get();
+        return orbLocator.get();
     }
 
     /**

@@ -33,8 +33,8 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
 import org.glassfish.enterprise.iiop.api.IIOPSSLUtil;
+import org.glassfish.internal.api.ORBLocator;
 import org.jvnet.hk2.annotations.Service;
 import org.omg.IOP.TaggedComponent;
 import org.omg.PortableInterceptor.IORInfo;
@@ -53,8 +53,6 @@ public class IIOPSSLUtilImpl implements IIOPSSLUtil {
 
     @Inject
     private SSLUtils sslUtils;
-
-    private GlassFishORBHelper orbHelper;
 
     private Object appClientSSL;
 
@@ -119,9 +117,8 @@ public class IIOPSSLUtilImpl implements IIOPSSLUtil {
     @Override
     public TaggedComponent createSSLTaggedComponent(IORInfo iorInfo, Object sInfos) {
         List<com.sun.corba.ee.spi.folb.SocketInfo> socketInfos = (List<com.sun.corba.ee.spi.folb.SocketInfo>) sInfos;
-        orbHelper = Lookups.getGlassFishORBHelper();
-        TaggedComponent result = null;
-        org.omg.CORBA.ORB orb = orbHelper.getORB();
+        ORBLocator orbLocator = Lookups.getOrbLocator();
+        org.omg.CORBA.ORB orb = orbLocator.getORB();
         int sslMutualAuthPort = -1;
         try {
             if (iorInfo instanceof com.sun.corba.ee.spi.legacy.interceptor.IORInfoExt) {
@@ -137,9 +134,8 @@ public class IIOPSSLUtilImpl implements IIOPSSLUtil {
         CSIV2TaggedComponentInfo ctc = new CSIV2TaggedComponentInfo(orb, sslMutualAuthPort);
         EjbDescriptor desc = ctc.getEjbDescriptor(iorInfo);
         if (desc != null) {
-            result = ctc.createSecurityTaggedComponent(socketInfos, desc);
+            return ctc.createSecurityTaggedComponent(socketInfos, desc);
         }
-        return result;
+        return null;
     }
-
 }

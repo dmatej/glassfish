@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -40,7 +40,7 @@ import javax.naming.NamingException;
 
 import org.glassfish.api.naming.GlassfishNamingManager;
 import org.glassfish.api.naming.SimpleJndiName;
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.enterprise.iiop.api.GlassFishORBLocator;
 import org.glassfish.enterprise.iiop.api.ProtocolManager;
 import org.glassfish.internal.api.Globals;
 
@@ -98,8 +98,8 @@ public class EJBObjectOutputStreamHandler implements GlassFishOutputStreamHandle
      * this runtime.
      */
     private ProtocolManager getProtocolManager() {
-        GlassFishORBHelper orbHelper = Globals.getDefaultHabitat().getService(GlassFishORBHelper.class);
-        return orbHelper.isORBInitialized() ? orbHelper.getProtocolManager() : null;
+        GlassFishORBLocator orbLocator = Globals.getDefaultHabitat().getService(GlassFishORBLocator.class);
+        return orbLocator.isORBInitialized() ? orbLocator.getProtocolManager() : null;
     }
 
 
@@ -199,7 +199,7 @@ abstract class AbstractSerializableS1ASEJBReference implements SerializableObjec
             byte[] serializedRef = EJBObjectOutputStreamHandler._javaEEIOUtils.serializeObject(reference, false);
             Remote returnReference = (java.rmi.Remote) EJBObjectOutputStreamHandler._javaEEIOUtils
                 .deserializeObject(serializedRef, false, contextClassLoader);
-            GlassFishORBHelper orbHelper = EjbContainerUtilImpl.getInstance().getORBHelper();
+            GlassFishORBLocator orbHelper = EjbContainerUtilImpl.getInstance().getOrbLocator();
             ProtocolManager protocolMgr = orbHelper.getProtocolManager();
             protocolMgr.connectObject(returnReference);
             return returnReference;

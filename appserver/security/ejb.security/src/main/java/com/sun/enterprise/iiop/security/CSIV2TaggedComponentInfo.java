@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -54,7 +54,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.glassfish.enterprise.iiop.api.GlassFishORBHelper;
+import org.glassfish.enterprise.iiop.api.GlassFishORBLocator;
 import org.glassfish.enterprise.iiop.impl.CSIv2Policy;
 import org.glassfish.internal.api.ORBLocator;
 import org.glassfish.pfl.basic.func.UnaryFunction;
@@ -91,11 +91,11 @@ public final class CSIV2TaggedComponentInfo {
     // private byte[] _realm_name_bytes = null;
     private final ORB orb;
     private int sslMutualAuthPort;
-    private final GlassFishORBHelper orbHelper;
+    private final GlassFishORBLocator orbLocator;
 
     public CSIV2TaggedComponentInfo(ORB orb) {
         this.orb = orb;
-        orbHelper = Lookups.getGlassFishORBHelper();
+        this.orbLocator = Lookups.getOrbLocator();
     }
 
     public CSIV2TaggedComponentInfo(ORB orb, int sslMutualAuthPort) {
@@ -106,7 +106,7 @@ public final class CSIV2TaggedComponentInfo {
     public EjbDescriptor getEjbDescriptor(IORInfo iorInfo) {
         CSIv2Policy csiv2Policy = null;
         try {
-            csiv2Policy = (CSIv2Policy) iorInfo.get_effective_policy(orbHelper.getCSIv2PolicyType());
+            csiv2Policy = (CSIv2Policy) iorInfo.get_effective_policy(orbLocator.getCSIv2PolicyType());
         } catch (INV_POLICY ex) {
             LOG.log(Level.FINE, "CSIV2TaggedComponentInfo.getEjbDescriptor: CSIv2Policy not present");
         }
@@ -178,7 +178,7 @@ public final class CSIV2TaggedComponentInfo {
         org.omg.IOP.TaggedComponent tc = null;
 
         try {
-            Properties props = orbHelper.getCSIv2Props();
+            Properties props = orbLocator.getCSIv2Props();
             boolean sslRequired = getBooleanValue(props, ORBLocator.ORB_SSL_SERVER_REQUIRED);
             boolean clientAuthRequired = getBooleanValue(props, ORBLocator.ORB_CLIENT_AUTH_REQUIRED);
 
