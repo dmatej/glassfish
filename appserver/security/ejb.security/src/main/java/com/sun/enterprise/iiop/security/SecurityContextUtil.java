@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -102,7 +102,7 @@ public class SecurityContextUtil implements PostConstruct {
         if (StubAdapter.isStub(effective_target)) {
             if (StubAdapter.isLocal(effective_target)) {
                 // XXX: Workaround for non-null connection object ri for local invocation.
-                ConnectionExecutionContext.setClientThreadID(Thread.currentThread().getId());
+                ConnectionExecutionContext.setClientThreadID(Thread.currentThread().threadId());
                 return null;
             }
         }

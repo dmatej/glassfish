@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -1240,7 +1240,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
         // XXX: Workaround for non-null connection object ri for local invocation.
         // if (socket == null && ctx == null)
         Long ClientID = ConnectionExecutionContext.readClientThreadID();
-        if (ClientID != null && ClientID == Thread.currentThread().getId() && ctx == null) {
+        if (ClientID != null && ClientID == Thread.currentThread().threadId() && ctx == null) {
             return null;
         }
 

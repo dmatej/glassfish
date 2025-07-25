@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -66,8 +66,8 @@ public class AssocWithThreadResourcePool extends ConnectionPool {
             // synch on ar and do a quick-n-dirty check to see if the local
             // resource is usable at all
             synchronized (ar.lock) {
-                if ((ar.getThreadId() != Thread.currentThread().getId()) || ar.hasConnectionErrorOccurred() || ar.isDirty()
-                        || !ar.isAssociated()) {
+                if ((ar.getThreadId() != Thread.currentThread().threadId()) || ar.hasConnectionErrorOccurred()
+                    || ar.isDirty() || !ar.isAssociated()) {
                     // we were associated with someone else or resource error
                     // occurred or resource was disassociated and used by some one else. So evict
                     // NOTE: We do not setAssociated to false here since someone
@@ -139,7 +139,7 @@ public class AssocWithThreadResourcePool extends ConnectionPool {
     private void setInThreadLocal(AssocWithThreadResourceHandle h) {
         if (h != null) {
             synchronized (h.lock) {
-                h.setThreadId(Thread.currentThread().getId());
+                h.setThreadId(Thread.currentThread().threadId());
                 h.setAssociated(true);
                 localResource.set(h);
             }

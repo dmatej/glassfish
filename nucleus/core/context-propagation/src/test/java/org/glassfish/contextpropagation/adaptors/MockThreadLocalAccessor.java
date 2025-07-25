@@ -1,6 +1,6 @@
 /*
+ * Copyright (c) 2021, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2021 Contributors to the Eclipse Foundation
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -32,7 +32,7 @@ public class MockThreadLocalAccessor implements ThreadLocalAccessor {
 
     @Override
     public AccessControlledMap get() {
-        MockLoggerAdapter.debug("Thread: " + Thread.currentThread().getId() + " map: " + mapThreadLocal.get());
+        MockLoggerAdapter.debug("Thread: " + Thread.currentThread().threadId() + " map: " + mapThreadLocal.get());
         return mapThreadLocal.get();
     }
 }

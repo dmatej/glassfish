@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -399,7 +400,7 @@ public class ProfiledConnectionWrapper40 extends ConnectionHolder40 implements C
                 record.setParams(args);
                 record.setClassName(actualObject.getClass().getName());
                 record.setThreadName(Thread.currentThread().getName());
-                record.setThreadID(Thread.currentThread().getId());
+                record.setThreadID(Thread.currentThread().threadId());
                 record.setTimeStamp(System.currentTimeMillis());
                 sqlTraceDelegator.sqlTrace(record);
                 return method.invoke(actualObject, args);

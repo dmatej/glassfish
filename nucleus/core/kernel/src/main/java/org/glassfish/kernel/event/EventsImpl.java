@@ -61,7 +61,7 @@ public class EventsImpl implements Events, PostConstruct {
         ThreadFactory threadFactory = r -> {
             Thread t = Executors.defaultThreadFactory().newThread(r);
             t.setDaemon(true);
-            t.setName("events-" + t.getId());
+            t.setName("events-" + t.threadId());
             return t;
         };
         executor = Executors.newCachedThreadPool(threadFactory);

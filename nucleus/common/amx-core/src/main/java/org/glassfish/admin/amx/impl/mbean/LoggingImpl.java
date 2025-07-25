@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2022 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -532,7 +532,7 @@ public final class LoggingImpl extends AMXImplBase {
         m.put(LOG_RECORD_SEQUENCE_NUMBER_KEY, record.getSequenceNumber());
         m.put(LOG_RECORD_SOURCE_CLASS_NAME_KEY, record.getSourceClassName());
         m.put(LOG_RECORD_SOURCE_METHOD_NAME_KEY, record.getSourceMethodName());
-        m.put(LOG_RECORD_THREAD_ID_KEY, record.getThreadID());
+        m.put(LOG_RECORD_THREAD_ID_KEY, record.getLongThreadID());
         final Throwable thrown = record.getThrown();
         if (thrown != null) {
             final Throwable mapped = new ThrowableMapper(thrown).map();
@@ -557,12 +557,12 @@ public final class LoggingImpl extends AMXImplBase {
             final Formatter formatter) {
         //debug( "LoggingImpl.privateLoggingHook: " + formatter.format( logRecord ) );
 
-        if (logRecord.getThreadID() == mMyThreadID) {
+        if (logRecord.getLongThreadID() == mMyThreadID) {
             debug("privateLoggingHook: recusive call!!!");
             throw new RuntimeException("recursive call");
         }
         synchronized (this) {
-            mMyThreadID = Thread.currentThread().getId();
+            mMyThreadID = Thread.currentThread().threadId();
 
             final Level level = logRecord.getLevel();
 

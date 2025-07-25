@@ -190,17 +190,34 @@ public class GlassFishLogRecord extends LogRecord {
     }
 
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public int getThreadID() {
         return this.record.getThreadID();
     }
 
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public void setThreadID(final int threadID) {
         this.record.setThreadID(threadID);
+        this.record.setLongThreadID(threadID);
     }
 
+
+    @Override
+    public long getLongThreadID() {
+        return this.record.getLongThreadID();
+    }
+
+
+    @Override
+    public LogRecord setLongThreadID(final long threadID) {
+        this.record.setLongThreadID(threadID);
+        return this;
+    }
 
     @Override
     public long getMillis() {

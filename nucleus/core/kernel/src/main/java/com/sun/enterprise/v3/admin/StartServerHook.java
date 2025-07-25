@@ -266,7 +266,7 @@ class StartServerShutdownHook extends Thread {
     private static String toString(Thread thread) {
         return new StringBuilder()
             .append("Thread[")
-            .append("id=").append(thread.getId())
+            .append("id=").append(thread.threadId())
             .append(", name=").append(thread.getName())
             .append(", daemon=").append(thread.isDaemon())
             .append(", priority=").append(thread.getPriority())

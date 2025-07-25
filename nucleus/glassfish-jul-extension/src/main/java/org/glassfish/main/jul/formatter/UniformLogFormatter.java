@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Eclipse Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2006, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -198,7 +198,7 @@ public class UniformLogFormatter extends GlassFishLogFormatter {
 
     private void appendDetails(final StringBuilder output, final GlassFishLogRecord record) {
         if (!excludeFieldsSupport.isSet(SupplementalAttribute.TID)) {
-            output.append("_ThreadID").append(VALUE_SEPARATOR).append(record.getThreadID()).append(PAIR_SEPARATOR);
+            output.append("_ThreadID").append(VALUE_SEPARATOR).append(record.getLongThreadID()).append(PAIR_SEPARATOR);
             output.append("_ThreadName").append(VALUE_SEPARATOR).append(record.getThreadName()).append(PAIR_SEPARATOR);
         }
 

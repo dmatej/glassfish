@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -65,14 +66,14 @@ public class ThreadPoolMonitor implements ThreadPoolProbe {
     public void onThreadAllocateEvent(AbstractThreadPool threadPool, Thread thread) {
         grizzlyMonitoring.getThreadPoolProbeProvider().threadAllocatedEvent(
                 monitoringId, threadPool.getConfig().getPoolName(),
-                thread.getId());
+                thread.threadId());
     }
 
     @Override
     public void onThreadReleaseEvent(AbstractThreadPool threadPool, Thread thread) {
         grizzlyMonitoring.getThreadPoolProbeProvider().threadReleasedEvent(
                 monitoringId, threadPool.getConfig().getPoolName(),
-                thread.getId());
+                thread.threadId());
     }
 
     @Override
@@ -86,7 +87,7 @@ public class ThreadPoolMonitor implements ThreadPoolProbe {
     public void onTaskDequeueEvent(AbstractThreadPool threadPool, Runnable task) {
         grizzlyMonitoring.getThreadPoolProbeProvider().threadDispatchedFromPoolEvent(
                 monitoringId, threadPool.getConfig().getPoolName(),
-                Thread.currentThread().getId());
+                Thread.currentThread().threadId());
         grizzlyMonitoring.getConnectionQueueProbeProvider().onTaskDequeuedEvent(
                 monitoringId, task.getClass().getName());
     }
@@ -97,14 +98,14 @@ public class ThreadPoolMonitor implements ThreadPoolProbe {
         // we marked as dispatched from the pool
         grizzlyMonitoring.getThreadPoolProbeProvider().threadReturnedToPoolEvent(
                 monitoringId, threadPool.getConfig().getPoolName(),
-                Thread.currentThread().getId());
+                Thread.currentThread().threadId());
     }
 
     @Override
     public void onTaskCompleteEvent(AbstractThreadPool threadPool, Runnable task) {
         grizzlyMonitoring.getThreadPoolProbeProvider().threadReturnedToPoolEvent(
                 monitoringId, threadPool.getConfig().getPoolName(),
-                Thread.currentThread().getId());
+                Thread.currentThread().threadId());
     }
 
     @Override

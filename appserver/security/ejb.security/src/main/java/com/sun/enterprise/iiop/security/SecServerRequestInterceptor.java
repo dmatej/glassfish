@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -565,7 +565,7 @@ public class SecServerRequestInterceptor extends org.omg.CORBA.LocalObject imple
             local = false;
         }
         Long clientID = ConnectionExecutionContext.readClientThreadID();
-        if (clientID != null && clientID == Thread.currentThread().getId()) {
+        if (clientID != null && clientID == Thread.currentThread().threadId()) {
             local = true;
         }
         return local;

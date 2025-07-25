@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Eclipse Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -57,6 +57,7 @@ public class GlassFishLogRecordTest {
         record.setSourceClassName(null);
         record.setSourceMethodName(null);
         record.setThreadID(1000);
+        record.setLongThreadID(1000);
         record.setThrown(null);
     }
 
@@ -85,6 +86,7 @@ public class GlassFishLogRecordTest {
         record.setSequenceNumber(1L);
         record.setSourceClassName("SourceClassName");
         record.setSourceMethodName("sourceMethodName");
+        // Intentionally not setting the long variant in the test!
         record.setThreadID(1000);
         record.setThrown(new RuntimeException("Exception Message"));
 
@@ -120,6 +122,8 @@ public class GlassFishLogRecordTest {
             () -> assertEquals(record.getSourceClassName(), record2.getSourceClassName()),
             () -> assertEquals(record.getSourceMethodName(), record2.getSourceMethodName()),
             () -> assertEquals(record.getThreadID(), record2.getThreadID()),
+            () -> assertEquals(record.getLongThreadID(), record2.getLongThreadID()),
+            () -> assertEquals(record.getLongThreadID(), record2.getThreadID()),
             () -> assertEquals(record.getThreadName(), record2.getThreadName()),
             () -> assertNotEquals(record.getThrown(), record2.getThrown()),
             () -> assertThat(record2.getThrown(), instanceOf(record.getThrown().getClass())),

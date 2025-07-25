@@ -126,7 +126,7 @@ public class JobManagerService implements JobManager<AdminCommandJob>, EventList
         ThreadFactory threadFactory = r -> {
             Thread t = Executors.defaultThreadFactory().newThread(r);
             t.setDaemon(true);
-            t.setName("managed-job-" + t.getId());
+            t.setName("managed-job-" + t.threadId());
             return t;
         };
         pool = Executors.newCachedThreadPool(threadFactory);

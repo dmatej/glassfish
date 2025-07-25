@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Eclipse Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -123,7 +123,7 @@ public class ODLLogFormatter extends GlassFishLogFormatter {
             appendLogLevel(output, logLevel);
             appendMessageKey(output, msgId);
             appendLoggerName(output, loggerName);
-            appendThread(output, record.getThreadID(), threadName);
+            appendThread(output, record.getLongThreadID(), threadName);
             appendLogLevelAsInt(output, logLevel);
             appendSequenceNumber(output, record.getSequenceNumber());
             appendSource(output, record.getSourceClassName(), record.getSourceMethodName());
@@ -182,7 +182,7 @@ public class ODLLogFormatter extends GlassFishLogFormatter {
         output.append(FIELD_END_MARKER).append(fieldSeparator);
     }
 
-    private void appendThread(final StringBuilder output, final int threadId, final String threadName) {
+    private void appendThread(final StringBuilder output, final long threadId, final String threadName) {
         if (!excludeFieldsSupport.isSet(SupplementalAttribute.TID)) {
             output.append(FIELD_BEGIN_MARKER);
             output.append("tid: ").append("_ThreadID=").append(threadId).append(" _ThreadName=").append(threadName);
