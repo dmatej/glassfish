@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 2008, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -17,14 +17,14 @@
 
 package org.glassfish.main.jdke.i18n;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
-
-import static java.util.ResourceBundle.Control.FORMAT_PROPERTIES;
 
 /**
  * This class makes getting localized strings super-simple.  This is the companion
@@ -57,17 +57,15 @@ public class LocalStringsImpl {
     private static final boolean LOG_ERRORS = Boolean.parseBoolean(System.getenv("AS_LOG_I18N_ERRORS"));
     private static final String LOG_TARGET_FILE = System.getenv("AS_LOG_I18N_LOG_FILE");
     private static final PrintStream LOG_TARGET;
-    private static final String thisPackage = "com.elf.util";
-    private static final ResourceBundle.Control rbcontrol = ResourceBundle.Control.getControl(FORMAT_PROPERTIES);
     static {
         if (LOG_ERRORS) {
             if (LOG_TARGET_FILE == null) {
                 LOG_TARGET = System.err;
             } else {
                 try {
-                    LOG_TARGET = new PrintStream(LOG_TARGET_FILE);
+                    LOG_TARGET = new PrintStream(LOG_TARGET_FILE, StandardCharsets.UTF_8);
                     Runtime.getRuntime().addShutdownHook(new Thread(() -> LOG_TARGET.close()));
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     throw new Error(e);
                 }
             }
@@ -80,27 +78,12 @@ public class LocalStringsImpl {
 
     /**
      * Create a LocalStringsImpl instance.
-     * use the proffered class object to find LocalStrings.properties.
-     * This is the constructor to use if you are concerned about getting
-     * the fastest performance.
+     * Use the provided class object to find <code>LocalStrings.properties</code>.
+     *
+     * @param clazz
      */
-    public LocalStringsImpl(Class clazz) {
+    public LocalStringsImpl(Class<?> clazz) {
         bundle = load(clazz);
-    }
-
-
-    private static ResourceBundle load(Class clazz) {
-        String className = clazz.getName();
-        String props = className.substring(0, className.lastIndexOf('.')) + "." + "LocalStrings";
-        try {
-            return ResourceBundle.getBundle(props, Locale.getDefault(), clazz.getModule());
-        } catch (Exception e) {
-            if (LOG_ERRORS) {
-                LOG_TARGET.println("Could not find resource bundle: " + props);
-                e.printStackTrace(LOG_TARGET);
-            }
-            return null;
-        }
     }
 
 
@@ -134,7 +117,7 @@ public class LocalStringsImpl {
      */
     public String get(String key, Object... objects) {
         final String template = get(key);
-        if (template == key) {
+        if (Objects.equals(template, key)) {
             return key + ": " + Arrays.toString(objects);
         }
         try {
@@ -153,6 +136,7 @@ public class LocalStringsImpl {
      * Get a String from the caller's package's LocalStrings.properties
      *
      * @param key The string index into the localized string file
+     * @param defaultValue returned if there was an exception.
      * @return the String from LocalStrings or the supplied default value if it doesn't exist
      */
     public String getString(String key, String defaultValue) {
@@ -173,6 +157,7 @@ public class LocalStringsImpl {
      * Get an integer from the caller's package's LocalStrings.properties
      *
      * @param key The string index into the localized string file
+     * @param defaultValue returned if there was an exception.
      * @return the integer value from LocalStrings or the supplied default if
      *         it doesn't exist or is bad.
      */
@@ -195,6 +180,7 @@ public class LocalStringsImpl {
      * Get a boolean from the caller's package's LocalStrings.properties
      *
      * @param key The string index into the localized string file
+     * @param defaultValue returned if there was an exception.
      * @return the integer value from LocalStrings or the supplied default if
      *         it doesn't exist or is bad.
      */
@@ -212,7 +198,25 @@ public class LocalStringsImpl {
     }
 
 
+    /**
+     * @return internal {@link ResourceBundle}
+     */
     public ResourceBundle getBundle() {
         return bundle;
+    }
+
+
+    private static ResourceBundle load(Class<?> clazz) {
+        String className = clazz.getName();
+        String props = className.substring(0, className.lastIndexOf('.')) + "." + "LocalStrings";
+        try {
+            return ResourceBundle.getBundle(props, Locale.getDefault(), clazz.getModule());
+        } catch (Exception e) {
+            if (LOG_ERRORS) {
+                LOG_TARGET.println("Could not find resource bundle: " + props);
+                e.printStackTrace(LOG_TARGET);
+            }
+            return null;
+        }
     }
 }
