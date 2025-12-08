@@ -1117,7 +1117,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.8.6.0</version>
+                    <version>4.9.8.2</version>
                     <configuration>
                         <skip>${spotbugs.skip}</skip>
                         <debug>false</debug>
@@ -1132,7 +1132,7 @@
                             <plugin>
                                 <groupId>com.h3xstream.findsecbugs</groupId>
                                 <artifactId>findsecbugs-plugin</artifactId>
-                                <version>1.13.0</version>
+                                <version>1.14.0</version>
                             </plugin>
                         </plugins>
                     </configuration>
@@ -1146,7 +1146,7 @@
                         <dependency>
                             <groupId>com.github.spotbugs</groupId>
                             <artifactId>spotbugs</artifactId>
-                            <version>4.8.6</version>
+                            <version>4.9.8</version>
                         </dependency>
                     </dependencies>
                     <executions>
