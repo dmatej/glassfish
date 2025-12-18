@@ -23,18 +23,16 @@ import com.sun.enterprise.admin.servermgmt.DomainException;
 import com.sun.enterprise.admin.servermgmt.RepositoryException;
 import com.sun.enterprise.admin.servermgmt.RepositoryManager;
 import com.sun.enterprise.admin.servermgmt.pe.PEDomainConfigValidator;
-import com.sun.enterprise.admin.servermgmt.stringsubs.StringSubstitutionFactory;
 import com.sun.enterprise.admin.servermgmt.stringsubs.StringSubstitutor;
 import com.sun.enterprise.admin.servermgmt.stringsubs.impl.AttributePreprocessorImpl;
+import com.sun.enterprise.admin.servermgmt.stringsubs.impl.StringSubstitutionEngine;
 import com.sun.enterprise.admin.servermgmt.template.TemplateInfoHolder;
 import com.sun.enterprise.admin.servermgmt.xml.stringsubs.Property;
 import com.sun.enterprise.admin.servermgmt.xml.stringsubs.PropertyType;
 import com.sun.enterprise.universal.glassfish.ASenvPropertyReader;
 import com.sun.enterprise.util.io.FileUtils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
@@ -119,7 +117,7 @@ public class DomainBuilder {
             }
             final TemplateInfoHolder templateInfoHolder;
             try (InputStream is = _templateJar.getInputStream(je)) {
-                templateInfoHolder = new TemplateInfoHolder(is, templateJarPath);
+                templateInfoHolder = new TemplateInfoHolder(is);
             }
             _extractedEntries.add(TEMPLATE_INFO_XML);
 
@@ -129,7 +127,7 @@ public class DomainBuilder {
             if (je == null) {
                 LOG.log(Level.WARNING, "Missing file: {0}", STRINGSUBS_FILE);
             } else {
-                stringSubstitutor = StringSubstitutionFactory.createStringSubstitutor(_templateJar.getInputStream(je));
+                stringSubstitutor = new StringSubstitutionEngine(_templateJar.getInputStream(je));
                 List<Property> defaultStringSubsProps = stringSubstitutor.getDefaultProperties(PropertyType.PORT);
                 for (Property prop : defaultStringSubsProps) {
                     _defaultPortValues.setProperty(prop.getKey(), prop.getValue());
@@ -200,7 +198,6 @@ public class DomainBuilder {
         createDirectory(domainDir);
         try {
             // Extract other jar entries
-            byte[] buffer = new byte[10000];
             for (Enumeration<JarEntry> entry = _templateJar.entries(); entry.hasMoreElements();) {
                 JarEntry jarEntry = entry.nextElement();
                 String entryName = jarEntry.getName();
@@ -220,31 +217,10 @@ public class DomainBuilder {
                     }
                     continue;
                 }
-                InputStream in = null;
-                BufferedOutputStream outputStream = null;
-                try {
-                    in = _templateJar.getInputStream(jarEntry);
-                    outputStream = new BufferedOutputStream(
-                            new FileOutputStream(new File(domainDir.getAbsolutePath(), jarEntry.getName())));
-                    int i = 0;
-                    while ((i = in.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, i);
-                    }
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (Exception io) {
-                            /** ignore */
-                        }
-                    }
-                    if (outputStream != null) {
-                        try {
-                            outputStream.close();
-                        } catch (Exception io) {
-                            /** ignore */
-                        }
-                    }
+
+                try (InputStream in = _templateJar.getInputStream(jarEntry)) {
+                    File outputFile = new File(domainDir, jarEntry.getName());
+                    FileUtils.copy(in, outputFile);
                 }
             }
 

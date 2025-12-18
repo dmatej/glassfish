@@ -38,26 +38,21 @@ import org.xml.sax.InputSource;
 public class TemplateInfoHolder {
 
     private static final LocalStringsImpl _strings = new LocalStringsImpl(TemplateInfoHolder.class);
-    //Path where schema resides.
+    /** Resource path */
     private final static String TEMPLATE_INFO_SCHEMA_PATH = "xsd/schema/template-info.xsd";
-    private TemplateInfo _templateInfo;
-    private final String _location;
 
-    public TemplateInfoHolder(InputStream inputSteam, String location) throws DomainException {
+    private TemplateInfo templateInfo;
+
+    public TemplateInfoHolder(InputStream inputSteam) throws DomainException {
         try {
-            _templateInfo = parse(inputSteam);
+            templateInfo = parse(inputSteam);
         } catch (Exception e) {
             throw new DomainException(_strings.get("failedToParse", TEMPLATE_INFO_SCHEMA_PATH), e);
         }
-        _location = location;
     }
 
     public TemplateInfo getTemplateInfo() {
-        return _templateInfo;
-    }
-
-    public String getLocation() {
-        return _location;
+        return templateInfo;
     }
 
     /**
@@ -83,6 +78,9 @@ public class TemplateInfoHolder {
         InputSource is = new InputSource(configStream);
         SAXSource source = new SAXSource(is);
         Object obj = unmarshaller.unmarshal(source);
-        return obj instanceof JAXBElement ? (TemplateInfo) (((JAXBElement) obj).getValue()) : (TemplateInfo) obj;
+        if (obj instanceof JAXBElement) {
+            return ((JAXBElement<TemplateInfo>) obj).getValue();
+        }
+        return (TemplateInfo) obj;
     }
 }
