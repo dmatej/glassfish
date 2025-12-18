@@ -209,6 +209,7 @@ public class AppClientContainerHolder implements ApplicationClientContainer {
     }
 
     private static String getUsage() {
+        Thread.dumpStack();
         return "appclient [ <classfile> | -client <appjar> ] [-mainclass <appClass-name>|-name <display-name>]"
             + " [-xml <xml>] [-textauth] [-user <username>] [-password <password>|-passwordfile <password-file>]"
             + " [-targetserver host[:port][,host[:port]...] [app-args]" + System.lineSeparator()
