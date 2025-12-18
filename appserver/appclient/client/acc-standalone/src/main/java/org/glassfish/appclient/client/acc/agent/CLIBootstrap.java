@@ -280,7 +280,11 @@ public class CLIBootstrap {
      */
     private void addProperties(final StringBuilder command) {
         final Path gfBootstrapLibs = gfInfo.lib.toPath().resolve("bootstrap").normalize();
-        command.append(' ').append("--module-path ").append(quote(gfBootstrapLibs.toString()));
+        final Path gfClientJar = gfInfo.lib.toPath().resolve("gf-client.jar").normalize();
+        command.append(' ').append("--module-path ")
+            .append(quote(gfClientJar.toString()))
+            .append(File.pathSeparatorChar)
+            .append(quote(gfBootstrapLibs.toString()));
         command.append(' ').append("--add-modules ALL-MODULE-PATH");
         command.append(' ').append("--add-opens=java.base/java.lang=ALL-UNNAMED");
         if (userVMArgs.evJVMValuedOptions.values.isEmpty()) {
