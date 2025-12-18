@@ -19,12 +19,17 @@ package com.sun.enterprise.admin.servermgmt.stringsubs.impl;
 
 import com.sun.enterprise.admin.servermgmt.stringsubs.AttributePreprocessor;
 import com.sun.enterprise.admin.servermgmt.stringsubs.StringSubstitutionException;
+import com.sun.enterprise.admin.servermgmt.stringsubs.StringSubstitutor;
+import com.sun.enterprise.admin.servermgmt.stringsubs.Substitutable;
 import com.sun.enterprise.admin.servermgmt.test.ServerMgmgtTestFiles;
+import com.sun.enterprise.admin.servermgmt.xml.stringsubs.Group;
 import com.sun.enterprise.admin.servermgmt.xml.stringsubs.StringsubsDefinition;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,24 +57,41 @@ public class StringSubstitutionEngineTest {
     private static final String GROUP_WITHOUT_CHANGE_PAIR = "group_without_change_pair";
     private static final String GROUP_WITHOUT_FILES = "group_without_files";
     private static final String GROUP_WITH_INVALID_FILE_PATHS = "group_invalid_file_paths";
-    private static final String _testFileName = "testStringSubs.txt";
-    private final Map<String, String> substitutionRestoreMap = new HashMap<>();
+    private static final String TEST_ARCHIVE_NAME = "testStringSubsArchive.jar";
+    private static final String TEST_FILE_NAME = "testStringSubs.txt";
+    private static final Map<String, String> SUBSTITUTION_MAP = Map.of(
+        "JAVA", "REPLACED_JAVA",
+        "JAVA_HOME", "REPLACED_JAVA_HOME",
+        "MW_HOME", "REPLACED_MW_HOME",
+        "ORACLE_HOME", "REPLACED_ORACLE_HOME",
+        // See stringsubs.xml
+        "TEST_FILE_DIR_PATH", TEST_FILES.getBasePackageAbsolutePath().toString());
 
     private File testFile;
     private Path archiveDirPath;
     private StringSubstitutionEngine engine;
+    private Map<String, String> engineMap;
 
     @BeforeEach
     public void init() throws Exception {
         archiveDirPath = TEST_FILES.getBasePackageAbsolutePath();
-
-        final Map<String, String> lookUpMap = new HashMap<>();
-        lookUpMap.put("ORACLE_HOME", "REPLACED_ORACLE_HOME");
-        lookUpMap.put("MW_HOME", "REPLACED_MW_HOME");
-        substitutionRestoreMap.put("REPLACED_ORACLE_HOME", "@ORACLE_HOME@");
-        substitutionRestoreMap.put("REPLACED_MW_HOME", "@MW_HOME@");
+        engineMap = new HashMap<>(SUBSTITUTION_MAP);
+        final Map<String, String> lookupMap = new HashMap<>();
+        lookupMap.put("ORACLE_HOME", "REPLACED_ORACLE_HOME");
+        lookupMap.put("MW_HOME", "REPLACED_MW_HOME");
         engine = new StringSubstitutionEngine(TEST_FILES.openInputStream("stringsubs.xml"));
-        engine.setAttributePreprocessor(new CustomAttributePreprocessor(lookUpMap));
+        engine.setAttributePreprocessor(new CustomAttributePreprocessor(lookupMap));
+    }
+
+    /**
+     * Delete test file after test case executions.
+     */
+    @AfterEach
+    public void destroy() {
+        if (testFile != null) {
+            testFile.delete();
+            testFile = null;
+        }
     }
 
     /**
@@ -221,6 +243,34 @@ public class StringSubstitutionEngineTest {
     }
 
     /**
+     * Test String substitution for valid stream.
+     * @throws StringSubstitutionException
+     * @throws IOException
+     */
+    @Test
+    public void testStringSubstitutorValidStream() throws StringSubstitutionException, IOException {
+        final StringSubstitutor substitutor;
+        try (InputStream validStream = TEST_FILES.openInputStream("stringsubs.xml")) {
+            substitutor = new StringSubstitutionEngine(validStream);
+        }
+        substitutor.setAttributePreprocessor(new AttributePreprocessorImpl(engineMap));
+        substitutor.substituteAll();
+        for (Group group : substitutor.getStringSubsDefinition().getGroup()) {
+            if (group.getId().equals("valid_group")) {
+                List<? extends Substitutable> substituables = new SubstituableFactoryImpl()
+                    .getArchiveEntrySubstitutable(group.getArchive().get(0));
+                for (Substitutable substituable : substituables) {
+                    final List<String> lines = Files.readAllLines(new File(substituable.getName()).toPath());
+                    assertEquals(2, lines.size());
+                    assertEquals("Substitute REPLACED_JAVA_HOME REPLACED_JAVA @MW_", lines.get(0));
+                    assertEquals("HOME@", lines.get(1));
+                    substituable.finish();
+                }
+            }
+        }
+    }
+
+    /**
      * Creates text file.
      * @throws Exception
      */
@@ -228,7 +278,7 @@ public class StringSubstitutionEngineTest {
         if (testFile != null) {
             destroy();
         }
-        testFile = new File(_testFileName);
+        testFile = new File(TEST_FILE_NAME);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(testFile), UTF_8))) {
             writer.write("@ORACLE_HOME@ First word in first line");
             writer.newLine();
@@ -247,20 +297,9 @@ public class StringSubstitutionEngineTest {
             if (testFile == null) {
                 createTextFile();
             }
-            testFilePath = testFile.getAbsolutePath().replace(File.separator + _testFileName, "");
+            testFilePath = testFile.getAbsolutePath().replace(File.separator + TEST_FILE_NAME, "");
             lookUpMap.put("ARCHIVE_DIR", archiveDirPath.toString());
             lookUpMap.put("TEST_FILE_DIR", testFilePath);
-        }
-    }
-
-    /**
-     * Delete test file after test case executions.
-     */
-    @AfterEach
-    public void destroy() {
-        if (testFile != null) {
-            testFile.delete();
-            testFile = null;
         }
     }
 }
