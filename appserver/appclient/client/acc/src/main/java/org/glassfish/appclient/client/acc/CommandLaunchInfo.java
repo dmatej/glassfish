@@ -53,8 +53,7 @@ public class CommandLaunchInfo {
 
 
     public static CommandLaunchInfo newInstance(final AgentArguments agentArgs) {
-        final CommandLaunchInfo result = new CommandLaunchInfo(agentArgs);
-        return result;
+        return new CommandLaunchInfo(agentArgs);
     }
 
 
@@ -96,7 +95,7 @@ public class CommandLaunchInfo {
         if ((s = lastFromList(agentArgs.namedValues(CLIENT_AGENT_ARG_NAME))) != null) {
             result = processClientArg(s);
         }
-        if ((s = lastFromList(agentArgs.namedValues(APPCPATH)))  != null) {
+        if ((s = lastFromList(agentArgs.namedValues(APPCPATH))) != null) {
             processAppcPath(s);
         }
 
