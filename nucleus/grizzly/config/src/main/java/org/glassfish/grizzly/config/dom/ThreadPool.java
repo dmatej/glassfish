@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -31,7 +31,9 @@ import org.jvnet.hk2.config.types.PropertyBag;
 @Configured
 public interface ThreadPool extends ConfigBeanProxy, PropertyBag {
 
+    // Used in annotations, must be constant expressions, not X.class.getName()
     String DEFAULT_THREAD_POOL_CLASS_NAME = "org.glassfish.grizzly.threadpool.GrizzlyExecutorService";
+    String DEFAULT_VIRTUAL_THREAD_POOL_CLASS_NAME = "org.glassfish.grizzly.threadpool.VirtualThreadExecutorService";
 
     int IDLE_THREAD_TIMEOUT = 900;
 
