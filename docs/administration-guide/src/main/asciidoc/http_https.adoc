@@ -190,6 +190,13 @@ xref:reference-manual.adoc#create-threadpool[`create-threadpool`] subcommand.
 To avoid using a thread pool, or to use the built-in `http-thread-pool`
 thread pool, skip this step.
 For additional thread pool information, see xref:threadpools.adoc#administering-thread-pools[Administering Thread Pools].
++
+To enable virtual threads, set the thread pool class name:
++
+[source]
+----
+asadmin> set server.thread-pools.thread-pool.thread-pool-name.classname=org.glassfish.grizzly.threadpool.VirtualThreadExecutorService
+----
 6. Create an HTTP listener by using the
 xref:reference-manual.adoc#create-network-listener[`create-network-listener`] subcommand.
 Specify a protocol and transport, optionally a thread pool.

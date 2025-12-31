@@ -1176,6 +1176,10 @@ processing new requests until the number of active requests drops below
 the maximum amount. Increasing this value will reduce HTTP response
 latency times.
 
+When using virtual threads, consider much higher
+values (10,000 or more) as virtual threads have significantly lower
+overhead than platform threads.
+
 In practice, clients frequently connect to the server and then do not
 complete their requests. In these cases, the server waits a length of
 time specified by the Timeout parameter.

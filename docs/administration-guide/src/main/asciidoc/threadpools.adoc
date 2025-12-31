@@ -18,6 +18,7 @@ The following topics are addressed here:
 
 * <<About Thread Pools>>
 * <<Configuring Thread Pools>>
+* <<Using Virtual Threads>>
 
 Instructions for accomplishing these tasks by using the Administration
 Console are contained in the Administration Console online help.
@@ -213,5 +214,51 @@ See Also
 
 You can also view the full syntax and options of the subcommand by
 typing `asadmin help delete-threadpool` at the command line.
+
+[[using-virtual-threads]]
+
+=== Using Virtual Threads
+
+{productName} supports virtual threads for HTTP request processing, providing improved scalability for high-concurrency applications.
+
+[[configuring-virtual-threads]]
+
+==== Configuring Virtual Threads
+
+To enable virtual threads for an HTTP thread pool, set the thread pool's class name to the virtual thread executor service:
+
+[source]
+----
+asadmin> set server.thread-pools.thread-pool.http-thread-pool.classname=org.glassfish.grizzly.threadpool.VirtualThreadExecutorService
+Command set executed successfully
+----
+
+To revert to platform threads, set the class name back to the default:
+
+[source]
+----
+asadmin> set server.thread-pools.thread-pool.http-thread-pool.classname=org.glassfish.grizzly.threadpool.GrizzlyExecutorService
+Command set executed successfully
+----
+
+[[virtual-thread-behavior]]
+
+==== Virtual Thread Behavior
+
+When virtual threads are enabled:
+
+* A new virtual thread is created for each HTTP request and destroyed when the request completes
+* Maximum parallel requests equals the sum of `max-thread-pool-size` and `max-queue-size`
+* The `min-thread-pool-size` and `idle-timeout` parameters are ignored
+* Configuration changes apply immediately without requiring a server restart
+
+For optimal performance with virtual threads, set high limits:
+
+[source]
+----
+asadmin> set server.thread-pools.thread-pool.http-thread-pool.max-thread-pool-size=10000
+asadmin> set server.thread-pools.thread-pool.http-thread-pool.max-queue-size=10000
+Command set executed successfully
+----
 
 
