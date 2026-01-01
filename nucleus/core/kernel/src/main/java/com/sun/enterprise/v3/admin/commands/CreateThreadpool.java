@@ -83,6 +83,12 @@ public class CreateThreadpool implements AdminCommand, AdminCommandSecurity.Prea
     @Param(name = "target", optional = true, defaultValue = SystemPropertyConstants.DAS_SERVER_NAME)
     String target;
 
+    @Param(name="classname", optional=true)
+    String poolClassName;
+
+    @Param(name="virtual", optional=true, defaultValue = "false")
+    boolean useVirtualThreads;
+
     @Param(name="threadpool_id", primary=true)
     String threadpool_id;
 
@@ -138,6 +144,11 @@ public class CreateThreadpool implements AdminCommand, AdminCommandSecurity.Prea
                     newPool.setMinThreadPoolSize(minthreadpoolsize);
                     newPool.setMaxQueueSize(maxQueueSize);
                     newPool.setIdleThreadTimeoutSeconds(idletimeout);
+                    if (poolClassName != null) {
+                        newPool.setClassname(poolClassName);
+                    } else if (useVirtualThreads) {
+                        newPool.setClassname(ThreadPool.DEFAULT_VIRTUAL_THREAD_POOL_CLASS_NAME);
+                    }
                     param.getThreadPool().add(newPool);
                     return newPool;
                 }
