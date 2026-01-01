@@ -567,22 +567,24 @@ public class GenericGrizzlyListener implements GrizzlyListener {
 
         final String classname = threadPool.getClassname();
         ExecutorService result = null;
+        final Boolean virtualThreads = Boolean.valueOf(threadPool.getVirtual());
 
         if (classname != null &&
                 !ThreadPool.DEFAULT_THREAD_POOL_CLASS_NAME.equals(classname)) {
 
-            if (ThreadPool.DEFAULT_VIRTUAL_THREAD_POOL_CLASS_NAME.equals(classname)) {
-                try {
-                    // Use standard virtual threads Grizzly thread pool
-                    result = VirtualThreadExecutorService.createInstance(
-                            configureThreadPoolConfig(networkListener, threadPool));
-                } catch (NumberFormatException ex) {
-                    LOGGER.log(Level.WARNING, "Invalid thread-pool attribute", ex);
-                }
-            } else {
-                result = createCustomThreadPool(locator, classname, networkListener, threadPool);
-            }
+            result = createCustomThreadPool(locator, classname, networkListener, threadPool);
+        }
 
+        if (result == null && virtualThreads) {
+            try {
+                // Use standard virtual threads Grizzly thread pool
+                result = VirtualThreadExecutorService.createInstance(
+                        configureThreadPoolConfig(networkListener, threadPool));
+            } catch (NumberFormatException ex) {
+                LOGGER.log(Level.WARNING, "Invalid thread-pool attribute", ex);
+            } catch (Throwable ex) {
+                LOGGER.log(Level.WARNING, "Cannot use virtual threads, going to use platform threads", ex);
+            }
         }
 
         if (result == null) {
@@ -623,12 +625,16 @@ public class GenericGrizzlyListener implements GrizzlyListener {
                 return customThreadPool;
             }
             LOGGER.log(Level.WARNING,
-                    () -> "Can not initalize custom thread pool: " + classname);
+                    () -> couldNotInintializeCustomThreadPoolMessage(classname));
         }catch (Throwable exception) {
             LOGGER.log(Level.WARNING, exception,
-                    () -> "Can not initalize custom thread pool: " + classname);
+                    () -> couldNotInintializeCustomThreadPoolMessage(classname));
         }
         return null;
+    }
+
+    private static String couldNotInintializeCustomThreadPoolMessage(String classname) {
+        return "Can not initalize custom thread pool: " + classname + ". Will use the default thread pool";
     }
 
     protected ThreadPoolConfig configureThreadPoolConfig(final NetworkListener networkListener,

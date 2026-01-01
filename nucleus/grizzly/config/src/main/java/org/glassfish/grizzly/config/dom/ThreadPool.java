@@ -33,7 +33,6 @@ public interface ThreadPool extends ConfigBeanProxy, PropertyBag {
 
     // Used in annotations, must be constant expressions, not X.class.getName()
     String DEFAULT_THREAD_POOL_CLASS_NAME = "org.glassfish.grizzly.threadpool.GrizzlyExecutorService";
-    String DEFAULT_VIRTUAL_THREAD_POOL_CLASS_NAME = "org.glassfish.grizzly.threadpool.VirtualThreadExecutorService";
 
     int IDLE_THREAD_TIMEOUT = 900;
 
@@ -54,6 +53,14 @@ public interface ThreadPool extends ConfigBeanProxy, PropertyBag {
     String getClassname();
 
     void setClassname(String classname);
+
+    /**
+     * Whether to use virtual threads for this thread pool.
+     */
+    @Attribute(defaultValue = "false", dataType = Boolean.class)
+    String getVirtual();
+
+    void setVirtual(String virtual);
 
     /**
      * Idle threads are removed from pool, after this time (in seconds).

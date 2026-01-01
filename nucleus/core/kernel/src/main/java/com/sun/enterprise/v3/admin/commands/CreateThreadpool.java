@@ -147,7 +147,7 @@ public class CreateThreadpool implements AdminCommand, AdminCommandSecurity.Prea
                     if (poolClassName != null) {
                         newPool.setClassname(poolClassName);
                     } else if (useVirtualThreads) {
-                        newPool.setClassname(ThreadPool.DEFAULT_VIRTUAL_THREAD_POOL_CLASS_NAME);
+                        newPool.setVirtual(Boolean.TRUE.toString());
                     }
                     param.getThreadPool().add(newPool);
                     return newPool;
