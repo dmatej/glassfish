@@ -18,32 +18,30 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @WebServlet("/lock")
 public class LockServlet extends HttpServlet {
 
-    private static final ConcurrentHashMap<String, AtomicBoolean> LOCKS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, CompletableFuture<Void>> LOCKS = new ConcurrentHashMap<>();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         String idLock = req.getParameter("idLock");
         if ("lock".equals(action)) {
-            AtomicBoolean lock = new AtomicBoolean(true);
+            CompletableFuture<Void> lock = new CompletableFuture<>();
             LOCKS.put(idLock, lock);
-            while (lock.get() && !Thread.currentThread().isInterrupted()) {
-                Thread.onSpinWait();
-            }
+            lock.join();
             sendResponse("Unlocked " + idLock + ". Still locked around " + LOCKS.size() + " requests.", resp);
         } else if ("unlock".equals(action)) {
-            AtomicBoolean lock = LOCKS.remove(idLock);
+            CompletableFuture<Void> lock = LOCKS.remove(idLock);
             if (lock == null) {
                 throw new ServletException("Unknown lock: " + lock);
             }
             // Release another thread trapped in the loop
-            lock.set(false);
+            lock.complete(null);
             sendResponse("Unlocking " + idLock + ".", resp);
         } else if ("count".equals(action)) {
             sendResponse(LOCKS.size(), resp);

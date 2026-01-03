@@ -81,10 +81,10 @@ asadmin-options::
   If not specified, the default thread pool implementation will be used.
 `--virtual`::
   Specifies whether to use virtual threads for the thread pool. When set to
-  `true`, the thread pool will use virtual threads. When set to `false` (default), 
-  the thread pool will use platform threads. This setting applies when using the 
-  default thread pool implementation (when classname is not specified or is set to 
-  the default value). When a custom classname is specified, this setting is ignored. 
+  `true`, the thread pool will use virtual threads. When set to `false` (default),
+  the thread pool will use platform threads. This setting applies when using the
+  default thread pool implementation (when classname is not specified or is set to
+  the default value). When a custom classname is specified, this setting is ignored.
   Default is `false`.
 
 === Operands
