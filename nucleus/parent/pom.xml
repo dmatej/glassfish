@@ -143,7 +143,7 @@
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
 
         <!-- GlassFish Components -->
-        <grizzly.version>4.1.0-SNAPSHOT</grizzly.version>
+        <grizzly.version>5.0.0</grizzly.version>
         <grizzly.npn.version>2.0.0</grizzly.npn.version>
         <glassfish-management-api.version>3.3.0</glassfish-management-api.version>
 
