@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2010, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -19,11 +19,6 @@ package com.sun.enterprise.transaction.jts.recovery;
 
 import com.sun.enterprise.config.serverbeans.Server;
 import com.sun.enterprise.config.serverbeans.Servers;
-import com.sun.enterprise.ee.cms.core.CallBack;
-import com.sun.enterprise.ee.cms.core.DistributedStateCache;
-import com.sun.enterprise.ee.cms.core.FailureRecoverySignal;
-import com.sun.enterprise.ee.cms.core.GroupManagementService;
-import com.sun.enterprise.ee.cms.core.Signal;
 import com.sun.enterprise.transaction.api.ResourceRecoveryManager;
 import com.sun.enterprise.transaction.jts.api.DelegatedTransactionRecoveryFence;
 import com.sun.jts.CosTransactions.Configuration;
@@ -38,6 +33,11 @@ import java.util.logging.Logger;
 import org.glassfish.gms.bootstrap.GMSAdapter;
 import org.glassfish.gms.bootstrap.GMSAdapterService;
 import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.shoal.gms.api.core.CallBack;
+import org.glassfish.shoal.gms.api.core.DistributedStateCache;
+import org.glassfish.shoal.gms.api.core.FailureRecoverySignal;
+import org.glassfish.shoal.gms.api.core.GroupManagementService;
+import org.glassfish.shoal.gms.api.core.Signal;
 
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;

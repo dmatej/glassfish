@@ -20,10 +20,6 @@ import com.sun.ejb.PersistentTimerService;
 import com.sun.ejb.containers.EJBTimerService;
 import com.sun.ejb.containers.EjbContainerUtil;
 import com.sun.ejb.containers.EjbContainerUtilImpl;
-import com.sun.enterprise.ee.cms.core.CallBack;
-import com.sun.enterprise.ee.cms.core.GMSConstants;
-import com.sun.enterprise.ee.cms.core.PlannedShutdownSignal;
-import com.sun.enterprise.ee.cms.core.Signal;
 import com.sun.enterprise.transaction.api.RecoveryResourceRegistry;
 import com.sun.enterprise.transaction.spi.RecoveryEventListener;
 
@@ -35,6 +31,10 @@ import java.util.logging.Logger;
 import org.glassfish.gms.bootstrap.GMSAdapter;
 import org.glassfish.gms.bootstrap.GMSAdapterService;
 import org.glassfish.hk2.api.PostConstruct;
+import org.glassfish.shoal.gms.api.core.CallBack;
+import org.glassfish.shoal.gms.api.core.GMSConstants;
+import org.glassfish.shoal.gms.api.core.PlannedShutdownSignal;
+import org.glassfish.shoal.gms.api.core.Signal;
 import org.jvnet.hk2.annotations.Service;
 
 @Service

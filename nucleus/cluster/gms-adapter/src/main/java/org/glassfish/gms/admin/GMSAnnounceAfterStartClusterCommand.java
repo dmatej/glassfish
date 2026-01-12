@@ -17,7 +17,6 @@
 package org.glassfish.gms.admin;
 
 import com.sun.enterprise.config.serverbeans.Domain;
-import com.sun.enterprise.ee.cms.core.GMSConstants;
 
 import jakarta.inject.Inject;
 
@@ -42,6 +41,7 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.logging.annotation.LogMessageInfo;
 import org.glassfish.logging.annotation.LogMessagesResourceBundle;
 import org.glassfish.logging.annotation.LoggerInfo;
+import org.glassfish.shoal.gms.api.core.GMSConstants;
 import org.jvnet.hk2.annotations.Service;
 
 
