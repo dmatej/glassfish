@@ -173,7 +173,7 @@
         <glassfish-corba.version>5.0.0</glassfish-corba.version>
         <gmbal.version>4.1.0</gmbal.version>
 
-        <shoal.version>4.0.0-SNAPSHOT</shoal.version>
+        <shoal.version>4.0.0</shoal.version>
         <ha-api.version>3.1.13</ha-api.version>
         <logging-annotation-processor.version>1.10</logging-annotation-processor.version>
         <command.security.maven.plugin.isFailureFatal>true</command.security.maven.plugin.isFailureFatal>
