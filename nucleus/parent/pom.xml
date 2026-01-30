@@ -147,7 +147,7 @@
 
         <!-- Jakarta REST -->
         <jakarta.rest-api.version>4.0.0</jakarta.rest-api.version>
-        <jersey.version>4.0.1</jersey.version>
+        <jersey.version>4.0.2</jersey.version>
 
         <!-- Jakarta Persistence -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
