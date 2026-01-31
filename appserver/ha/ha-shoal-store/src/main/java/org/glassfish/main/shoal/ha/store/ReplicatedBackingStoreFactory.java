@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,7 +15,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-package org.shoal.ha.store;
+package org.glassfish.main.shoal.ha.store;
 
 
 import java.io.Serializable;
@@ -26,17 +27,16 @@ import org.glassfish.ha.store.api.BackingStoreException;
 import org.glassfish.ha.store.api.BackingStoreFactory;
 import org.glassfish.ha.store.api.BackingStoreTransaction;
 import org.glassfish.ha.store.api.Storeable;
+import org.glassfish.shoal.ha.cache.mapper.KeyMapper;
+import org.glassfish.shoal.ha.cache.store.backing.ReplicatedBackingStore;
+import org.glassfish.shoal.ha.cache.store.backing.StoreableReplicatedBackingStore;
 import org.jvnet.hk2.annotations.Service;
-import org.shoal.adapter.store.ReplicatedBackingStore;
-import org.shoal.adapter.store.StoreableReplicatedBackingStore;
-import org.shoal.ha.mapper.KeyMapper;
 
 /**
  * @author Mahesh Kannan
  */
 @Service(name="shoal-backing-store-factory")
-public class ReplicatedBackingStoreFactory
-    implements BackingStoreFactory {
+public class ReplicatedBackingStoreFactory implements BackingStoreFactory {
 
     public ReplicatedBackingStoreFactory()  {
     }
@@ -48,20 +48,19 @@ public class ReplicatedBackingStoreFactory
     public <K extends Serializable, V extends Serializable> BackingStore<K, V> createBackingStore(BackingStoreConfiguration<K, V> conf)
             throws BackingStoreException {
 
-        KeyMapper keyMapper = new GlassFishKeyMapper(conf.getInstanceName(), conf.getClusterName());
+        KeyMapper keyMapper = new GlassFishKeyMapper(conf.getInstanceName());
         conf.getVendorSpecificSettings().put("key.mapper", keyMapper);
 
         Class<V> vClazz = conf.getValueClazz();
         if (Storeable.class.isAssignableFrom(vClazz)) {
-            StoreableReplicatedBackingStore srbs = new StoreableReplicatedBackingStore();
+            StoreableReplicatedBackingStore<K, V> srbs = new StoreableReplicatedBackingStore<>();
             srbs.initialize(conf);
             return srbs;
-        } else {
-            ReplicatedBackingStore<K, V> bStore = new ReplicatedBackingStore<K, V>();
-            bStore.initialize(conf);
-            System.out.println("GlassFish2ShoalBackingStoreFactory:: CREATED an instance of: " + bStore.getClass().getName());
-            return bStore;
         }
+        ReplicatedBackingStore<K, V> bStore = new ReplicatedBackingStore<K, V>();
+        bStore.initialize(conf);
+        System.out.println("GlassFish2ShoalBackingStoreFactory:: CREATED an instance of: " + bStore.getClass().getName());
+        return bStore;
     }
 
     @Override

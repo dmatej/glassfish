@@ -32,13 +32,6 @@ import com.sun.enterprise.config.serverbeans.Node;
 import com.sun.enterprise.config.serverbeans.Nodes;
 import com.sun.enterprise.config.serverbeans.Server;
 import com.sun.enterprise.config.serverbeans.Servers;
-import com.sun.enterprise.ee.cms.core.CallBack;
-import com.sun.enterprise.ee.cms.core.FailureNotificationSignal;
-import com.sun.enterprise.ee.cms.core.JoinedAndReadyNotificationSignal;
-import com.sun.enterprise.ee.cms.core.PlannedShutdownSignal;
-import com.sun.enterprise.ee.cms.core.Signal;
-import com.sun.enterprise.ee.cms.core.SignalAcquireException;
-import com.sun.enterprise.ee.cms.core.SignalReleaseException;
 import com.sun.logging.LogDomains;
 
 import java.net.InetAddress;
@@ -57,6 +50,13 @@ import org.glassfish.gms.bootstrap.GMSAdapterService;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.orb.admin.config.IiopListener;
 import org.glassfish.orb.admin.config.IiopService;
+import org.glassfish.shoal.gms.api.core.CallBack;
+import org.glassfish.shoal.gms.api.core.FailureNotificationSignal;
+import org.glassfish.shoal.gms.api.core.JoinedAndReadyNotificationSignal;
+import org.glassfish.shoal.gms.api.core.PlannedShutdownSignal;
+import org.glassfish.shoal.gms.api.core.Signal;
+import org.glassfish.shoal.gms.api.core.SignalAcquireException;
+import org.glassfish.shoal.gms.api.core.SignalReleaseException;
 import org.omg.CORBA.ORBPackage.InvalidName;
 
 

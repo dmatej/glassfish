@@ -35,7 +35,9 @@
         setPageSessionAttribute(key="rest-api" value="true");
         gf.getDefaultValues(endpoint="#{pageSession.selfUrl}", valueMap="#{pageSession.valueMap}");
         mapPut(map="#{pageSession.valueMap}" key="target" value="#{pageSession.configName}");
-        setPageSessionAttribute(key="skipAttrsList" value={"classname"});
+        setPageSessionAttribute(key="skipAttrsList" value={});
+        setPageSessionAttribute(key="convertToFalseList" value={"virtual"});
+        setPageSessionAttribute(key="convertToFalseList" value={"virtual"});
         //set the following for including buttons.inc
         setPageSessionAttribute(key="edit" value="#{false}" );
         setPageSessionAttribute(key="showDefaultButton" value="#{true}" );

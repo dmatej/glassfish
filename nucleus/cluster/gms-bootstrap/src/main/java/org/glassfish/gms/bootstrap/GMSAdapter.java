@@ -17,9 +17,8 @@
 
 package org.glassfish.gms.bootstrap;
 
-import com.sun.enterprise.ee.cms.core.CallBack;
-import com.sun.enterprise.ee.cms.core.GroupManagementService;
-
+import org.glassfish.shoal.gms.api.core.CallBack;
+import org.glassfish.shoal.gms.api.core.GroupManagementService;
 import org.jvnet.hk2.annotations.Contract;
 
 /**

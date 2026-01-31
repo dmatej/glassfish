@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
  * Copyright (c) 2018, 2025 Eclipse Krazo committers and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +16,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.eclipse.krazo.cdi.types;
 
-import org.eclipse.krazo.binding.validate.ValidationInterceptorBinding;
-import org.eclipse.krazo.cdi.AroundController;
-import org.eclipse.krazo.util.ControllerUtils;
+package org.eclipse.krazo.cdi.types;
 
 import jakarta.enterprise.inject.spi.AnnotatedMethod;
 import jakarta.enterprise.inject.spi.AnnotatedType;
+
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -30,6 +29,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.eclipse.krazo.binding.validate.ValidationInterceptorBinding;
+import org.eclipse.krazo.cdi.AroundController;
+import org.eclipse.krazo.util.ControllerUtils;
 
 /**
  * This class can create a modified version of a AnnotatedType to inject custom behavior

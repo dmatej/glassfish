@@ -16,11 +16,10 @@
 
 package org.glassfish.gms.admin;
 
-import com.sun.enterprise.ee.cms.core.GroupManagementService;
-
 import java.util.List;
 
 import org.glassfish.gms.bootstrap.GMSAdapter;
+import org.glassfish.shoal.gms.api.core.GroupManagementService;
 
 class GMSAnnounceSupplementalInfo {
     final public List<String> clusterMembers;

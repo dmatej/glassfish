@@ -17,7 +17,6 @@
 package com.sun.enterprise.admin.cli.cluster;
 
 import com.sun.enterprise.admin.cli.CLICommand;
-import com.sun.enterprise.gms.tools.MulticastTester;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.List;
 import org.glassfish.api.Param;
 import org.glassfish.api.admin.CommandException;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.shoal.gms.tools.MulticastTester;
 import org.jvnet.hk2.annotations.Service;
 
 /**

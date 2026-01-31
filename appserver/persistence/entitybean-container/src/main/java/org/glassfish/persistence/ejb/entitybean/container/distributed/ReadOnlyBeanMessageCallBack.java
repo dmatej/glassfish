@@ -17,10 +17,6 @@
 package org.glassfish.persistence.ejb.entitybean.container.distributed;
 
 import com.sun.ejb.containers.EjbContainerUtil;
-import com.sun.enterprise.ee.cms.core.CallBack;
-import com.sun.enterprise.ee.cms.core.GroupManagementService;
-import com.sun.enterprise.ee.cms.core.MessageSignal;
-import com.sun.enterprise.ee.cms.core.Signal;
 import com.sun.logging.LogDomains;
 
 import jakarta.inject.Inject;
@@ -30,6 +26,10 @@ import java.util.logging.Logger;
 
 import org.glassfish.gms.bootstrap.GMSAdapter;
 import org.glassfish.gms.bootstrap.GMSAdapterService;
+import org.glassfish.shoal.gms.api.core.CallBack;
+import org.glassfish.shoal.gms.api.core.GroupManagementService;
+import org.glassfish.shoal.gms.api.core.MessageSignal;
+import org.glassfish.shoal.gms.api.core.Signal;
 import org.jvnet.hk2.annotations.Service;
 
 @Service

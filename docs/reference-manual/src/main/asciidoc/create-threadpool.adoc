@@ -22,7 +22,8 @@ asadmin [asadmin-options] create-threadpool [--help]
 [--maxthreadpoolsize maxthreadpoolsize]
 [--minthreadpoolsize minthreadpoolsize]
 [--idletimeout idletimeout] [--maxqueuesize maxqueuesize]
-[--workqueues workqueues] threadpool-id
+[--workqueues workqueues] [--classname classname]
+[--virtual virtual] threadpool-id
 ----
 
 === Description
@@ -75,6 +76,16 @@ asadmin-options::
   with earlier releases. If you specify this option, a syntax error does
   not occur. Instead, the subcommand runs successfully and displays a
   warning message that the option is ignored.
+`--classname`::
+  Specifies the fully qualified class name of a custom thread pool implementation.
+  If not specified, the default thread pool implementation will be used.
+`--virtual`::
+  Specifies whether to use virtual threads for the thread pool. When set to
+  `true`, the thread pool will use virtual threads. When set to `false` (default),
+  the thread pool will use platform threads. This setting applies when using the
+  default thread pool implementation (when classname is not specified or is set to
+  the default value). When a custom classname is specified, this setting is ignored.
+  Default is `false`.
 
 === Operands
 
@@ -85,14 +96,40 @@ threadpool-id::
 
 [[sthref558]]
 
-==== Example 1   Creating a Thread Pool
+==== Example 1   Creating a Thread Pool
 
-This command creates a new thread pool called `threadpool-l`.
+This command creates a new thread pool called `threadpool-l` that uses platform threads (the default).
 
 [source]
 ----
 asadmin> create-threadpool --maxthreadpoolsize 100
 --minthreadpoolsize 20 --idletimeout 2 threadpool-1
+Command create-threadpool executed successfully
+----
+
+[[sthref559]]
+
+==== Example 2   Creating a Thread Pool with Virtual Threads Enabled
+
+This command creates a new thread pool called `threadpool-2` that uses virtual threads.
+
+[source]
+----
+asadmin> create-threadpool --maxthreadpoolsize 50
+--minthreadpoolsize 10 --virtual true threadpool-2
+Command create-threadpool executed successfully
+----
+
+[[sthref560]]
+
+==== Example 3   Creating a Thread Pool with Custom Implementation
+
+This command creates a new thread pool called `threadpool-3` with a custom thread pool implementation.
+
+[source]
+----
+asadmin> create-threadpool --maxthreadpoolsize 75
+--classname com.example.CustomThreadPool threadpool-3
 Command create-threadpool executed successfully
 ----
 
@@ -109,5 +146,3 @@ xref:asadmin.adoc#asadmin[`asadmin`(1M)]
 
 xref:delete-threadpool.adoc#delete-threadpool[`delete-threadpool`(1)],
 xref:list-threadpools.adoc#list-threadpools[`list-threadpools`(1)]
-
-

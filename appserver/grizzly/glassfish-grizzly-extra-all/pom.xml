@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>glassfish-grizzly-extra-all</artifactId>
-    <packaging>jar</packaging>
 
     <name>Glassfish Grizzly extra jars Combining</name>
     <description>combining of all glassfish grizzly extra jars</description>

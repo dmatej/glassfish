@@ -30,6 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
@@ -77,9 +78,11 @@ public class ThreadPoolMonitoringTest {
         }
     };
     private ThreadPoolMetrics http1Baseline;
+    private static boolean useVirtualThreads = false;
 
     @BeforeAll
     static void beforeAll() throws Exception {
+        useVirtualThreads(false);
         deploy();
         // Enable monitoring
         assertThat(
@@ -98,6 +101,14 @@ public class ThreadPoolMonitoringTest {
         assertThat("admin listener max threads", adminBaseline.maxThreads(), greaterThan(0));
         assertThat("admin listener busy threads", adminBaseline.currentThreadsBusy(), greaterThanOrEqualTo(0));
     }
+
+    private static void useVirtualThreads(boolean useVirtualThreads) {
+        assertThat(ASADMIN.exec("set",
+            "configs.config.server-config.thread-pools.thread-pool.http-thread-pool.virtual=" + useVirtualThreads),
+            asadminOK());
+        ThreadPoolMonitoringTest.useVirtualThreads = useVirtualThreads;
+    }
+
 
     @AfterAll
     static void afterAll() {
@@ -138,6 +149,61 @@ public class ThreadPoolMonitoringTest {
             asadminOK());
     }
 
+    /*
+     These tests run after the top-level tests and repeat them with virtual threads enabled on the HTTP1 thread pool
+    */
+    @Nested
+    @TestMethodOrder(MethodName.class)
+    class VirtualThreadTests {
+
+        private ThreadPoolMonitoringTest parent = ThreadPoolMonitoringTest.this;
+
+        @BeforeAll
+        static void setupVirtualThreads() {
+            useVirtualThreads(true);
+        }
+
+        @Test
+        void testDualListenerHugeAmountOfFastRequests() throws Exception {
+            parent.testDualListenerHugeAmountOfFastRequests();
+        }
+
+        @Test
+        void testThreadPoolMetricsBaseline() throws Exception {
+            parent.testThreadPoolMetricsBaseline();
+        }
+
+        @Test
+        void testThreadPoolMetricsReadTimeout() throws Exception {
+            parent.testThreadPoolMetricsReadTimeout();
+        }
+
+        @Test
+        void testThreadPoolMetricsWithBurstLoad() throws Exception {
+            parent.testThreadPoolMetricsWithBurstLoad();
+        }
+
+        @Test
+        void testThreadPoolMonitoringEnableDisable() throws Exception {
+            parent.testThreadPoolMonitoringEnableDisable();
+        }
+
+        @Test
+        void testThreadPoolSizeCycling() throws Exception {
+            parent.testThreadPoolSizeCycling();
+        }
+
+        @Test
+        void testThreadPoolSizeDecrease() throws Exception {
+            parent.testThreadPoolSizeDecrease();
+        }
+
+        @Test
+        void testThreadPoolSizeIncrease() throws Exception {
+            parent.testThreadPoolSizeIncrease();
+        }
+    }
+
     /**
      * Create load on admin port (4848) using asadmin commands
      */
@@ -176,7 +242,7 @@ public class ThreadPoolMonitoringTest {
         final ThreadPoolMetrics metricsTestBaseline = getThreadPoolMetrics(HTTP_POOL_TEST);
 
         assertThat("listener 1 current threads", metrics1Baseline.currentThreadCount(), greaterThanOrEqualTo(0));
-        assertThat("listener Test current threads", metricsTestBaseline.currentThreadCount(), equalTo(5));
+        assertThat("listener Test current threads", metricsTestBaseline.currentThreadCount(), useVirtualThreads ? equalTo(0) : equalTo(5));
 
         assertThat(new AppClient(HTTP_POOL_TEST_PORT, 5000).test(), stringContainsInOrder(HTTP_POOL_TEST));
 
@@ -251,7 +317,8 @@ public class ThreadPoolMonitoringTest {
         Thread.sleep(HTTP_REQUEST_TIMEOUT + 100L);
 
         assertAll("metrics under load - no response yet",
-            () -> assertThat("current threads", duringLoad.currentThreadCount(), equalTo(http1Baseline.maxThreads())),
+            () -> assertThat("current threads", duringLoad.currentThreadCount(), lessThanOrEqualTo(http1Baseline.maxThreads())),
+            () -> assertThat("current threads", duringLoad.currentThreadCount(), greaterThanOrEqualTo(duringLoad.currentThreadsBusy())),
             () -> assertThat("busy threads", duringLoad.currentThreadsBusy(), equalTo(locks.size())),
             () -> assertThat("total tasks", duringLoad.totalTasks(), equalTo(http1Baseline.totalTasks()))
         );
@@ -262,7 +329,8 @@ public class ThreadPoolMonitoringTest {
 
         final ThreadPoolMetrics afterLoad = getThreadPoolMetrics(HTTP_POOL_1);
         assertAll("metrics after client stopped",
-            () -> assertThat("current threads", afterLoad.currentThreadCount(), equalTo(afterLoad.maxThreads())),
+            () -> assertThat("current threads", duringLoad.currentThreadCount(), lessThanOrEqualTo(http1Baseline.maxThreads())),
+            () -> assertThat("current threads", duringLoad.currentThreadCount(), greaterThanOrEqualTo(duringLoad.currentThreadsBusy())),
             () -> assertThat("busy threads", afterLoad.currentThreadsBusy(), equalTo(0)),
             () -> assertThat("total tasks", afterLoad.totalTasks(), greaterThan(http1Baseline.totalTasks()))
         );
@@ -320,7 +388,7 @@ public class ThreadPoolMonitoringTest {
         // 4. Verify thread metrics show running requests
         final ThreadPoolMetrics metrics = getThreadPoolMetrics(HTTP_POOL_1);
         assertAll("Under load",
-            () -> assertThat("current thread count", metrics.currentThreadCount(), equalTo(http1Baseline.currentThreadCount())),
+            () -> assertThat("current thread count", metrics.currentThreadCount(), greaterThanOrEqualTo(metrics.currentThreadsBusy())),
             () -> assertThat("busy threads", metrics.currentThreadsBusy(), equalTo(locks.size()))
         );
 
@@ -397,7 +465,7 @@ public class ThreadPoolMonitoringTest {
         final ThreadPoolMetrics afterDecrease = getThreadPoolMetrics(HTTP_POOL_1);
         assertAll("afterDecrease",
             () -> assertThat("max threads", afterDecrease.maxThreads(), equalTo(count2)),
-            () -> assertThat("current threads", afterDecrease.currentThreadCount(), equalTo(afterDecrease.coreThreads())),
+            () -> assertThat("current threads", afterDecrease.currentThreadCount(), useVirtualThreads ? equalTo(0) : equalTo(afterDecrease.coreThreads())),
             () -> assertThat("busy threads", afterDecrease.currentThreadsBusy(), equalTo(0))
         );
 
@@ -431,7 +499,10 @@ public class ThreadPoolMonitoringTest {
         unlockGenerator.close();
         lockGenerator.close();
 
-        assertThat("current thread count under load", loaded.currentThreadCount(), equalTo(locks.size()));
+        assertAll("under load",
+            () -> assertThat("busy thread count under load", loaded.currentThreadsBusy(), equalTo(locks.size())),
+            () -> assertThat("current thread count under load", loaded.currentThreadCount(), equalTo(loaded.currentThreadsBusy()))
+        );
     }
 
     private static List<UUID> generateLocks(int count) {

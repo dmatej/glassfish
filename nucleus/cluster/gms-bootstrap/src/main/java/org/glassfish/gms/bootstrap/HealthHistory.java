@@ -19,12 +19,6 @@ package org.glassfish.gms.bootstrap;
 import com.sun.enterprise.config.serverbeans.Cluster;
 import com.sun.enterprise.config.serverbeans.Server;
 import com.sun.enterprise.config.serverbeans.ServerRef;
-import com.sun.enterprise.ee.cms.core.FailureNotificationSignal;
-import com.sun.enterprise.ee.cms.core.JoinNotificationSignal;
-import com.sun.enterprise.ee.cms.core.JoinedAndReadyNotificationSignal;
-import com.sun.enterprise.ee.cms.core.PlannedShutdownSignal;
-import com.sun.enterprise.ee.cms.core.RejoinSubevent;
-import com.sun.enterprise.ee.cms.core.Signal;
 import com.sun.enterprise.util.i18n.StringManager;
 
 import java.beans.PropertyChangeEvent;
@@ -41,6 +35,12 @@ import org.glassfish.api.logging.LogLevel;
 import org.glassfish.logging.annotation.LogMessageInfo;
 import org.glassfish.logging.annotation.LogMessagesResourceBundle;
 import org.glassfish.logging.annotation.LoggerInfo;
+import org.glassfish.shoal.gms.api.core.FailureNotificationSignal;
+import org.glassfish.shoal.gms.api.core.JoinNotificationSignal;
+import org.glassfish.shoal.gms.api.core.JoinedAndReadyNotificationSignal;
+import org.glassfish.shoal.gms.api.core.PlannedShutdownSignal;
+import org.glassfish.shoal.gms.api.core.RejoinSubevent;
+import org.glassfish.shoal.gms.api.core.Signal;
 import org.jvnet.hk2.config.ConfigListener;
 import org.jvnet.hk2.config.UnprocessedChangeEvents;
 

@@ -30,8 +30,12 @@
             <sun:textField id="nameText" text="#{pageSession.valueMap['name']}" columns="$int{55}" maxLength="#{sessionScope.fieldLengths['maxLength.common.Name']}" styleClass="required" required="#{true}" />
         </sun:property>
 
-        <sun:property id="classname"  rendered="#{edit}" labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18n_web.threadPool.classname}" helpText="$resource{i18n_web.threadPool.classnameHelp}">
-        <sun:textField id="classname" styleClass="required" columns="$int{50}" maxLength="#{sessionScope.fieldLengths['maxLength.threadPool.classname']}" text="#{pageSession.valueMap['classname']}" />
+        <sun:property id="classname"  labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18n_web.threadPool.classname}" helpText="$resource{i18n_web.threadPool.classnameHelp}">
+        <sun:textField id="classname" columns="$int{50}" maxLength="#{sessionScope.fieldLengths['maxLength.threadPool.classname']}" text="#{pageSession.valueMap['classname']}" />
+        </sun:property>
+
+        <sun:property id="virtual"  labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18n_web.threadPool.virtual}" helpText="$resource{i18n_web.threadPool.virtualHelp}">
+        <sun:checkbox id="virtual" selected="#{pageSession.valueMap['virtual']}" selectedValue="true" />
         </sun:property>
 
         <sun:property id="max"  labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18n_web.threadPool.maxQueue}" helpText="$resource{i18n_web.threadPool.maxQueueHelp}">

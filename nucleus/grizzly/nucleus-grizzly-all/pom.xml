@@ -27,7 +27,6 @@
     </parent>
 
     <artifactId>nucleus-grizzly-all</artifactId>
-    <packaging>jar</packaging>
 
     <name>Nucleus Grizzly jars Combining</name>
     <description>combining of all nucleus grizzly jars</description>
