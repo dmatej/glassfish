@@ -131,7 +131,7 @@
         <jakarta.xml.ws-api.version>4.0.2</jakarta.xml.ws-api.version>
 
         <!-- Jakarta SOAP (with Attachments) -->
-        <webservices.version>4.0.5-SNAPSHOT</webservices.version>
+        <webservices.version>4.0.5</webservices.version>
 
         <!-- Jakarta Inject -->
         <jakarta.inject-api.version>2.0.1.MR</jakarta.inject-api.version>
