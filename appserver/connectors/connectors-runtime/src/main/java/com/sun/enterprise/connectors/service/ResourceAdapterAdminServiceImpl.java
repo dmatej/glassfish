@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -225,13 +225,6 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
                     _runtime.getNamingManager().publishObject(descriptorJNDIName, connectorDescriptor, true);
 
                     activeResourceAdapter.setup();
-
-                    String securityWarningMessage=
-                        connectorRuntime.getSecurityPermissionSpec(moduleName);
-                    // To i18N.
-                    if (securityWarningMessage != null) {
-                        _logger.log(Level.WARNING, securityWarningMessage);
-                    }
                 }
 
             } catch (NullPointerException npEx) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to Eclipse Foundation. All rights reserved.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -652,11 +652,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     @Override
     public String[] getConnectionDefinitionNames(String rarName) throws ConnectorRuntimeException {
         return configParserAdmService.getConnectionDefinitionNames(rarName);
-    }
-
-    @Override
-    public String getSecurityPermissionSpec(String moduleName) throws ConnectorRuntimeException {
-        return configParserAdmService.getSecurityPermissionSpec(moduleName);
     }
 
     @Override

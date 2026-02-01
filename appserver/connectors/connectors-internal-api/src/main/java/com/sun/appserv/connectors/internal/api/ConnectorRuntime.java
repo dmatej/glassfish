@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -342,19 +342,6 @@ public interface ConnectorRuntime extends ConnectorConstants {
      *             descriptor.
      */
     String[] getConnectionDefinitionNames(String rarName) throws ConnectorRuntimeException;
-
-    /**
-     * Obtains the Permission string that needs to be added to the to the security policy files.
-     * These are the security
-     * permissions needed by the resource adapter implementation classes. These strings are obtained
-     * by parsing the ra.xml
-     * and by processing annotations if any
-     *
-     * @param moduleName rar module Name
-     * @throws ConnectorRuntimeException If rar.xml parsing or annotation processing fails.
-     * @return security permission spec
-     */
-    String getSecurityPermissionSpec(String moduleName) throws ConnectorRuntimeException;
 
     /**
      * Obtains all the Admin object interface names of a rar
