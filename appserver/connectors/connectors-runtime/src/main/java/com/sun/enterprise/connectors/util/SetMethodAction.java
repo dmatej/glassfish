@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,9 +22,9 @@ import com.sun.enterprise.deployment.EnvironmentProperty;
 import com.sun.logging.LogDomains;
 
 import java.lang.reflect.Method;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -39,7 +39,7 @@ import static java.util.logging.Level.WARNING;
  *
  * @author Qingqing Ouyang, Binod P.G, Sivakumar Thyagarajan
  */
-public final class SetMethodAction<P extends EnvironmentProperty> implements PrivilegedExceptionAction<Void> {
+public final class SetMethodAction<P extends EnvironmentProperty> {
 
     private static final Logger LOG = LogDomains.getLogger(SetMethodAction.class, LogDomains.RSR_LOGGER);
 
@@ -51,14 +51,13 @@ public final class SetMethodAction<P extends EnvironmentProperty> implements Pri
      * Accepts java bean object and properties to be set.
      */
     public SetMethodAction(Object bean, Set<P> props) {
-        this.bean = bean;
-        this.props = props;
+        this.bean = Objects.requireNonNull(bean, "The bean to be set must not be null.");
+        this.props = Objects.requireNonNull(props, "Properties to be set to the bean must not be null.");
     }
 
     /**
      * Executes the setter methods in the java bean.
      */
-    @Override
     public Void run() throws Exception {
         methods = bean.getClass().getMethods();
         for (EnvironmentProperty prop : props) {

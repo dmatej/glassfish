@@ -17,7 +17,6 @@
 
 package com.sun.enterprise.connectors.jms.system;
 
-import com.sun.appserv.connectors.internal.api.ConnectorConstants;
 import com.sun.appserv.connectors.internal.api.ConnectorRuntime;
 import com.sun.appserv.connectors.internal.api.ConnectorRuntimeException;
 import com.sun.appserv.connectors.internal.api.ConnectorsUtil;
@@ -113,6 +112,7 @@ import org.glassfish.server.ServerEnvironmentImpl;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.types.Property;
 
+import static com.sun.appserv.connectors.internal.api.ConnectorConstants.DEFAULT_JMS_ADAPTER;
 import static com.sun.enterprise.connectors.service.ConnectorAdminServiceUtils.getReservePrefixedJNDINameForDescriptor;
 import static java.util.logging.Level.CONFIG;
 import static java.util.logging.Level.FINE;
@@ -404,7 +404,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
 
     @Override
     protected void startResourceAdapter(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
-        if (this.moduleName_.equals(ConnectorConstants.DEFAULT_JMS_ADAPTER)) {
+        if (this.moduleName_.equals(DEFAULT_JMS_ADAPTER)) {
             if (connectorRuntime.isServer()) {
                 Domain domain = Globals.get(Domain.class);
                 ServerContext serverContext = Globals.get(ServerContext.class);
@@ -1580,16 +1580,12 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
     @Override
     protected ManagedConnectionFactory instantiateMCF(final String mcfClass, final ClassLoader loader)
         throws Exception {
-        if (moduleName_.equals(ConnectorConstants.DEFAULT_JMS_ADAPTER)) {
-            instantiateManagedConnectionFactory(mcfClass, loader);
+        if (moduleName_.equals(DEFAULT_JMS_ADAPTER)) {
+            return super.instantiateMCF(mcfClass, loader);
         }
+        LOG.log(WARNING, () -> "The module name was \"" + moduleName_ + "\" instead of the only one supported \""
+            + DEFAULT_JMS_ADAPTER + "\". Returning null.");
         return null;
-    }
-
-
-    private ManagedConnectionFactory instantiateManagedConnectionFactory(final String mcfClass,
-        final ClassLoader loader) throws Exception {
-        return super.instantiateMCF(mcfClass, loader);
     }
 
     /**
@@ -1685,7 +1681,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
             throw new ConnectorRuntimeException(msg);
         }
 
-        String resourceAdapterMid = ConnectorConstants.DEFAULT_JMS_ADAPTER;
+        String resourceAdapterMid = DEFAULT_JMS_ADAPTER;
 
         ejbDescriptor.setResourceAdapterMid(resourceAdapterMid);
 
@@ -1714,7 +1710,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
                             new Object[]{ejbDescriptor.getDestinationType(), jndiName, ejbDescriptor.getName()});
                 }
             } else if (isValidDestination(destination)
-                && ConnectorConstants.DEFAULT_JMS_ADAPTER.equals(destination.getResourceAdapter())) {
+                && DEFAULT_JMS_ADAPTER.equals(destination.getResourceAdapter())) {
                 ejbDescriptor.putRuntimeActivationConfigProperty(
                     new EnvironmentProperty(DESTINATION_TYPE, destination.getInterfaceName(), null));
                 if (LOG.isLoggable(INFO)) {
@@ -1735,7 +1731,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
                 try {
                     AdminObjectResource aor = ResourcesUtil.createInstance().getResource(jndiName, appName, moduleName,
                         AdminObjectResource.class);
-                    if (aor != null && ConnectorConstants.DEFAULT_JMS_ADAPTER.equals(aor.getResAdapter())) {
+                    if (aor != null && DEFAULT_JMS_ADAPTER.equals(aor.getResAdapter())) {
                         ejbDescriptor.putRuntimeActivationConfigProperty(
                             new EnvironmentProperty(DESTINATION_TYPE, aor.getResType(), null));
                         LOG.log(INFO, JMSLoggerInfo.ENDPOINT_DEST_NAME,
@@ -2107,7 +2103,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
     @Override
     public boolean initializeService(){
         try {
-            String module = ConnectorConstants.DEFAULT_JMS_ADAPTER;
+            String module = DEFAULT_JMS_ADAPTER;
             String loc = ConnectorsUtil.getSystemModuleLocation(module);
             ConnectorRuntime connectorRuntime = connectorRuntimeProvider.get();
             connectorRuntime.createActiveResourceAdapter(loc, module, null);
