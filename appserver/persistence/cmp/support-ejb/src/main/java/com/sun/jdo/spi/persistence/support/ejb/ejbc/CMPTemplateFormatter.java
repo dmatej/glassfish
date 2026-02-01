@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -12,12 +13,6 @@
  * https://www.gnu.org/software/classpath/license.html.
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
- */
-
-/*
- * CMPTemplateFormatter.java
- *
- * Created on December 03, 2001
  */
 
 package com.sun.jdo.spi.persistence.support.ejb.ejbc;
@@ -35,7 +30,7 @@ import java.util.StringTokenizer;
  * This is the helper class for JDO specific generation of
  * a concrete bean implementation.
  *
- * @author Marina Vatkina
+ * @author Marina Vatkina 2001
  */
 public class CMPTemplateFormatter extends JavaClassWriterHelper{
 
@@ -284,29 +279,23 @@ public class CMPTemplateFormatter extends JavaClassWriterHelper{
     /**
      * Loads Properties object from the specified template file.
      */
-    static synchronized void loadProperties(Properties helpers,
-            final String templateFile) throws IOException {
-
+    static synchronized void loadProperties(Properties helpers, final String templateFile) throws IOException {
         BufferedInputStream bin = null;
         try {
             final ClassLoader loader = CMPTemplateFormatter.class.getClassLoader();
-            InputStream in = (InputStream)java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        if (loader != null) {
-                            return loader.getResourceAsStream(templateFile);
-                        } else {
-                            return ClassLoader.getSystemResourceAsStream(templateFile);
-                        }
-                    }
-                }
-            );
-
+            InputStream in;
+            if (loader == null) {
+                in = ClassLoader.getSystemResourceAsStream(templateFile);
+            } else {
+                in = loader.getResourceAsStream(templateFile);
+            }
             bin = new BufferedInputStream(in);
             helpers.load(bin);
         } finally {
             try {
-                bin.close();
+                if (bin != null) {
+                    bin.close();
+                }
             } catch (Exception e) {
                 // no action
             }

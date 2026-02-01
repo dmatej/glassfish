@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -28,8 +28,6 @@ import java.io.PrintStream;
 import java.lang.Runtime.Version;
 import java.net.ConnectException;
 import java.nio.file.Path;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -126,14 +124,11 @@ public class AdminMain {
         if (extensions == null || extensions.isEmpty()) {
             return ecl;
         }
-        final PrivilegedAction<ClassLoader> action = () -> {
-            try {
-                return new DirectoryClassLoader(extensions, ecl);
-            } catch (final RuntimeException ex) {
-                throw new Error(strings.get("ExtDirFailed", extensions), ex);
-            }
-        };
-        return AccessController.doPrivileged(action);
+        try {
+            return new DirectoryClassLoader(extensions, ecl);
+        } catch (final RuntimeException ex) {
+            throw new Error(strings.get("ExtDirFailed", extensions), ex);
+        }
     }
 
     /**

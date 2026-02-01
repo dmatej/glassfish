@@ -37,12 +37,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
 import java.security.SecureClassLoader;
 import java.security.cert.Certificate;
@@ -367,9 +363,7 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
      */
     @Override
     public ClassLoader copy() {
-        final ASURLClassLoader copyFrom = this;
-        PrivilegedAction<DelegatingClassLoader> privilegedAction = () -> new DelegatingClassLoader(copyFrom);
-        return AccessController.doPrivileged(privilegedAction);
+        return new DelegatingClassLoader(this);
     }
 
 
@@ -390,49 +384,44 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
      * @param name name of the resource
      */
     private URL findResource0(final URLEntry res, final String name) {
-        PrivilegedAction<URL> action = () -> {
 
-            if (res.isJar) {
-                try {
-                    JarEntry jarEntry = res.zip.getJarEntry(name);
-                    if (jarEntry == null) {
-                        return null;
-                    }
-                    // Use a custom URL with a special stream handler to
-                    // prevent the JDK's JarURLConnection caching from
-                    // locking the jar file until JVM exit.
-                    InternalURLStreamHandler handler = new InternalURLStreamHandler(res, name);
+        if (res.isJar) {
+            try {
+                JarEntry jarEntry = res.zip.getJarEntry(name);
+                if (jarEntry == null) {
+                    return null;
+                }
+                // Use a custom URL with a special stream handler to
+                // prevent the JDK's JarURLConnection caching from
+                // locking the jar file until JVM exit.
+                InternalURLStreamHandler handler = new InternalURLStreamHandler(res, name);
 
-                    // Create a new sub URL from the resource URL (i.e. res.source). To avoid
-                    // double encoding
-                    // (see https://glassfish.dev.java.net/issues/show_bug.cgi?id=13045)
-                    // use URL constructor instead of first creating a URI and then calling
-                    // toURL().
-                    // If the resource URL is not properly encoded, that's not our problem.
-                    // Whoever has supplied the resource URL is at fault.
-                    URL ret = new URL("jar", null /* host */, -1 /* port */, res.source + "!/" + name, handler);
-                    handler.tieUrl(ret);
-                    return ret;
-                } catch (Throwable thr) {
-                    _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, thr);
-                }
-            } else { // directory
-                try {
-                    File resourceFile = new File(res.file, name);
-                    if (resourceFile.exists()) {
-                        // If we make it this far,
-                        // the resource is in the directory.
-                        return resourceFile.toURI().toURL();
-                    }
-                } catch (IOException e) {
-                    _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, e);
-                }
+                // Create a new sub URL from the resource URL (i.e. res.source). To avoid
+                // double encoding
+                // (see https://glassfish.dev.java.net/issues/show_bug.cgi?id=13045)
+                // use URL constructor instead of first creating a URI and then calling
+                // toURL().
+                // If the resource URL is not properly encoded, that's not our problem.
+                // Whoever has supplied the resource URL is at fault.
+                URL ret = new URL("jar", null /* host */, -1 /* port */, res.source + "!/" + name, handler);
+                handler.tieUrl(ret);
+                return ret;
+            } catch (Throwable thr) {
+                _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, thr);
             }
-
-            return null;
-
-        };
-        return AccessController.doPrivileged(action);
+        } else { // directory
+            try {
+                File resourceFile = new File(res.file, name);
+                if (resourceFile.exists()) {
+                    // If we make it this far,
+                    // the resource is in the directory.
+                    return resourceFile.toURI().toURL();
+                }
+            } catch (IOException e) {
+                _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, e);
+            }
+        }
+        return null;
     }
 
 
@@ -564,49 +553,46 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
      * @param entryName name of the class
      */
     private byte[] loadClassData0(final URLEntry res, final String entryName) {
-        PrivilegedAction<byte[]> action = () -> {
-            InputStream classStream = null;
-            try {
-                if (res.isJar) { // It is a jarfile.
-                    JarFile zip = res.zip;
-                    JarEntry entry = zip.getJarEntry(entryName);
-                    if (entry != null) {
-                        classStream = zip.getInputStream(entry);
-                        byte[] classData1 = getClassData(classStream);
-                        res.setProtectionDomain(ASURLClassLoader.this, entry.getCertificates());
-                        return classData1;
-                    }
-                } else { // Its a directory....
-                    File classFile = new File (res.file, entryName.replace('/', File.separatorChar));
+        InputStream classStream = null;
+        try {
+            if (res.isJar) { // It is a jarfile.
+                JarFile zip = res.zip;
+                JarEntry entry = zip.getJarEntry(entryName);
+                if (entry != null) {
+                    classStream = zip.getInputStream(entry);
+                    byte[] classData1 = getClassData(classStream);
+                    res.setProtectionDomain(ASURLClassLoader.this, entry.getCertificates());
+                    return classData1;
+                }
+            } else { // Its a directory....
+                File classFile = new File (res.file, entryName.replace('/', File.separatorChar));
 
-                    if (classFile.exists()) {
-                        try {
-                            classStream = new FileInputStream(classFile);
-                            byte[] classData2 = getClassData(classStream);
-                            res.setProtectionDomain(ASURLClassLoader.this, null);
-                            return classData2;
-                        } finally {
-                            /*
-                             * Close the stream only if this is a directory.  The stream for
-                             * a jar/zip file was opened elsewhere and should remain open after this
-                             * method completes.
-                             */
-                            if (classStream != null) {
-                                try {
-                                    classStream.close();
-                                } catch (IOException closeIOE) {
-                                    _logger.log(INFO, "loader.excep_in_asurlclassloader", closeIOE);
-                                }
+                if (classFile.exists()) {
+                    try {
+                        classStream = new FileInputStream(classFile);
+                        byte[] classData2 = getClassData(classStream);
+                        res.setProtectionDomain(ASURLClassLoader.this, null);
+                        return classData2;
+                    } finally {
+                        /*
+                         * Close the stream only if this is a directory.  The stream for
+                         * a jar/zip file was opened elsewhere and should remain open after this
+                         * method completes.
+                         */
+                        if (classStream != null) {
+                            try {
+                                classStream.close();
+                            } catch (IOException closeIOE) {
+                                _logger.log(INFO, "loader.excep_in_asurlclassloader", closeIOE);
                             }
                         }
                     }
                 }
-            } catch (IOException ioe) {
-                _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, ioe);
             }
-            return null;
-        };
-        return AccessController.doPrivileged(action);
+        } catch (IOException ioe) {
+            _logger.log(INFO, CULoggerInfo.exceptionInASURLClassLoader, ioe);
+        }
+        return null;
     }
 
     @Override
@@ -999,29 +985,11 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
          * in case of error
          */
         private File privilegedCheckForFile(final String targetPath) {
-            /*
-             * Check for the file existence with privs, because this code can
-             * be invoked from user code which may not otherwise have access
-             * to the directories of interest.
-             */
-            try {
-                PrivilegedExceptionAction<File> action = () -> {
-                    File targetFile = new File(file, targetPath);
-                    if (!targetFile.exists()) {
-                        targetFile = null;
-                    }
-                    return targetFile;
-                };
-                return AccessController.doPrivileged(action);
-            } catch (PrivilegedActionException pae) {
-                /*
-                 *Log any exception and return false.
-                 */
-                _logger.log(Level.SEVERE,
-                        CULoggerInfo.getString(CULoggerInfo.exceptionCheckingFile, targetPath, file.getAbsolutePath()),
-                        pae.getCause());
-                return null;
+            File targetFile = new File(file, targetPath);
+            if (targetFile.exists()) {
+                return targetFile;
             }
+            return null;
         }
 
           /**

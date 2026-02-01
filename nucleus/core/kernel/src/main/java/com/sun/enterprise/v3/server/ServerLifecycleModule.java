@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -25,8 +25,6 @@ import com.sun.enterprise.util.LocalStringManagerImpl;
 
 import java.io.File;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -188,12 +186,7 @@ public final class ServerLifecycleModule {
     }
 
     private void setClassLoader() {
-        // set the url class loader as the thread context class loader
-        PrivilegedAction<Void> action = () -> {
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
-            return null;
-        };
-        AccessController.doPrivileged(action);
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
     }
 
     /**

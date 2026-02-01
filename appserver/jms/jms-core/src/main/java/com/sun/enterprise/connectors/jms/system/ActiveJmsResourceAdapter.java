@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -76,9 +76,6 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.rmi.Naming;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -407,25 +404,19 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
 
     @Override
     protected void startResourceAdapter(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
-        try {
-            if (this.moduleName_.equals(ConnectorConstants.DEFAULT_JMS_ADAPTER)) {
-                if (connectorRuntime.isServer()) {
-                    Domain domain = Globals.get(Domain.class);
-                    ServerContext serverContext = Globals.get(ServerContext.class);
-                    Server server = domain.getServerNamed(serverContext.getInstanceName());
-                    JmsService jmsService = server.getConfig().getExtensionByType(JmsService.class);
-                    initializeLazyListener(jmsService);
-                }
-                PrivilegedExceptionAction<Void> action = () -> {
-                    resourceadapter_.start(bootStrapContextImpl);
-                    return null;
-                };
-                AccessController.doPrivileged(action);
-            } else {
-                resourceadapter_.start(bootStrapContextImpl);
+        if (this.moduleName_.equals(ConnectorConstants.DEFAULT_JMS_ADAPTER)) {
+            if (connectorRuntime.isServer()) {
+                Domain domain = Globals.get(Domain.class);
+                ServerContext serverContext = Globals.get(ServerContext.class);
+                Server server = domain.getServerNamed(serverContext.getInstanceName());
+                JmsService jmsService = server.getConfig().getExtensionByType(JmsService.class);
+                initializeLazyListener(jmsService);
             }
-        } catch (PrivilegedActionException ex) {
-            throw new ResourceAdapterInternalException(ex);
+        }
+        try {
+            resourceadapter_.start(bootStrapContextImpl);
+        } catch (Exception e) {
+            throw new ResourceAdapterInternalException(e.getMessage(), e);
         }
     }
 
@@ -1590,9 +1581,7 @@ public class ActiveJmsResourceAdapter extends ActiveInboundResourceAdapterImpl i
     protected ManagedConnectionFactory instantiateMCF(final String mcfClass, final ClassLoader loader)
         throws Exception {
         if (moduleName_.equals(ConnectorConstants.DEFAULT_JMS_ADAPTER)) {
-            PrivilegedExceptionAction<ManagedConnectionFactory> action = () -> instantiateManagedConnectionFactory(
-                mcfClass, loader);
-            return AccessController.doPrivileged(action);
+            instantiateManagedConnectionFactory(mcfClass, loader);
         }
         return null;
     }

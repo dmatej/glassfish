@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,7 +22,6 @@ import jakarta.annotation.PostConstruct;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.PrivilegedActionException;
 import java.util.LinkedList;
 
 /**
@@ -32,7 +31,7 @@ import java.util.LinkedList;
 public class PostConstructRunner {
 
     public static void runPostConstructs(final Object obj)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, PrivilegedActionException {
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         /*
          * As we ascend the hierarchy, record the @PostConstruct methods we find
          * at each level at the beginning of the list.  After we have processed
@@ -59,16 +58,10 @@ public class PostConstructRunner {
             }
         }
         for (final Method m : postConstructMethods) {
-            java.security.AccessController.doPrivileged(new java.security.PrivilegedExceptionAction() {
-                public java.lang.Object run() throws Exception {
-                    if (!m.trySetAccessible()) {
-                        throw new InaccessibleObjectException("Unable to make accessible: " + m);
-                    }
-                    m.invoke(obj);
-                    return null;
-                }
-            });
+            if (!m.trySetAccessible()) {
+                throw new InaccessibleObjectException("Unable to make accessible: " + m);
+            }
+            m.invoke(obj);
         }
     }
-
 }

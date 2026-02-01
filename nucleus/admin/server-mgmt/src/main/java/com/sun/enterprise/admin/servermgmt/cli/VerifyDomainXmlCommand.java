@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -24,8 +24,6 @@ import com.sun.enterprise.module.single.StaticModulesRegistry;
 
 import java.io.File;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -85,10 +83,9 @@ public final class VerifyDomainXmlCommand extends LocalDomainCommand {
 
             final URL[] urlsA = urls.toArray(new URL[urls.size()]);
 
-            PrivilegedAction<ClassLoader> action = () -> new GlassfishUrlClassLoader("DomainXmlVerifier", urlsA,
+            GlassfishUrlClassLoader classLoader = new GlassfishUrlClassLoader("DomainXmlVerifier", urlsA,
                 CLICommand.class.getClassLoader());
-            ClassLoader cl = AccessController.doPrivileged(action);
-            ModulesRegistry registry = new StaticModulesRegistry(cl);
+            ModulesRegistry registry = new StaticModulesRegistry(classLoader);
             ServiceLocator serviceLocator = registry.createServiceLocator("default");
 
             ConfigParser parser = new ConfigParser(serviceLocator);

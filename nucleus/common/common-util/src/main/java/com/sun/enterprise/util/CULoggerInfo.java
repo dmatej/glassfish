@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -167,13 +167,6 @@ public class CULoggerInfo {
             action = "Check the system logs and contact support.",
             level = "SEVERE")
     public static final String exceptionProcessingFile = LOGMSG_PREFIX + "-00020";
-
-    @LogMessageInfo(
-            message = "Error checking for existing of {0} in {1}",
-            cause = "An unexpected exception occurred while checking for the existence of a file.",
-            action = "Check the system logs and contact support.",
-            level = "SEVERE")
-    public static final String exceptionCheckingFile = LOGMSG_PREFIX + "-00021";
 
     @LogMessageInfo(
             message = "Error closing an open stream during loader clean-up",

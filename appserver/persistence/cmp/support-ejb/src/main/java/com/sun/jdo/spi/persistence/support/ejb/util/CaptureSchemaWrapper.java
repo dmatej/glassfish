@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,15 +15,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * CaptureSchemaWrapper.java
- *
- * Created on October 5, 2004
- */
-
 package com.sun.jdo.spi.persistence.support.ejb.util;
 
-import com.sun.enterprise.util.Utility;
 import com.sun.jdo.api.persistence.mapping.ejb.CaptureSchema;
 
 /**
@@ -31,12 +25,11 @@ import com.sun.jdo.api.persistence.mapping.ejb.CaptureSchema;
  * to the <code>CaptureSchema<\code>
  * @see CaptureSchema
  *
- * @author  Marina Vatkina
+ * @author  Marina Vatkina 2004
  */
 
 public final class CaptureSchemaWrapper {
     public static void main(String args[]) {
-        Utility.setEnvironment();
         CaptureSchema.main(args);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -57,8 +57,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.net.Socket;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -641,8 +639,7 @@ public final class SecurityMechanismSelector implements PostConstruct {
             final Subject sub = s;
             ctx.subject = s;
             // determining if run-as has been used
-            PrivilegedAction<Set<PasswordCredential>> action = () -> sub.getPrivateCredentials(PasswordCredential.class);
-            Set<PasswordCredential> privateCredSet = AccessController.doPrivileged(action);
+            Set<PasswordCredential> privateCredSet = sub.getPrivateCredentials(PasswordCredential.class);
             // this is runas case dont set
             if (privateCredSet.isEmpty()) {
                 LOG.log(Level.FINE, "No private credential run as mode");
@@ -665,12 +662,8 @@ public final class SecurityMechanismSelector implements PostConstruct {
                 final String realm_name = new String(_realm);
                 final Iterator<PasswordCredential> it = privateCredSet.iterator();
                 for (; it.hasNext();) {
-                    PrivilegedAction<Void> action2 = () -> {
-                        PasswordCredential pc = it.next();
-                        pc.setRealm(realm_name);
-                        return null;
-                    };
-                    AccessController.doPrivileged(action2);
+                    PasswordCredential pc = it.next();
+                    pc.setRealm(realm_name);
                 }
                 ctx.authcls = PasswordCredential.class;
             }
@@ -695,19 +688,14 @@ public final class SecurityMechanismSelector implements PostConstruct {
         final SecurityContext sCtx = ctx;
         // get stuff from the SecurityContext class
         com.sun.enterprise.security.SecurityContext scontext = com.sun.enterprise.security.SecurityContext.getCurrent();
-        if ((scontext == null) || scontext.didServerGenerateCredentials()) {
+        if (scontext == null || scontext.didServerGenerateCredentials()) {
 
             // a default guest/guest123 was created
             sCtx.identcls = AnonCredential.class;
-
-            PrivilegedAction<Void> action = () -> {
-                // remove all the public and private credentials
-                Subject sub = new Subject();
-                sCtx.subject = sub;
-                sCtx.subject.getPublicCredentials().add(new AnonCredential());
-                return null;
-            };
-            AccessController.doPrivileged(action);
+            // remove all the public and private credentials
+            Subject sub = new Subject();
+            sCtx.subject = sub;
+            sCtx.subject.getPublicCredentials().add(new AnonCredential());
             return sCtx;
         }
 
@@ -715,21 +703,14 @@ public final class SecurityMechanismSelector implements PostConstruct {
         ctx.subject = s;
 
         // Figure out the credential class
-        final Subject sub = s;
-        PrivilegedAction<Set<PasswordCredential>> action = () -> sub.getPrivateCredentials(PasswordCredential.class);
-        Set<PasswordCredential> credSet = AccessController.doPrivileged(action);
+        Set<PasswordCredential> credSet = s.getPrivateCredentials(PasswordCredential.class);
         if (credSet.size() == 1) {
             ctx.identcls = GSSUPName.class;
-            final Set<PasswordCredential> cs = credSet;
-            PrivilegedAction<Subject> action2 = () -> {
-                Subject ss = new Subject();
-                Iterator<PasswordCredential> iter = cs.iterator();
-                PasswordCredential pc = iter.next();
-                GSSUPName gssname = new GSSUPName(pc.getUser(), pc.getRealm());
-                ss.getPublicCredentials().add(gssname);
-                return ss;
-            };
-            Subject subj = AccessController.doPrivileged(action2);
+            Subject subj = new Subject();
+            Iterator<PasswordCredential> iter = credSet.iterator();
+            PasswordCredential pc = iter.next();
+            GSSUPName gssname = new GSSUPName(pc.getUser(), pc.getRealm());
+            subj.getPublicCredentials().add(gssname);
             ctx.subject = subj;
             return ctx;
         }
@@ -850,21 +831,11 @@ public final class SecurityMechanismSelector implements PostConstruct {
         byte[] tgt_name = {};
 
         final Subject sub = subj;
-        final Set<PasswordCredential> credset = AccessController.doPrivileged(new PrivilegedAction<Set>() {
-            @Override
-            public Set run() {
-                return sub.getPrivateCredentials(PasswordCredential.class);
-            }
-        });
+        final Set<PasswordCredential> credset =  sub.getPrivateCredentials(PasswordCredential.class);
         if (credset.size() == 1) {
-            tgt_name = AccessController.doPrivileged(new PrivilegedAction<byte[]>() {
-                @Override
-                public byte[] run() {
-                    Iterator<PasswordCredential> iter = credset.iterator();
-                    PasswordCredential pc = iter.next();
-                    return pc.getTargetName();
-                }
-            });
+            Iterator<PasswordCredential> iter = credset.iterator();
+            PasswordCredential pc = iter.next();
+            tgt_name = pc.getTargetName();
         }
         return tgt_name;
     }

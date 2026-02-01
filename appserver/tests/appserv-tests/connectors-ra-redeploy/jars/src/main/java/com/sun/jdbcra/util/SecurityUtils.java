@@ -1,6 +1,6 @@
 /*
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2003, 2018 Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -21,9 +21,8 @@ import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ManagedConnectionFactory;
 import jakarta.resource.spi.security.PasswordCredential;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -54,8 +53,7 @@ public class SecurityUtils {
      * @param        subject        <code>Subject</code>
      * @param        info        <code>ConnectionRequestInfo</code>
      * @return        <code>PasswordCredential</code>
-     * @throws        <code>ResourceException</code>        generic exception if operation fails
-     * @throws        <code>SecurityException</code>        if access to the <code>Subject</code> instance is denied
+     * @throws ResourceException generic exception if operation fails
      */
     public static PasswordCredential getPasswordCredential(final ManagedConnectionFactory mcf,
          final Subject subject, jakarta.resource.spi.ConnectionRequestInfo info) throws ResourceException {
@@ -63,50 +61,29 @@ public class SecurityUtils {
         if (info == null) {
             if (subject == null) {
                 return null;
-            } else {
-                PasswordCredential pc = (PasswordCredential) AccessController.doPrivileged
-                    (new PrivilegedAction() {
-                        @Override
-                        public Object run() {
-                            Set passwdCredentialSet = subject.getPrivateCredentials(PasswordCredential.class);
-                            Iterator iter = passwdCredentialSet.iterator();
-                            while (iter.hasNext()) {
-                                PasswordCredential temp = (PasswordCredential) iter.next();
-                                if (temp.getManagedConnectionFactory().equals(mcf)) {
-                                    return temp;
-                                }
-                            }
-                            return null;
-                        }
-                    });
-                if (pc == null) {
-                    throw new jakarta.resource.spi.SecurityException("No PasswordCredential found");
-                } else {
-                    return pc;
-                }
             }
-        } else {
-            com.sun.jdbcra.spi.ConnectionRequestInfo cxReqInfo = (com.sun.jdbcra.spi.ConnectionRequestInfo) info;
-            PasswordCredential pc = new PasswordCredential(cxReqInfo.getUser(), cxReqInfo.getPassword().toCharArray());
-            pc.setManagedConnectionFactory(mcf);
+            PasswordCredential pc = getPrivatePasswordCredential(subject, mcf);
+            if (pc == null) {
+                throw new jakarta.resource.spi.SecurityException("No PasswordCredential found");
+            }
             return pc;
         }
+        com.sun.jdbcra.spi.ConnectionRequestInfo cxReqInfo = (com.sun.jdbcra.spi.ConnectionRequestInfo) info;
+        PasswordCredential pc = new PasswordCredential(cxReqInfo.getUser(), cxReqInfo.getPassword().toCharArray());
+        pc.setManagedConnectionFactory(mcf);
+        return pc;
     }
 
-    /**
-     * Returns true if two strings are equal; false otherwise
-     *
-     * @param        str1        <code>String</code>
-     * @param        str2        <code>String</code>
-     * @return        true        if the two strings are equal
-     *                false        otherwise
-     */
-    static private boolean isEqual(String str1, String str2) {
-        if (str1 == null) {
-            return (str2 == null);
-        } else {
-            return str1.equals(str2);
+    private static PasswordCredential getPrivatePasswordCredential(Subject subject, Object mcf) {
+        Set<PasswordCredential> passwdCredentialSet = subject.getPrivateCredentials(PasswordCredential.class);
+        Iterator<PasswordCredential> iter = passwdCredentialSet.iterator();
+        while (iter.hasNext()) {
+            PasswordCredential credential = iter.next();
+            if (credential.getManagedConnectionFactory().equals(mcf)) {
+                return credential;
+            }
         }
+        return null;
     }
 
     /**
@@ -124,7 +101,7 @@ public class SecurityUtils {
         if(pC1 == null || pC2 == null) {
             return (pC1 == pC2);
         }
-        if (!isEqual(pC1.getUserName(), pC2.getUserName())) {
+        if (!Objects.equals(pC1.getUserName(), pC2.getUserName())) {
             return false;
         }
         String p1 = null;
@@ -135,6 +112,6 @@ public class SecurityUtils {
         if (pC2.getPassword() != null) {
             p2 = new String(pC2.getPassword());
         }
-        return (isEqual(p1, p2));
+        return Objects.equals(p1, p2);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -67,7 +67,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.InaccessibleObjectException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -75,9 +74,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -565,52 +561,42 @@ public class WsUtil {
      * Accessing wsdl URL might involve file system access, so wrap operation in a doPrivileged block.
      */
     public URL privilegedGetServiceRefWsdl(final ServiceReferenceDescriptor serviceRef) throws Exception {
-        try {
-            PrivilegedExceptionAction<URL> action = () -> {
-                if (serviceRef.hasWsdlOverride()) {
-                    return serviceRef.getWsdlOverride();
-                }
-                // Upon server restart, wsdlfileURL can be null
-                // check that and return value from wsdlFileURI
-                if (serviceRef.getWsdlFileUrl() != null) {
-                    return serviceRef.getWsdlFileUrl();
-                }
-                final String wsdlFileUri = serviceRef.getWsdlFileUri();
-                if (wsdlFileUri.startsWith("http")) {
-                    return new URL(wsdlFileUri);
-                }
-                if (wsdlFileUri.startsWith("WEB-INF") || wsdlFileUri.startsWith("META-INF")) {
-                    // This can be the case when the toURL fails
-                    // because in its implementation it looks for user.dir
-                    // which sometimes can vary based on where vm is launched
-                    // so in this case resolve from application path
-                    ServerEnvironment se = WebServiceContractImpl.getInstance().getServerEnvironment();
-
-                    // First look in the root of the deployment
-                    String appName = serviceRef.getBundleDescriptor().getApplication().getAppName();
-                    File appFile = new File(se.getApplicationRepositoryPath(), appName);
-                    if (appFile.exists()) {
-                        File wsdlFile = new File(appFile, wsdlFileUri);
-                        if (wsdlFile.exists()) {
-                            return wsdlFile.toURI().toURL();
-                        }
-                        // try the module path for example when we are in an EAR file
-                        wsdlFile = new File(serviceRef.getBundleDescriptor().getRawModuleID(), wsdlFileUri);
-                        if (wsdlFile.exists()) {
-                            return wsdlFile.toURI().toURL();
-                        }
-                    }
-                    return Thread.currentThread().getContextClassLoader().getResource(wsdlFileUri);
-                }
-                return new File(wsdlFileUri).toURI().toURL();
-            };
-            return AccessController.doPrivileged(action);
-        } catch (PrivilegedActionException pae) {
-            LOG.log(Level.WARNING, LogUtils.EXCEPTION_THROWN, pae);
-            Exception e = new Exception();
-            e.initCause(pae.getCause());
-            throw e;
+        if (serviceRef.hasWsdlOverride()) {
+            return serviceRef.getWsdlOverride();
         }
+        // Upon server restart, wsdlfileURL can be null
+        // check that and return value from wsdlFileURI
+        if (serviceRef.getWsdlFileUrl() != null) {
+            return serviceRef.getWsdlFileUrl();
+        }
+        final String wsdlFileUri = serviceRef.getWsdlFileUri();
+        if (wsdlFileUri.startsWith("http")) {
+            return new URL(wsdlFileUri);
+        }
+        if (wsdlFileUri.startsWith("WEB-INF") || wsdlFileUri.startsWith("META-INF")) {
+            // This can be the case when the toURL fails
+            // because in its implementation it looks for user.dir
+            // which sometimes can vary based on where vm is launched
+            // so in this case resolve from application path
+            ServerEnvironment se = WebServiceContractImpl.getInstance().getServerEnvironment();
+
+            // First look in the root of the deployment
+            String appName = serviceRef.getBundleDescriptor().getApplication().getAppName();
+            File appFile = new File(se.getApplicationRepositoryPath(), appName);
+            if (appFile.exists()) {
+                File wsdlFile = new File(appFile, wsdlFileUri);
+                if (wsdlFile.exists()) {
+                    return wsdlFile.toURI().toURL();
+                }
+                // try the module path for example when we are in an EAR file
+                wsdlFile = new File(serviceRef.getBundleDescriptor().getRawModuleID(), wsdlFileUri);
+                if (wsdlFile.exists()) {
+                    return wsdlFile.toURI().toURL();
+                }
+            }
+            return Thread.currentThread().getContextClassLoader().getResource(wsdlFileUri);
+        }
+        return new File(wsdlFileUri).toURI().toURL();
     }
 
     /**
@@ -1231,16 +1217,10 @@ public class WsUtil {
         for (final Method method : methods) {
             if (method.getAnnotation(annType) != null) {
                 try {
-                    AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                        @Override
-                        public Object run() throws IllegalAccessException, InvocationTargetException {
-                            if (!method.trySetAccessible()) {
-                                throw new InaccessibleObjectException("Unable to make accessible: " + method);
-                            }
-                            method.invoke(implObj, new Object[] {});
-                            return null;
-                        }
-                    });
+                    if (!method.trySetAccessible()) {
+                        throw new InaccessibleObjectException("Unable to make accessible: " + method);
+                    }
+                    method.invoke(implObj, new Object[] {});
                 } catch (Throwable e) {
                     // Should we log or throw an exception
                     LOG.log(Level.SEVERE, LogUtils.FAILURE_CALLING_POST_PRE, e);

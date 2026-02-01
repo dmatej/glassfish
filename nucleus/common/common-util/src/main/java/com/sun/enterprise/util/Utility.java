@@ -584,10 +584,6 @@ public final class Utility {
         }
     }
 
-    public static void setEnvironment() {
-        Environment.obtain().activateEnvironment();
-    }
-
     /**
      * Return the value for a given name from the System Properties or the Environmental Variables. The former overrides the
      * latter.

@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,12 +15,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * ClassType.java
- *
- * Created on March 8, 2000
- */
-
 package com.sun.jdo.spi.persistence.support.sqlstore.query.util.type;
 
 import com.sun.jdo.api.persistence.model.jdo.PersistenceClassElement;
@@ -28,17 +23,13 @@ import com.sun.jdo.api.persistence.support.JDOFatalUserException;
 import com.sun.jdo.spi.persistence.utility.FieldTypeEnumeration;
 
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author  Michael Bouschen
- * @version 0.1
+ * @author  Michael Bouschen 2000
  */
 public class ClassType
     extends Type
@@ -100,6 +91,7 @@ public class ClassType
      * false otherwise.
      * @see Type#isCompatibleWith(Type)
      */
+    @Override
     public boolean isCompatibleWith(Type type)
     {
         boolean result = false;
@@ -116,6 +108,7 @@ public class ClassType
      * @return true if an order is defined for this;
      * false otherwise.
      */
+        @Override
         public boolean isOrderable()
         {
         Type comparable = typetab.checkType("java.lang.Comparable"); //NOI18N
@@ -146,20 +139,16 @@ public class ClassType
         //Field[] fields = clazz.getDeclaredFields();
 
         final Class cl = clazz;
-
-        Field[] fields =  (Field[]) AccessController.doPrivileged(new PrivilegedAction() {
-                                public Object run () {
-                                        return cl.getDeclaredFields();
-                                }
-                        });
+        Field[] fields = cl.getDeclaredFields();
 
         synchronized(fieldInfos) {
             for (int i = 0; i < fields.length; i++)
             {
                 String fieldName = fields[i].getName();
                 FieldInfo fieldInfo = (FieldInfo)fieldInfos.get(fieldName);
-                if (fieldInfo == null)
+                if (fieldInfo == null) {
                     fieldInfos.put(fieldName, new FieldInfo(fields[i], this));
+                }
             }
         }
         return (FieldInfo[])fieldInfos.values().toArray(new FieldInfo[0]);
@@ -168,31 +157,19 @@ public class ClassType
     /**
      * Return FieldInfo object for the field with the specified name.
      */
-    public FieldInfo getFieldInfo(final String fieldName)
-    {
+    public FieldInfo getFieldInfo(final String fieldName) {
         synchronized(fieldInfos) {
             FieldInfo fieldInfo = (FieldInfo)fieldInfos.get(fieldName);
-            if (fieldInfo == null)
-            {
+            if (fieldInfo == null) {
                 // NOTE, no inheritance!
                 final Class cl = clazz;
-                Field field = (Field) AccessController.doPrivileged(new PrivilegedAction()
-                    {
-                        public Object run ()
-                        {
-                            try
-                            {
-                                return cl.getDeclaredField(fieldName);
-                            }
-                            catch (NoSuchFieldException ex)
-                            {
-                                return null; // do nothing, just return null
-                            }
-                        }
-                    });
-
-                if (field != null)
-                {
+                Field field;
+                try {
+                    field = cl.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException ex) {
+                    field = null;
+                }
+                if (field != null) {
                     fieldInfo = new FieldInfo(field, this);
                     fieldInfos.put(fieldName, fieldInfo);
                 }
@@ -212,8 +189,9 @@ public class ClassType
             List names = new ArrayList();
             for (int i = 0; i < persistentFields.length; i++)
             {
-                if (persistentFields[i].isKey())
+                if (persistentFields[i].isKey()) {
                     names.add(persistentFields[i].getName());
+                }
             }
             return names;
         }
