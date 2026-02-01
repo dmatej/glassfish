@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997-2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright 2004 The Apache Software Foundation
  *
@@ -18,7 +19,6 @@
 package org.apache.catalina.loader;
 
 import java.io.File;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -28,11 +28,8 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
-import java.security.AccessControlException;
-import java.security.CodeSource;
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,7 +39,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.catalina.LogFacade;
-import org.apache.naming.JndiPermission;
 import org.glassfish.web.loader.Reloader;
 
 import static com.sun.logging.LogCleanerUtil.neutralizeForLog;
@@ -90,8 +86,6 @@ public class StandardClassLoader
         super(new URL[0]);
         this.parent = getParent();
         this.system = getSystemClassLoader();
-        securityManager = System.getSecurityManager();
-
     }
 
 
@@ -120,8 +114,6 @@ public class StandardClassLoader
         super((new URL[0]), parent);
         this.parent = parent;
         this.system = getSystemClassLoader();
-        securityManager = System.getSecurityManager();
-
     }
 
 
@@ -175,7 +167,6 @@ public class StandardClassLoader
         super(repositories);
         this.parent = getParent();
         this.system = getSystemClassLoader();
-        securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (URL element : repositories) {
                 addRepositoryInternal(element.toString());
@@ -196,7 +187,6 @@ public class StandardClassLoader
         super(repositories, parent);
         this.parent = parent;
         this.system = getSystemClassLoader();
-        securityManager = System.getSecurityManager();
         if (repositories != null) {
             for (URL element : repositories) {
                 addRepositoryInternal(element.toString());
@@ -245,12 +235,6 @@ public class StandardClassLoader
      */
     private final HashMap<String, PermissionCollection> loaderPC =
         new HashMap<>();
-
-
-    /**
-     * Instance of the SecurityManager installed.
-     */
-    private SecurityManager securityManager = null;
 
 
     /**
@@ -321,37 +305,6 @@ public class StandardClassLoader
         this.delegate = delegate;
 
     }
-
-
-    /**
-     * If there is a Java SecurityManager create a read FilePermission
-     * or JndiPermission for the file directory path.
-     *
-     * @param path file directory path
-     */
-    protected void setPermissions(String path) {
-        if( securityManager != null ) {
-            if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
-                permissionList.add(new JndiPermission(path + "*"));
-            } else {
-                permissionList.add(new FilePermission(path + "-","read"));
-            }
-        }
-    }
-
-
-    /**
-     * If there is a Java SecurityManager add a read FilePermission
-     * or JndiPermission for URL.
-     *
-     * @param url URL for a file or directory on local system
-     */
-    protected void setPermissions(URL url) {
-        setPermissions(url.toString());
-    }
-
-
-    // ------------------------------------------------------- Reloader Methods
 
 
     @Override
@@ -436,24 +389,6 @@ public class StandardClassLoader
             log("    findClass(" + name + ")");
         }
 
-        // (1) Permission to define this class when using a SecurityManager
-        if (securityManager != null) {
-            int i = name.lastIndexOf('.');
-            if (i >= 0) {
-                try {
-                    if (debug >= 4) {
-                        log("      securityManager.checkPackageDefinition");
-                    }
-                    securityManager.checkPackageDefinition(name.substring(0,i));
-                } catch (Exception se) {
-                    if (debug >= 4) {
-                        log("      -->Exception-->ClassNotFoundException", se);
-                    }
-                    throw new ClassNotFoundException(name, se);
-                }
-            }
-        }
-
         // Ask our superclass to locate this class, if possible
         // (throws ClassNotFoundException if it is not found)
         Class clazz = null;
@@ -469,8 +404,6 @@ public class StandardClassLoader
                     }
                     clazz = super.findClass(name);
                 }
-            } catch(AccessControlException ace) {
-                throw new ClassNotFoundException(name, ace);
             } catch (RuntimeException e) {
                 if (debug >= 4) {
                     log("      -->RuntimeException Rethrown", e);
@@ -798,21 +731,6 @@ public class StandardClassLoader
             throw new ClassNotFoundException(name);
         }
 
-        // (.5) Permission to access this class when using a SecurityManager
-        if (securityManager != null) {
-            int i = name.lastIndexOf('.');
-            if (i >= 0) {
-                try {
-                    securityManager.checkPackageAccess(name.substring(0,i));
-                } catch (SecurityException se) {
-                    String error = "Security Violation, attempt to use " +
-                        "Restricted Class: " + name;
-                    log(error);
-                    throw new ClassNotFoundException(error, se);
-                }
-            }
-        }
-
         // (1) Delegate to our parent if requested
         if (delegate) {
             if (debug >= 3) {
@@ -886,42 +804,6 @@ public class StandardClassLoader
         throw new ClassNotFoundException(name);
 
     }
-
-
-    /**
-     * Get the Permissions for a CodeSource.  If this instance
-     * of StandardClassLoader is for a web application context,
-     * add read FilePermissions for the base directory (if unpacked),
-     * the context URL, and jar file resources.
-     *
-     * @param codeSource where the code was loaded from
-     * @return PermissionCollection for CodeSource
-     */
-    @Override
-    protected final PermissionCollection getPermissions(CodeSource codeSource) {
-        if (!policy_refresh) {
-            // Refresh the security policies
-            Policy policy = Policy.getPolicy();
-            policy.refresh();
-            policy_refresh = true;
-        }
-        String codeUrl = codeSource.getLocation().toString();
-        PermissionCollection pc;
-        if ((pc = loaderPC.get(codeUrl)) == null) {
-            pc = super.getPermissions(codeSource);
-            if (pc != null) {
-                for (Permission p : permissionList) {
-                    pc.add(p);
-                }
-                loaderPC.put(codeUrl,pc);
-            }
-        }
-        return (pc);
-
-    }
-
-
-    // ------------------------------------------------------ Protected Methods
 
 
     /**

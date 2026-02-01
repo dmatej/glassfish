@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2007, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -27,8 +27,6 @@ import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -139,16 +137,7 @@ public class APIClassLoaderServiceImpl implements PostConstruct {
     }
 
     private ClassLoader getExtensionClassLoader() {
-        if (System.getSecurityManager() != null) {
-            return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    return ClassLoader.getSystemClassLoader().getParent();
-                }
-            });
-        } else {
-            return ClassLoader.getSystemClassLoader().getParent();
-        }
+        return ClassLoader.getSystemClassLoader().getParent();
     }
 
     public ClassLoader getAPIClassLoader() {
@@ -356,16 +345,7 @@ public class APIClassLoaderServiceImpl implements PostConstruct {
          * This method is required as {@link ClassLoader#getParent} is a privileged method
          */
         private ClassLoader getParent_() {
-            if (System.getSecurityManager() != null) {
-                return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                    @Override
-                    public ClassLoader run() {
-                        return getParent();
-                    }
-                });
-            } else {
-                return getParent();
-            }
+            return getParent();
         }
 
         @Override

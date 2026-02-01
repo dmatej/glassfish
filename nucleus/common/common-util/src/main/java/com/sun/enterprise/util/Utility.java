@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2024 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -32,8 +32,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.rmi.Remote;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -534,15 +532,7 @@ public final class Utility {
         }
         LOG.log(Level.FINER, "setContextClassLoader(classLoader={0}; original: {1})",
             new Object[] {classLoader, original});
-        if (System.getSecurityManager() == null) {
-            currentThread.setContextClassLoader(classLoader);
-        } else {
-            PrivilegedAction<Void> action = () -> {
-                currentThread.setContextClassLoader(classLoader);
-                return null;
-            };
-            AccessController.doPrivileged(action);
-        }
+        currentThread.setContextClassLoader(classLoader);
         return original;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2006, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -727,15 +727,7 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
             }
             byte[] result = loadClassData0(u, entryName);
             if (result != null) {
-                if (System.getSecurityManager() == null) {
-                    return new ClassData(result, u.pd);
-                }
-                //recreate the pd to include the declared permissions
-                CodeSource cs = u.pd.getCodeSource();
-                PermissionCollection pc = this.getPermissions(cs);
-                ProtectionDomain pdWithPemissions =
-                    new ProtectionDomain(u.pd.getCodeSource(), pc, u.pd.getClassLoader(), u.pd.getPrincipals());
-                return new ClassData(result, pdWithPemissions);
+                return new ClassData(result, u.pd);
             }
         }
 

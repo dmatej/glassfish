@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2025, 2026 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,9 +17,6 @@
 package org.glassfish.main.jdke;
 
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactoryBuilder;
@@ -30,8 +27,6 @@ import javax.naming.spi.NamingManager;
  */
 public final class JavaApiGaps {
 
-    @SuppressWarnings("removal")
-    private static final SecurityManager SECURITY_MANAGER = System.getSecurityManager();
     private static final String FIELD_INITCTX_FACTORY_BUILDER = "initctx_factory_builder";
 
 
@@ -52,12 +47,7 @@ public final class JavaApiGaps {
      * @throws IllegalStateException if the builder was already set
      */
     public static void setInitialContextFactoryBuilder(InitialContextFactoryBuilder builder) throws NamingException {
-        NamingAction action = () -> NamingManager.setInitialContextFactoryBuilder(builder);
-        if (SECURITY_MANAGER == null) {
-            action.execute();
-            return;
-        }
-        doPrivilegedNamingAction(action);
+        NamingManager.setInitialContextFactoryBuilder(builder);
     }
 
 
@@ -69,12 +59,7 @@ public final class JavaApiGaps {
      * @throws NamingException
      */
     public static void unsetInitialContextFactoryBuilder() throws NamingException {
-        NamingAction action = () -> set(NamingManager.class, FIELD_INITCTX_FACTORY_BUILDER, null);
-        if (SECURITY_MANAGER == null) {
-            action.execute();
-            return;
-        }
-        doPrivilegedNamingAction(action);
+        set(NamingManager.class, FIELD_INITCTX_FACTORY_BUILDER, null);
     }
 
 
@@ -87,37 +72,5 @@ public final class JavaApiGaps {
             throw new IllegalStateException(
                 "Reflection to the field " + type.getCanonicalName() + "." + fieldName + " failed.", e);
         }
-    }
-
-
-    private static void doPrivilegedNamingAction(NamingAction action) throws NamingException {
-        try {
-            AccessController.doPrivileged(action);
-        } catch (PrivilegedActionException e) {
-            Throwable cause = e.getCause();
-            // Runtime and Naming exceptions same as if there would be no security manager
-            if (cause instanceof NamingException) {
-                throw (NamingException) cause;
-            } else if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            throw new RuntimeException("Failed to execute privileged naming action.", e);
-        }
-    }
-
-
-    @FunctionalInterface
-    private interface NamingAction extends PrivilegedExceptionAction<Void> {
-        @Override
-        default Void run() throws PrivilegedActionException {
-            try {
-                execute();
-                return null;
-            } catch (Exception e) {
-                throw new PrivilegedActionException(e);
-            }
-        }
-
-        void execute() throws NamingException;
     }
 }

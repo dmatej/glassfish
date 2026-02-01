@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2022 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -26,7 +26,6 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
-import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -39,7 +38,6 @@ import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
 import static com.sun.enterprise.util.Utility.getClassLoader;
-import static java.security.AccessController.doPrivileged;
 import static java.util.logging.Level.FINER;
 import static java.util.logging.Level.WARNING;
 
@@ -195,19 +193,6 @@ public class OSGiObjectInputOutputStreamFactoryImpl implements ObjectInputOutput
     }
 
     private Class loadClassFromBundle(final Bundle b, final String cname) throws ClassNotFoundException {
-        if (System.getSecurityManager() == null) {
-            return b.loadClass(cname);
-        } else {
-            try {
-                return (Class) doPrivileged(new PrivilegedExceptionAction<Object>() {
-                    @Override
-                    public Object run() throws ClassNotFoundException {
-                        return b.loadClass(cname);
-                    }
-                });
-            } catch (java.security.PrivilegedActionException pae) {
-                throw (ClassNotFoundException) pae.getException();
-            }
-        }
+        return b.loadClass(cname);
     }
 }

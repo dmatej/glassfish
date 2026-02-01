@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997-2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright 2004 The Apache Software Foundation
  *
@@ -41,8 +42,6 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 
-import org.apache.naming.JndiPermission;
-
 /**
  * Connection to a JNDI directory context.
  * <p/>
@@ -63,12 +62,10 @@ public class DirContextURLConnection
 
     public DirContextURLConnection(DirContext context, URL url) {
         super(url);
-        if (context == null)
+        if (context == null) {
             throw new IllegalArgumentException
                 ("Directory context can't be null");
-        if (IS_SECURITY_ENABLED) {
-            this.permission = new JndiPermission(url.toString());
-    }
+        }
         this.context = context;
     }
 
@@ -119,22 +116,13 @@ public class DirContextURLConnection
 
 
     /**
-     * Is the Java SecurityManager enabled?
-     */
-    public static final boolean IS_SECURITY_ENABLED =
-        (System.getSecurityManager() != null);
-
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
      * Connect to the DirContext, and retrive the bound object, as well as
      * its attributes. If no object is bound with the name specified in the
      * URL, then an IOException is thrown.
      *
      * @throws IOException Object not found
      */
+    @Override
     public void connect()
         throws IOException {
 
@@ -149,8 +137,9 @@ public class DirContextURLConnection
                     String hostName = proxyDirContext.getHostName();
                     String contextName = proxyDirContext.getContextName();
                     if (hostName != null) {
-                        if (!path.startsWith("/" + hostName + "/"))
+                        if (!path.startsWith("/" + hostName + "/")) {
                             return;
+                        }
                         path = path.substring(hostName.length()+ 1);
                     }
                     if (contextName != null) {
@@ -164,10 +153,12 @@ public class DirContextURLConnection
                 path = URLDecoder.decode(path, "UTF-8");
                 object = context.lookup(path);
                 attributes = context.getAttributes(path);
-                if (object instanceof Resource)
+                if (object instanceof Resource) {
                     resource = (Resource) object;
-                if (object instanceof DirContext)
+                }
+                if (object instanceof DirContext) {
                     collection = (DirContext) object;
+                }
             } catch (NamingException e) {
                 // Object not found
             }
@@ -182,6 +173,7 @@ public class DirContextURLConnection
     /**
      * Return the content length value.
      */
+    @Override
     public int getContentLength() {
         return getHeaderFieldInt(ResourceAttributes.CONTENT_LENGTH, -1);
     }
@@ -190,6 +182,7 @@ public class DirContextURLConnection
     /**
      * Return the content type value.
      */
+    @Override
     public String getContentType() {
         return getHeaderField(ResourceAttributes.CONTENT_TYPE);
     }
@@ -198,6 +191,7 @@ public class DirContextURLConnection
     /**
      * Return the last modified date.
      */
+    @Override
     public long getDate() {
         return date;
     }
@@ -206,6 +200,7 @@ public class DirContextURLConnection
     /**
      * Return the last modified date.
      */
+    @Override
     public long getLastModified() {
 
         if (!connected) {
@@ -216,8 +211,9 @@ public class DirContextURLConnection
             }
         }
 
-        if (attributes == null)
+        if (attributes == null) {
             return 0;
+        }
 
         Attribute lastModified =
             attributes.get(ResourceAttributes.LAST_MODIFIED);
@@ -236,6 +232,7 @@ public class DirContextURLConnection
     /**
      * Returns an unmodifiable Map of the header fields.
      */
+    @Override
     public Map<String, List<String>> getHeaderFields() {
 
         if (!connected) {
@@ -246,8 +243,9 @@ public class DirContextURLConnection
             }
         }
 
-        if (attributes == null)
+        if (attributes == null) {
             return (Collections.emptyMap());
+        }
 
         HashMap<String, List<String>> headerFields =
             new HashMap<String, List<String>>(attributes.size());
@@ -256,7 +254,9 @@ public class DirContextURLConnection
             while (attributeEnum.hasMore()) {
                 String attributeID = attributeEnum.next();
                 Attribute attribute = attributes.get(attributeID);
-                if (attribute == null) continue;
+                if (attribute == null) {
+                    continue;
+                }
                 ArrayList<String> attributeValueList =
                     new ArrayList<String>(attribute.size());
                 NamingEnumeration<?> attributeValues = attribute.getAll();
@@ -278,6 +278,7 @@ public class DirContextURLConnection
     /**
      * Returns the name of the specified header field.
      */
+    @Override
     public String getHeaderField(String name) {
 
         if (!connected) {
@@ -288,8 +289,9 @@ public class DirContextURLConnection
             }
         }
 
-        if (attributes == null)
+        if (attributes == null) {
             return (null);
+        }
 
         NamingEnumeration<String> attributeEnum = attributes.getIDs();
         try {
@@ -297,7 +299,9 @@ public class DirContextURLConnection
                 String attributeID = attributeEnum.next();
                 if (attributeID.equalsIgnoreCase(name)) {
                     Attribute attribute = attributes.get(attributeID);
-                    if (attribute == null) return null;
+                    if (attribute == null) {
+                        return null;
+                    }
                     return attribute.get(attribute.size()-1).toString();
                 }
             }
@@ -313,18 +317,23 @@ public class DirContextURLConnection
     /**
      * Get object content.
      */
+    @Override
     public Object getContent()
         throws IOException {
 
-        if (!connected)
+        if (!connected) {
             connect();
+        }
 
-        if (resource != null)
+        if (resource != null) {
             return getInputStream();
-        if (collection != null)
+        }
+        if (collection != null) {
             return collection;
-        if (object != null)
+        }
+        if (object != null) {
             return object;
+        }
 
         throw new FileNotFoundException();
 
@@ -334,14 +343,16 @@ public class DirContextURLConnection
     /**
      * Get object content.
      */
+    @Override
     public Object getContent(Class[] classes)
         throws IOException {
 
         Object object = getContent();
 
         for (int i = 0; i < classes.length; i++) {
-            if (classes[i].isInstance(object))
+            if (classes[i].isInstance(object)) {
                 return object;
+            }
         }
 
         return null;
@@ -352,11 +363,13 @@ public class DirContextURLConnection
     /**
      * Get input stream.
      */
+    @Override
     public InputStream getInputStream()
         throws IOException {
 
-        if (!connected)
+        if (!connected) {
             connect();
+        }
 
         if (resource == null) {
             throw new FileNotFoundException();
@@ -377,6 +390,7 @@ public class DirContextURLConnection
     /**
      * Get the Permission for this URL
      */
+    @Override
     public Permission getPermission() {
 
         return permission;

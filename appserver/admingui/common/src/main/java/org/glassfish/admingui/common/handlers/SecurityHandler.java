@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -93,7 +93,7 @@ public class SecurityHandler {
         }
 
         Map attrMap = new HashMap();
-        attrMap.put("Name", (String) realmMap.get("name"));
+        attrMap.put("Name", realmMap.get("name"));
         attrMap.put("fileJaax", "fileRealm");
         attrMap.put("ldapJaax", "ldapRealm" );
         attrMap.put("solarisJaax", "solarisRealm");
@@ -304,8 +304,9 @@ public class SecurityHandler {
         Map oneProp = new HashMap();
         oneProp.put("name", propName);
         String value = attrMap.get(key);
-        if (GuiUtil.isEmpty(value))
+        if (GuiUtil.isEmpty(value)) {
             return;
+        }
         oneProp.put("value", attrMap.get(key));
         propList.add(oneProp);
     }
@@ -364,11 +365,13 @@ public class SecurityHandler {
             // Converting the password back to string as this is passed directly as payload in REST request
             attrs.put("userpassword", new String(password));
             attrs.put("target", configName);
-            if (grouplist != null && grouplist.contains(","))
+            if (grouplist != null && grouplist.contains(",")) {
                 grouplist = grouplist.replace(',', ':');
+            }
             List<String> grpList = new ArrayList();
-            if (grouplist != null)
+            if (grouplist != null) {
                 grpList.add(grouplist);
+            }
             attrs.put("groups", grpList);
             RestUtil.restRequest(endpoint, attrs, "POST", null, true, true );
         } catch(Exception ex) {
@@ -463,7 +466,7 @@ public class SecurityHandler {
         String configName = (String) handlerCtx.getInputValue("configName");
         try{
             List obj = (List) handlerCtx.getInputValue("selectedRows");
-            List<Map> selectedRows = (List) obj;
+            List<Map> selectedRows = obj;
             for(Map oneRow : selectedRows){
                 String user = (String)oneRow.get("name");
                 String endpoint = GuiUtil.getSessionValue("REST_URL") + "/configs/config/" + configName + "/admin-service/jmx-connector/system.json";
@@ -529,7 +532,7 @@ public class SecurityHandler {
             //+ "/configs/config/server-config/security-service/auth-realm/list-predefined-authrealm-classnames";
         Map<String, Object> responseMap = RestUtil.restRequest(endpoint, null, "GET", null, false);
         Map<String, Object> valueMap = (Map<String, Object>) responseMap.get("data");
-        ArrayList<HashMap> classNames = (ArrayList<HashMap>) ((ArrayList<HashMap>) valueMap.get("children"));
+        ArrayList<HashMap> classNames = ((ArrayList<HashMap>) valueMap.get("children"));
         for (HashMap className : classNames) {
             realmClassList.add(className.get("message"));
         }
@@ -572,7 +575,7 @@ public class SecurityHandler {
 
         String endpoint = GuiUtil.getSessionValue("REST_URL") + "/configs/config/" + configName
                                         + "/security-service/message-security-config/" + msgSecurityName;
-        Map<String, Object> valueMap = (Map<String, Object>) RestUtil.getEntityAttrs(endpoint, "entity");
+        Map<String, Object> valueMap = RestUtil.getEntityAttrs(endpoint, "entity");
         String defaultProvider = (String) valueMap.get("defaultProvider");
         String defaultClientProvider = (String) valueMap.get("defaultClientProvider");
         String trueStr = GuiUtil.getMessage("common.true");
@@ -601,7 +604,7 @@ public class SecurityHandler {
         layers.add("SOAP");
         layers.add("HttpServlet");
         String endpoint = GuiUtil.getSessionValue("REST_URL") + "/configs/config/" + configName + "/security-service/message-security-config";
-        Set<String> msgSecurityCfgs = (Set<String>) (RestUtil.getChildMap(endpoint)).keySet();
+        Set<String> msgSecurityCfgs = (RestUtil.getChildMap(endpoint)).keySet();
         for(String name : msgSecurityCfgs){
             if (layers.contains(name)) {
                 layers.remove(name);
@@ -625,9 +628,9 @@ public class SecurityHandler {
         String msgSecurityName = (String) handlerCtx.getInputValue("msgSecurityName");
         String endpoint = GuiUtil.getSessionValue("REST_URL") + "/configs/config/" + configName +
                                 "/security-service/message-security-config/" + msgSecurityName + "/provider-config";
-        List<String> providers = (List<String>) RestUtil.getChildList(endpoint);
+        List<String> providers = RestUtil.getChildList(endpoint);
         for(String providerEndpoint : providers){
-            Map providerAttrs = (HashMap) RestUtil.getAttributesMap(providerEndpoint);
+            Map providerAttrs = RestUtil.getAttributesMap(providerEndpoint);
             String providerType = (String) providerAttrs.get("providerType");
             if (type.contains(providerType)) {
                 result.add(com.sun.jsftemplating.util.Util.htmlEscape((String)providerAttrs.get("providerId")));
@@ -650,7 +653,7 @@ public class SecurityHandler {
         String configName = (String)handlerCtx.getInputValue("configName");
 
         try{
-            String providerName = URLEncoder.encode((String)attrMap.get("Name"), "UTF-8");
+            String providerName = URLEncoder.encode(attrMap.get("Name"), "UTF-8");
             String providerEndpoint = GuiUtil.getSessionValue("REST_URL") + "/configs/config/" + configName +
                     "/security-service/message-security-config/" + msgSecurityName + "/provider-config/" + providerName;
 
@@ -660,7 +663,7 @@ public class SecurityHandler {
                     GuiUtil.handleError(handlerCtx, GuiUtil.getMessage(COMMON_BUNDLE, "msg.error.noSuchProvider")); //normally won't happen.
                     return;
                 }else{
-                    Map<String, Object> providerMap = (Map<String, Object>)RestUtil.getEntityAttrs(providerEndpoint, "entity");
+                    Map<String, Object> providerMap = RestUtil.getEntityAttrs(providerEndpoint, "entity");
                     providerMap.put("className", attrMap.get("ClassName"));
                     providerMap.put("providerType", attrMap.get("ProviderType"));
                     RestUtil.restRequest(providerEndpoint, providerMap, "POST", null, false);
@@ -735,85 +738,4 @@ public class SecurityHandler {
             GuiUtil.handleException(handlerCtx, ex);
         }
     }
-
-
-    @Handler(id="saveSecurityManagerValue",
-         input={
-            @HandlerInput(name="configName", type=String.class),
-            @HandlerInput(name="value", type=String.class, required=true)
-     })
-     public static void saveSecurityManagerValue(HandlerContext handlerCtx){
-        try {
-            String configName = (String) handlerCtx.getInputValue("configName");
-            if (GuiUtil.isEmpty(configName))
-                configName = "server-config";
-            String endpoint = GuiUtil.getSessionValue("REST_URL") +
-                    "/configs/config/" + configName + "/java-config/jvm-options.json";
-            ArrayList<String> list;
-            Map result = (HashMap) RestUtil.restRequest(endpoint, null, "GET", null, false).get("data");
-            list = (ArrayList<String>) ((Map<String, Object>) result.get("extraProperties")).get("leafList");
-            if (list == null)
-                list = new ArrayList<String>();
-            Boolean status = isSecurityManagerEnabled(list);
-            String value= (String) handlerCtx.getInputValue("value");
-            Boolean userValue = Boolean.valueOf(value);
-            if (status.equals(userValue)){
-                //no need to change
-                return;
-            }
-
-            ArrayList<String> newOptions = new ArrayList();
-            Object [] origOptions = list.toArray();
-            if (userValue){
-                for(int i=0; i<origOptions.length; i++){
-                    newOptions.add((String)origOptions[i]);
-                }
-                newOptions.add(JVM_OPTION_SECURITY_MANAGER);
-            } else{
-                for(int i=0; i<origOptions.length; i++){
-                    String str = (String) origOptions[i];
-                    if (! (str.trim().equals(JVM_OPTION_SECURITY_MANAGER) ||
-                            str.trim().startsWith(JVM_OPTION_SECURITY_MANAGER_WITH_EQUAL))){
-                       newOptions.add((String)origOptions[i]);
-                    }
-                }
-            }
-            Map<String, Object> payload = new HashMap<String, Object>();
-            payload.put("target", configName);
-            for (String option : newOptions) {
-                String option1 = UtilHandlers.escapePropertyValue(option);
-                ArrayList kv = InstanceHandler.getKeyValuePair(option1);
-                payload.put((String)kv.get(0), kv.get(1));
-            }
-            RestUtil.restRequest(endpoint, payload, "POST", handlerCtx, false);
-        }catch(Exception ex){
-            GuiUtil.handleException(handlerCtx, ex);
-        }
-    }
-
-    @Handler(id="getSecurityManagerValue",
-        input={
-            @HandlerInput(name="endpoint", type=String.class),
-            @HandlerInput(name="attrs", type=Map.class, required=false)},
-       output={
-           @HandlerOutput(name="value", type=String.class)}
-    )
-    public static void getSecurityManagerValue(HandlerContext handlerCtx){
-        ArrayList<String> list = InstanceHandler.getJvmOptions(handlerCtx);
-        handlerCtx.setOutputValue("value",  isSecurityManagerEnabled(list).toString());
-    }
-
-    private static Boolean isSecurityManagerEnabled(List<String> jvmOptions){
-        for(String jvmOption : jvmOptions){
-            if (jvmOption.trim().equals(JVM_OPTION_SECURITY_MANAGER) ||
-                    jvmOption.trim().startsWith(JVM_OPTION_SECURITY_MANAGER_WITH_EQUAL)){
-                return Boolean.TRUE;
-            }
-        }
-        return Boolean.FALSE;
-    }
-
-    private static final String JVM_OPTION_SECURITY_MANAGER = "-Djava.security.manager";
-    private static final String JVM_OPTION_SECURITY_MANAGER_WITH_EQUAL = "-Djava.security.manager=";
-
 }
