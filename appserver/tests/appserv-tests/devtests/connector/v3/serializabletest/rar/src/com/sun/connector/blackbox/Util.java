@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-package com.sun.connector.cciblackbox;
+package com.sun.connector.blackbox;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionRequestInfo;
@@ -41,7 +41,7 @@ public class Util {
             if (info == null) {
                 return null;
             }
-            CciConnectionRequestInfo myinfo = (CciConnectionRequestInfo) info;
+            JdbcConnectionRequestInfo myinfo = (JdbcConnectionRequestInfo) info;
             PasswordCredential pc = new PasswordCredential(myinfo.getUser(), myinfo.getPassword().toCharArray());
             pc.setManagedConnectionFactory(mcf);
             return pc;
