@@ -3,6 +3,8 @@ name: Build of AsciiDoc Documentation
 on:
   pull_request:
     branches: [ "main", "7.0", "8.0" ]
+    paths:
+    - 'docs/**'
 jobs:
   build:
     runs-on: ubuntu-24.04
