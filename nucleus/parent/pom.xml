@@ -182,7 +182,7 @@
         <commons-io.version>2.21.0</commons-io.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <jboss.logging.annotation.version>3.0.4.Final</jboss.logging.annotation.version>
-        <jboss.logging.version>3.6.1.Final</jboss.logging.version>
+        <jboss.logging.version>3.6.2.Final</jboss.logging.version>
         <javassist.version>3.30.2-GA</javassist.version>
         <asm.version>9.9.1</asm.version>
         <jsch.version>2.27.7</jsch.version>
@@ -192,9 +192,9 @@
         <!-- Warning: updating Ant to e.g. 1.10.5 will cause ElementStarITest.testLoadBalancerConfigs to fail -->
         <ant.version>1.10.2</ant.version>
         <ant.external.version>1.10.2</ant.external.version>
-        <jackson.version>2.20.1</jackson.version>
-        <jackson.version2>2.20</jackson.version2>
-        <fasterxml.classmate.version>1.7.1</fasterxml.classmate.version>
+        <jackson.version>2.21.0</jackson.version>
+        <jackson.version2>2.21</jackson.version2>
+        <fasterxml.classmate.version>1.7.3</fasterxml.classmate.version>
         <stax-api.version>1.0-2</stax-api.version>
         <jettison.version>1.5.4</jettison.version>
         <mimepull.version>1.10.0</mimepull.version>
@@ -923,7 +923,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.15.0</version>
                     <configuration>
                         <release>21</release>
                         <excludes>
@@ -1159,7 +1159,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -1186,7 +1186,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>1.7.3</version>
                     <configuration>
                         <flattenMode>ossrh</flattenMode>
                         <updatePomFile>true</updatePomFile>
@@ -1316,6 +1316,35 @@
                                 -->
                                 <ruleSet>
                                     <rules>
+                                        <rule>
+                                            <ignoreVersions>
+                                                <ignoreVersion>
+                                                    <type>regex</type>
+                                                    <version>.*-M.*</version>
+                                                </ignoreVersion>
+                                                <ignoreVersion>
+                                                    <type>regex</type>
+                                                    <version>.*-beta-.*</version>
+                                                </ignoreVersion>
+                                                <!-- Should work but, of course, does not -->
+                                                <ignoreVersion>
+                                                    <version>8.0.0-DONTPUBLISH</version>
+                                                </ignoreVersion>
+                                                <ignoreVersion>
+                                                    <type>regex</type>
+                                                    <version>.*-RC.*</version>
+                                                </ignoreVersion>
+                                            </ignoreVersions>
+                                        </rule>
+
+                                        <rule>
+                                            <groupId>org.glassfish.main</groupId>
+                                            <ignoreVersions>
+                                                <ignoreVersion>
+                                                    <version>8.0.0-DONTPUBLISH</version>
+                                                </ignoreVersion>
+                                            </ignoreVersions>
+                                        </rule>
                                         <rule>
                                             <groupId>antlr</groupId>
                                             <artifactId>antlr</artifactId>
