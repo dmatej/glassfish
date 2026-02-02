@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,8 +23,6 @@ import java.io.File;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -203,8 +202,9 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
                 (fieldType.isAssignableFrom(File.class) ||
                  fieldType.isAssignableFrom(File[].class))) {
             final List<String> paths = new ArrayList(uploadedFiles.size());
-            for (File f : uploadedFiles)
+            for (File f : uploadedFiles) {
                 paths.add(f.getAbsolutePath());
+            }
             return paths;
         } else {
             return null;
@@ -279,18 +279,11 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
      * @return the annotated Field value
      */
     // package-private, for testing
-    static Object getParamField(final Object component,
-                         final AnnotatedElement annotated) {
+    static Object getParamField(final Object component, final AnnotatedElement annotated) {
         try {
             if (annotated instanceof Field) {
-                final Field field = (Field)annotated;
-                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                    @Override
-                    public Object run() {
-                        field.setAccessible(true);
-                        return null;
-                    }
-                });
+                final Field field = (Field) annotated;
+                field.setAccessible(true);
                 return ((Field) annotated).get(component);
             }
         } catch (Exception e) {
@@ -381,8 +374,9 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
         Param param = target.getAnnotation(Param.class);
         // does this parameter type allow multiple values?
         if (!param.multiple()) {
-            if (paramValList.size() == 1)
+            if (paramValList.size() == 1) {
                 return convertStringToObject(target, type, paramValList.get(0));
+            }
             throw new UnacceptableValueException(
                 localStrings.getLocalString("TooManyValues",
                     "Invalid parameter: {0}.  This parameter may not have " +
@@ -417,14 +411,17 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
      * @return Boolean
      */
     private static Boolean convertStringToBoolean(String paramName, String s) {
-        if (!ok(s))
+        if (!ok(s)) {
             return Boolean.TRUE;
+        }
 
-        if (s.equalsIgnoreCase(Boolean.TRUE.toString()))
+        if (s.equalsIgnoreCase(Boolean.TRUE.toString())) {
             return Boolean.TRUE;
+        }
 
-        if (s.equalsIgnoreCase(Boolean.FALSE.toString()))
+        if (s.equalsIgnoreCase(Boolean.FALSE.toString())) {
             return Boolean.FALSE;
+        }
 
         String msg = localStrings.getLocalString("UnacceptableBooleanValue",
                 "Invalid parameter: {0}.  This boolean option must be set " +
@@ -475,24 +472,29 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
                 String token = stoken.nextTokenKeepEscapes();
                 final ParamTokenizer nameTok = new ParamTokenizer(token, '=');
                 String name = null, value = null;
-                if (nameTok.hasMoreTokens())
+                if (nameTok.hasMoreTokens()) {
                     name = nameTok.nextToken().trim();
-                if (nameTok.hasMoreTokens())
+                }
+                if (nameTok.hasMoreTokens()) {
                     value = nameTok.nextToken();
-                if (name == null)       // probably "::"
+                }
+                if (name == null) { // probably "::"
                     throw new IllegalArgumentException(
-                        localStrings.getLocalString("PropertyMissingName",
-                        "Invalid property syntax, missing property name",
-                        propsString));
-                if (value == null)
+                    localStrings.getLocalString("PropertyMissingName",
+                    "Invalid property syntax, missing property name",
+                    propsString));
+                }
+                if (value == null) {
                     throw new IllegalArgumentException(
                         localStrings.getLocalString("PropertyMissingValue",
                         "Invalid property syntax, missing property value",
                         token));
-                if (nameTok.hasMoreTokens())
+                }
+                if (nameTok.hasMoreTokens()) {
                     throw new IllegalArgumentException(
                         localStrings.getLocalString("PropertyExtraEquals",
                         "Invalid property syntax, \"=\" in value", token));
+                }
                 properties.setProperty(name, value);
             }
         }
@@ -507,8 +509,9 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
      */
     private static File[] convertListToFiles(List<String> filesList) {
         final File[] files = new File[filesList.size()];
-        for (int i = 0; i < filesList.size(); i++)
+        for (int i = 0; i < filesList.size(); i++) {
             files[i] = new File(filesList.get(i));
+        }
         return files;
     }
 
@@ -525,14 +528,17 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
             for (String prop : propsList) {
                 final ParamTokenizer nameTok = new ParamTokenizer(prop, '=');
                 String name = null, value = null;
-                if (nameTok.hasMoreTokens())
+                if (nameTok.hasMoreTokens()) {
                     name = nameTok.nextToken();
-                if (nameTok.hasMoreTokens())
+                }
+                if (nameTok.hasMoreTokens()) {
                     value = nameTok.nextToken();
-                if (nameTok.hasMoreTokens() || name == null || value == null)
+                }
+                if (nameTok.hasMoreTokens() || name == null || value == null) {
                     throw new IllegalArgumentException(
                         localStrings.getLocalString("InvalidPropertySyntax",
                             "Invalid property syntax.", prop));
+                }
                 properties.setProperty(name, value);
             }
         }
@@ -574,8 +580,9 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
     static String[] convertStringToStringArray(String arrayString, char sep) {
         final ParamTokenizer paramTok = new ParamTokenizer(arrayString, sep);
         List<String> strs = new ArrayList<String>();
-        while (paramTok.hasMoreTokens())
+        while (paramTok.hasMoreTokens()) {
             strs.add(paramTok.nextToken());
+        }
         return strs.toArray(new String[strs.size()]);
     }
 
@@ -596,8 +603,9 @@ public class MapInjectionResolver extends InjectionResolver<Param> {
             String[] ss = acceptable.split(",");
 
             for (String s : ss) {
-                if (paramValueStr.equals(s.trim()))
+                if (paramValueStr.equals(s.trim())) {
                     return;     // matched, value is good
+                }
             }
 
             // didn't match any, error

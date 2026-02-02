@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -12,12 +13,6 @@
  * https://www.gnu.org/software/classpath/license.html.
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
- */
-
-/*
- * RuntimeModel.java
- *
- * Created on March 10, 2000, 11:05 AM
  */
 
 package com.sun.jdo.api.persistence.model;
@@ -36,8 +31,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,11 +45,10 @@ import org.netbeans.modules.dbschema.SchemaElement;
 
 /**
  *
- * @author raccah
- * @version %I%
+ * @author raccah 2000
  */
-public class RuntimeModel extends Model
-{
+public class RuntimeModel extends Model {
+
     /** Extension of the class file, used to figure out the path for handling
      * the mapping file.
      */
@@ -90,6 +82,7 @@ public class RuntimeModel extends Model
      * @return <code>true</code> if this class name represents an interface;
      * <code>false</code> otherwise.
      */
+    @Override
     public boolean isInterface (String className)
     {
         Class classElement = (Class)getClass(className);
@@ -109,6 +102,7 @@ public class RuntimeModel extends Model
      * @return the input stream for the specified resource, <code>null</code>
      * if an error occurs or none exists
      */
+    @Override
     protected BufferedInputStream getInputStreamForResource (String className,
         ClassLoader classLoader, String resourceName)
     {
@@ -141,19 +135,22 @@ public class RuntimeModel extends Model
      * @return the top non-Object superclass for className,
      * <code>className</code> if an error occurs or none exists
      */
+    @Override
     protected String findPenultimateSuperclass (String className)
     {
         Class classElement = (Class)getClass(className);
         Class objectClass = java.lang.Object.class;
         Class testClass = null;
 
-        if (classElement == null)
+        if (classElement == null) {
             return className;
+        }
 
         while ((testClass = classElement.getSuperclass()) != null)
         {
-            if (testClass.equals(objectClass))
+            if (testClass.equals(objectClass)) {
                 break;
+            }
 
             classElement = testClass;
         }
@@ -166,12 +163,14 @@ public class RuntimeModel extends Model
      * @return the superclass for className, <code>null</code> if an error
      * occurs or none exists
      */
+    @Override
     protected String getSuperclass (String className)
     {
         Class classElement = (Class)getClass(className);
 
-        if (classElement != null)
+        if (classElement != null) {
             classElement = classElement.getSuperclass();
+        }
 
         return ((classElement != null) ? classElement.getName() : null);
     }
@@ -185,6 +184,7 @@ public class RuntimeModel extends Model
      * <code>null</code> if an error occurs or none exists
      * @see com.sun.jdo.api.persistence.model.mapping.impl.MappingClassElementImpl#forName(String, Model)
      */
+    @Override
     public MappingClassElement getMappingClass (String className,
         ClassLoader classLoader)
     {
@@ -225,6 +225,7 @@ public class RuntimeModel extends Model
     /** Returns an unmodifiable copy of the ClassLoader cache.
      * @return unmodifiable ClassLoader cache
      */
+    @Override
     public Map getClassLoaderCache ()
     {
         return Collections.unmodifiableMap(classLoaders);
@@ -238,6 +239,7 @@ public class RuntimeModel extends Model
      * are removed from the SchemaElement cache.
      * @param classLoader used to determine the classes to be removed
      */
+    @Override
     public void removeResourcesFromCaches (ClassLoader classLoader)
     {
         Collection classNames = new HashSet();
@@ -272,6 +274,7 @@ public class RuntimeModel extends Model
      * if an error occurs or none exists
      * @exception IOException if there is some error creating the file
      */
+    @Override
     protected BufferedOutputStream createFile (String className, String baseFileName,
         String extension) throws IOException
     {
@@ -306,13 +309,15 @@ public class RuntimeModel extends Model
      * @param fileName the name of the file
      * @exception IOException if there is some error deleting the file
      */
+    @Override
     protected void deleteFile (String className, String fileName)
         throws IOException
     {
         File file = getFile(className, fileName);
 
-        if ((file != null) && file.exists())
+        if ((file != null) && file.exists()) {
             file.delete();
+        }
     }
 
     /** Returns a file with the given file name which is parallel to the
@@ -347,10 +352,12 @@ public class RuntimeModel extends Model
      * @return the class element for the specified className, <code>null</code>
      * if an error occurs or none exists
      */
+    @Override
     public Object getClass (String className, ClassLoader classLoader)
     {
-        if (className == null)
+        if (className == null) {
             return null;
+        }
 
         try
         {
@@ -381,13 +388,14 @@ public class RuntimeModel extends Model
     {
         ClassLoader cached = null;
 
-        if (className == null)
+        if (className == null) {
             return null;
-        else if (className.startsWith(JAVA_PACKAGE) || isPrimitive(className))
+        } else if (className.startsWith(JAVA_PACKAGE) || isPrimitive(className)) {
             // Use current class loader for java packages or primitive types
             // - these classes cannot have the multiple class loader conflict
             // - these classes should not show up in the classLoaders map
             return getClass().getClassLoader();
+        }
 
         synchronized (classLoaders)
         {
@@ -467,8 +475,9 @@ public class RuntimeModel extends Model
                     // At least one of the class loader could not find the class.
                     // Update the classLoader map, if the specified class loader
                     // could find it, but the cached could not.
-                    if ((clazz != null) && (cachedClazz == null))
+                    if ((clazz != null) && (cachedClazz == null)) {
                         classLoaders.put(className, classLoader);
+                    }
                 }
             }
         }
@@ -487,14 +496,16 @@ public class RuntimeModel extends Model
      * <code>false</code> otherwise.
      * @see #getClass
      */
+    @Override
     public boolean implementsInterface (Object classElement,
         String interfaceName)
     {
         Class interfaceClass = (Class)getClass(interfaceName);
 
         if ((classElement == null) || !(classElement instanceof Class) ||
-            (interfaceClass == null))
+            (interfaceClass == null)) {
             return false;
+        }
 
         return interfaceClass.isAssignableFrom((Class)classElement);
     }
@@ -505,25 +516,13 @@ public class RuntimeModel extends Model
      * <code>false</code> otherwise.
      * @see #getClass
      */
-    public boolean hasConstructor (final String className)
-    {
+    @Override
+    public boolean hasConstructor(final String className) {
         final Class classElement = (Class)getClass(className);
-
-        if (classElement != null)
-        {
-            Boolean b = (Boolean)AccessController.doPrivileged(
-                new PrivilegedAction()
-            {
-                public Object run ()
-                {
-                    return JavaTypeHelper.valueOf(((Class)classElement).
-                        getDeclaredConstructors().length != 0);
-                }
-            });
-
+        if (classElement != null) {
+            Boolean b = JavaTypeHelper.valueOf(classElement.getDeclaredConstructors().length != 0);
             return b.booleanValue();
         }
-
         return false;
     }
 
@@ -537,32 +536,18 @@ public class RuntimeModel extends Model
      * @return the constructor element
      * @see #getClass
      */
-    public Object getConstructor (final String className, String[] argTypeNames)
-    {
-        final Class classElement = (Class)getClass(className);
-
-        if (classElement != null)
-        {
+    @Override
+    public Object getConstructor(final String className, String[] argTypeNames) {
+        final Class classElement = (Class) getClass(className);
+        if (classElement != null) {
             final Class[] argTypes = getTypesForNames(argTypeNames);
-
-            return AccessController.doPrivileged(new PrivilegedAction()
-            {
-                public Object run ()
-                {
-                    try
-                    {
-                        return ((Class)classElement).getDeclaredConstructor(
-                            argTypes);
-                    }
-                    catch (NoSuchMethodException ex)
-                    {
-                        // constructor not found => return null
-                        return null;
-                    }
-                }
-            });
+            try {
+                return classElement.getDeclaredConstructor(argTypes);
+            } catch (NoSuchMethodException ex) {
+                // constructor not found => return null
+                return null;
+            }
         }
-
         return null;
     }
 
@@ -577,33 +562,18 @@ public class RuntimeModel extends Model
      * @return the method element
      * @see #getClass
      */
-    public Object getMethod (final String className, final String methodName,
-        String[] argTypeNames)
-    {
-        final Class classElement = (Class)getClass(className);
-
-        if (classElement != null)
-        {
-            final Class[] argTypes =  getTypesForNames(argTypeNames);
-
-            return AccessController.doPrivileged(new PrivilegedAction()
-            {
-                public Object run ()
-                {
-                    try
-                    {
-                        return classElement.getDeclaredMethod(
-                            methodName, argTypes);
-                    }
-                    catch (NoSuchMethodException ex)
-                    {
-                        // method not found => return null
-                        return null;
-                    }
-                }
-            });
+    @Override
+    public Object getMethod(final String className, final String methodName, String[] argTypeNames) {
+        final Class classElement = (Class) getClass(className);
+        if (classElement != null) {
+            final Class[] argTypes = getTypesForNames(argTypeNames);
+            try {
+                return classElement.getDeclaredMethod(methodName, argTypes);
+            } catch (NoSuchMethodException ex) {
+                // method not found => return null
+                return null;
+            }
         }
-
         return null;
     }
 
@@ -619,6 +589,7 @@ public class RuntimeModel extends Model
      * @see #getField
      * @see #getMethod
      */
+    @Override
     public String getType (Object element)
     {
         return getNameForType(getTypeObject(element));
@@ -629,25 +600,18 @@ public class RuntimeModel extends Model
      * @param className the fully qualified name of the class to be checked
      * @return the names of the field elements for the specified class
      */
-    public List getFields (String className)
-    {
+    @Override
+    public List getFields(String className) {
         List returnList = new ArrayList();
-        final Class classElement = (Class)getClass(className);
+        final Class classElement = (Class) getClass(className);
 
-        if (classElement != null)
-        {
-            Field[] fields = (Field[]) AccessController.doPrivileged(
-                new PrivilegedAction()
-            {
-                public Object run ()
-                {
-                    return classElement.getDeclaredFields();
-                }
-            });
+        if (classElement != null) {
+            Field[] fields = classElement.getDeclaredFields();
             int i, count = fields.length;
 
-            for (i = 0; i < count; i++)
+            for (i = 0; i < count; i++) {
                 returnList.add(fields[i].getName());
+            }
         }
 
         return returnList;
@@ -660,31 +624,20 @@ public class RuntimeModel extends Model
      * @param fieldName the name of the field to be checked
      * @return the field element for the specified fieldName
      */
-    public Object getField (String className, final String fieldName)
-    {
-        final Class classElement = (Class)getClass(className);
-
-        if (classElement != null)
-        {
-            return AccessController.doPrivileged(new PrivilegedAction()
-            {
-                public Object run ()
-                {
-                    try
-                    {
-                        return classElement.getDeclaredField(fieldName);
-                    }
-                    catch (NoSuchFieldException e)
-                    {
-                        // field not found => return null;
-                        return null;
-                    }
-                }
-            });
+    @Override
+    public Object getField(String className, final String fieldName) {
+        final Class classElement = (Class) getClass(className);
+        if (classElement != null) {
+            try {
+                return classElement.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                // field not found => return null;
+                return null;
+            }
         }
-
         return null;
     }
+
 
     /** Determines if the specified field element has a serializable type.
      * A type is serializable if it is a primitive type, a class that implements
@@ -698,13 +651,15 @@ public class RuntimeModel extends Model
      * <code>false</code> otherwise.
      * @see #getField
      */
+    @Override
     public boolean isSerializable (Object fieldElement)
     {
         Class type = getTypeObject(fieldElement);
 
         // check if the topmost element type is serializable
-        while ((type != null) && type.isArray())
+        while ((type != null) && type.isArray()) {
             type = type.getComponentType();
+        }
 
         return ((type != null) ?
             (type.isPrimitive() || implementsInterface(type, SERIALIZABLE)) :
@@ -720,6 +675,7 @@ public class RuntimeModel extends Model
      * field; <code>false</code> otherwise.
      * @see #getFieldType
      */
+    @Override
     public boolean isArray (String className, String fieldName)
     {
         Object fieldElement = getField(className, fieldName);
@@ -743,12 +699,14 @@ public class RuntimeModel extends Model
      * @see #getConstructor
      * @see #getMethod
      */
+    @Override
     public String getDeclaringClass (Object memberElement)
     {
         Class classElement = null;
 
-        if ((memberElement != null) && (memberElement instanceof Member))
+        if ((memberElement != null) && (memberElement instanceof Member)) {
             classElement = ((Member)memberElement).getDeclaringClass();
+        }
 
         return ((classElement != null) ? classElement.getName() : null);
     }
@@ -767,6 +725,7 @@ public class RuntimeModel extends Model
      * @see #getConstructor
      * @see #getMethod
      */
+    @Override
     public int getModifiers (Object memberElement)
     {
         int modifiers = 0;
@@ -803,10 +762,11 @@ public class RuntimeModel extends Model
 
         if (element != null)
         {
-            if (element instanceof Field)
+            if (element instanceof Field) {
                 type = ((Field)element).getType();
-            else if (element instanceof Method)
+            } else if (element instanceof Method) {
                 type = ((Method)element).getReturnType();
+            }
         }
 
         return type;
@@ -822,9 +782,9 @@ public class RuntimeModel extends Model
             {
                 typeName = getNameForType(
                     type.getComponentType()) + "[]";    // NOI18N
-            }
-            else
+            } else {
                 typeName = type.getName();
+            }
         }
 
         return typeName;
@@ -836,8 +796,9 @@ public class RuntimeModel extends Model
     {
         Class[] classes = new Class[typeNames.length];
 
-        for (int i = 0; i < classes.length; i++)
+        for (int i = 0; i < classes.length; i++) {
             classes[i] = getTypeForName(typeNames[i]);
+        }
 
         return classes;
     }
@@ -849,8 +810,9 @@ public class RuntimeModel extends Model
     {
         Class clazz = JavaTypeHelper.getPrimitiveClass(typeName);
 
-        if (clazz == null)
+        if (clazz == null) {
             clazz = (Class)getClass(typeName);
+        }
 
         return clazz;
     }

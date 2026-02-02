@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -16,8 +17,6 @@
 
 package com.sun.jdo.spi.persistence.utility.logging;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.FileHandler;
@@ -70,36 +69,27 @@ public class LoggerFactoryJDK14 extends AbstractLoggerFactory {
      * @param loader the class loader used to load the resource bundle, or null
      * @return the logger
      */
+    @Override
     protected Logger createLogger (final String absoluteLoggerName,
         final String bundleName, final ClassLoader loader) {
-        return (Logger) AccessController.doPrivileged (
-            new PrivilegedAction () {
-                public Object run () {
-                    LoggerJDK14 logger = null;
-                    ClassLoader pushed = Thread.currentThread().getContextClassLoader();
-                    if(loader!=null) {
-                        setContextClassLoader (loader);
-                    }
-                    try {
-                        logger = createLogger(absoluteLoggerName, bundleName);
-                        LogManager.getLogManager().addLogger(logger);
-                        configureFileHandler(logger);
+        LoggerJDK14 logger = null;
+        ClassLoader pushed = Thread.currentThread().getContextClassLoader();
+        if (loader != null) {
+            setContextClassLoader(loader);
+        }
+        try {
+            logger = createLogger(absoluteLoggerName, bundleName);
+            LogManager.getLogManager().addLogger(logger);
+            configureFileHandler(logger);
 
-                        return logger;
-                    } catch (Exception ex) {
-                          MessageFormat messageFormat = new MessageFormat(
-                              getMessages().getString("errorlogger.create.exception"));
-
-                          getErrorLogger().log(Logger.SEVERE, messageFormat.format(
-                              new String[]{absoluteLoggerName}), ex);
-                    } finally {
-                        setContextClassLoader (pushed);
-                    }
-
-                    return logger;
-                }
-            }
-        );
+            return logger;
+        } catch (Exception ex) {
+            MessageFormat messageFormat = new MessageFormat(getMessages().getString("errorlogger.create.exception"));
+            getErrorLogger().log(Logger.SEVERE, messageFormat.format(new String[] {absoluteLoggerName}), ex);
+        } finally {
+            setContextClassLoader(pushed);
+        }
+        return logger;
     }
 
     /**
@@ -141,8 +131,9 @@ public class LoggerFactoryJDK14 extends AbstractLoggerFactory {
             if(limit != null) {
                 try {
                     defaultLimit = Integer.parseInt(limit);
-                    if(defaultLimit < 0)
+                    if(defaultLimit < 0) {
                         defaultLimit = 0;
+                    }
                 }
                 catch (NumberFormatException e) {
                 }
@@ -153,8 +144,9 @@ public class LoggerFactoryJDK14 extends AbstractLoggerFactory {
             if(count != null) {
                 try {
                     defaultCount = Integer.parseInt(count);
-                    if(defaultCount < 1)
+                    if(defaultCount < 1) {
                         defaultCount = 1;
+                    }
                 }
                 catch (NumberFormatException e) {
                 }

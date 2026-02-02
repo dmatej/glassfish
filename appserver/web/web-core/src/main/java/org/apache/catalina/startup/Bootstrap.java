@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2025, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997-2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright 2004 The Apache Software Foundation
  *
@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.catalina.LogFacade;
-import org.apache.catalina.security.SecurityClassLoad;
 
 import static org.glassfish.main.jdke.props.SystemProperties.setProperty;
 
@@ -168,8 +167,6 @@ public final class Bootstrap {
         initClassLoaders();
 
         Thread.currentThread().setContextClassLoader(catalinaLoader);
-
-        SecurityClassLoad.securityClassLoad(catalinaLoader);
 
         // Load our startup class and call its process() method
         if (log.isLoggable(Level.FINE)) {

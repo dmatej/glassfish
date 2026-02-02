@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -31,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -97,16 +96,10 @@ public class ClassLoaderHierarchyImpl implements ClassLoaderHierarchy {
     @Override
     public DelegatingClassLoader getConnectorClassLoader(String application) {
         // For distributions where connector module (connector CL) is not available, use empty classloader with parent
-        if(connectorCLS != null){
-            return connectorCLS.getConnectorClassLoader(application);
-        }else{
-            return AccessController.doPrivileged(new PrivilegedAction<DelegatingClassLoader>() {
-                @Override
-                public DelegatingClassLoader run() {
-                    return new DelegatingClassLoader(commonCLS.getCommonClassLoader());
-                }
-            });
+        if (connectorCLS == null) {
+            return new DelegatingClassLoader(commonCLS.getCommonClassLoader());
         }
+        return connectorCLS.getConnectorClassLoader(application);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2013, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -46,16 +46,6 @@ public class SecurityLoggerInfo {
             action = "Check the server logs and contact support.",
             level = "WARNING")
     public static final String securityExceptionError = LOGMSG_PREFIX + "-01000";
-
-    @LogMessageInfo(
-            message = "Java security manager is enabled.",
-            level = "INFO")
-    public static final String secMgrEnabled = LOGMSG_PREFIX + "-01001";
-
-    @LogMessageInfo(
-            message = "Java security manager is disabled.",
-            level = "INFO")
-    public static final String secMgrDisabled = LOGMSG_PREFIX + "-01002";
 
     @LogMessageInfo(
             message = "An I/O error occurred during copying of server config files.",

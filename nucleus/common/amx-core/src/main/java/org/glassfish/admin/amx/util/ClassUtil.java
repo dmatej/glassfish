@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,13 +21,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
 
 /*
-Used internally.
+ * Used internally.
  */
 final class ClassToClassMapping
 {
@@ -618,7 +617,7 @@ public final class ClassUtil
         {
             // count how deep the array is
             int depth = 0;
-            while (type.charAt(depth) == (int) '[')
+            while (type.charAt(depth) == '[')
             {
                 ++depth;
             }
@@ -1199,24 +1198,13 @@ public final class ClassUtil
 
     }
 
-    public static Package[] getPackages()
-    {
-        return AccessController.doPrivileged(new PrivilegedAction<MyClassLoader>() {
-            @Override
-            public MyClassLoader run() {
-                return new MyClassLoader();
-            }
-        }).getPackages();
+    public static Package[] getPackages() {
+        return new MyClassLoader().getPackages();
     }
 
-    public static Package[] getPackages(final ClassLoader cl)
-    {
-        return AccessController.doPrivileged(new PrivilegedAction<MyClassLoader>() {
-            @Override
-            public MyClassLoader run() {
-                return new MyClassLoader(cl);
-            }
-        }).getPackages();
+
+    public static Package[] getPackages(final ClassLoader cl) {
+        return new MyClassLoader(cl).getPackages();
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -195,15 +195,7 @@ public class LifecycleModuleService implements PreDestroy, PostConstruct, EventL
 
     private void resetClassLoader(final ClassLoader c) {
          // set the common class loader as the thread context class loader
-        java.security.AccessController.doPrivileged(
-            new java.security.PrivilegedAction() {
-                @Override
-                public Object run() {
-                    Thread.currentThread().setContextClassLoader(c);
-                    return null;
-                }
-            }
-        );
+        Thread.currentThread().setContextClassLoader(c);
     }
 
     private void sortModules(HashSet listenerSet) {

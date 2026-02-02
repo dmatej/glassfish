@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2010, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -80,7 +80,6 @@ public class CLIBootstrap {
     static final String ENV_VAR_PROP_PREFIX = "acc.";
 
 
-    private final static String SECURITY_POLICY_PROPERTY_EXPR = "-Djava.security.policy=";
     private final static String SECURITY_AUTH_LOGIN_CONFIG_PROPERTY_EXPR = "-Djava.security.auth.login.config=";
     private final static String SYSPROP_SYSTEM_CLASS_LOADER = "-Djava.system.class.loader=";
 
@@ -291,7 +290,6 @@ public class CLIBootstrap {
         command.append(' ').append(SYSPROP_SYSTEM_CLASS_LOADER).append("org.glassfish.appclient.client.acc.agent.ACCAgentClassLoader");
         command.append(' ').append("-D").append(INSTALL_ROOT.getSystemPropertyName()).append('=').append(quote(gfInfo.home().getAbsolutePath()));
         command.append(' ').append("-Dorg.glassfish.gmbal.no.multipleUpperBoundsException=true");
-        command.append(' ').append(SECURITY_POLICY_PROPERTY_EXPR).append(quote(gfInfo.securityPolicy().getAbsolutePath()));
         command.append(' ').append(SECURITY_AUTH_LOGIN_CONFIG_PROPERTY_EXPR).append(quote(gfInfo.loginConfig().toExternalForm()));
     }
 
@@ -902,10 +900,6 @@ public class CLIBootstrap {
          */
         String agentJarPath() {
             return new File(lib, "gf-client.jar").getAbsolutePath();
-        }
-
-        File securityPolicy() {
-            return new File(libAppclient, "client.policy");
         }
 
         URL loginConfig() {

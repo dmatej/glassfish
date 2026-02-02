@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -19,15 +19,8 @@ package org.glassfish.config.support;
 import com.sun.enterprise.security.store.DomainScopedPasswordAliasStore;
 import com.sun.enterprise.util.SystemPropertyConstants;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.security.AccessController;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivilegedAction;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,10 +88,11 @@ public class TranslatedConfigView implements ConfigView {
             if (stringValue.indexOf('$') == -1) {
                 return value;
             }
-            if (domainPasswordAliasStore() != null) {
+            DomainScopedPasswordAliasStore dasPasswordAliasStore = domainPasswordAliasStore();
+            if (dasPasswordAliasStore != null) {
                 if (getAlias(stringValue) != null) {
                     try {
-                        return getRealPasswordFromAlias(stringValue);
+                        return getRealPasswordFromAlias(stringValue, dasPasswordAliasStore);
                     } catch (Exception e) {
                         Logger.getAnonymousLogger()
                                 .severe(Strings.get("TranslatedConfigView.aliaserror", stringValue, e.getLocalizedMessage()));
@@ -198,16 +192,8 @@ public class TranslatedConfigView implements ConfigView {
         habitat = h;
     }
 
-    private static DomainScopedPasswordAliasStore domainPasswordAliasStore = null;
-
     private static DomainScopedPasswordAliasStore domainPasswordAliasStore() {
-        domainPasswordAliasStore = AccessController.doPrivileged(new PrivilegedAction<DomainScopedPasswordAliasStore>() {
-            @Override
-            public DomainScopedPasswordAliasStore run() {
-                return habitat.getService(DomainScopedPasswordAliasStore.class);
-            }
-        });
-        return domainPasswordAliasStore;
+        return habitat.getService(DomainScopedPasswordAliasStore.class);
     }
 
     /**
@@ -234,18 +220,14 @@ public class TranslatedConfigView implements ConfigView {
         return aliasName;
     }
 
-    public static String getRealPasswordFromAlias(final String at)
-            throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
+    private static String getRealPasswordFromAlias(final String at, DomainScopedPasswordAliasStore dasPwdAliasStore) {
         final String an = getAlias(at);
-        final boolean exists = domainPasswordAliasStore.containsKey(an);
+        final boolean exists = dasPwdAliasStore.containsKey(an);
         if (!exists) {
-
-            final String msg = String.format("Alias  %s does not exist", an);
-            throw new IllegalArgumentException(msg);
+            throw new IllegalArgumentException(String.format("Alias  %s does not exist", an));
         }
-        final String real = new String(domainPasswordAliasStore.get(an));
-        return (real);
+        return new String(dasPwdAliasStore.get(an));
     }
 
 }

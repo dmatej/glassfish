@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -26,8 +26,6 @@ import com.sun.enterprise.module.single.StaticModulesRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,18 +117,14 @@ public class CustomizationTokensProvider {
         final File ext = new File(inst, "modules");
         LOG.log(Level.FINE, "asadmin modules directory: {0}", ext);
         if (ext.isDirectory()) {
-            PrivilegedAction<Void> action = () -> {
-                try {
-                    GlassfishUrlClassLoader classLoader = new GlassfishUrlClassLoader("HK2Modules", getJars(ext));
-                    ModulesRegistry registry = new StaticModulesRegistry(classLoader);
-                    locator = registry.createServiceLocator("default");
-                } catch (IOException ex) {
-                    // any failure here is fatal
-                    LOG.log(Level.SEVERE, ConfigApiLoggerInfo.MODULES_CL_FAILED, ex);
-                }
-                return null;
-            };
-            AccessController.doPrivileged(action);
+            try {
+                GlassfishUrlClassLoader classLoader = new GlassfishUrlClassLoader("HK2Modules", getJars(ext));
+                ModulesRegistry registry = new StaticModulesRegistry(classLoader);
+                locator = registry.createServiceLocator("default");
+            } catch (IOException ex) {
+                // any failure here is fatal
+                LOG.log(Level.SEVERE, ConfigApiLoggerInfo.MODULES_CL_FAILED, ex);
+            }
         } else {
             LOG.log(Level.FINER, "Modules directory does not exist");
         }

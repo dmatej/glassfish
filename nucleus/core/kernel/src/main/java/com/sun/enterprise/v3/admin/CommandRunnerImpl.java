@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2008, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -47,7 +47,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -467,14 +466,7 @@ public class CommandRunnerImpl implements CommandRunner<AdminCommandJob> {
             return;
         }
 
-        ClassLoader cl = System.getSecurityManager() == null ? Thread.currentThread().getContextClassLoader()
-            : AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-
-                    @Override
-                    public ClassLoader run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                });
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(org.hibernate.validator.HibernateValidator.class.getClassLoader());
             ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -1038,16 +1030,8 @@ public class CommandRunnerImpl implements CommandRunner<AdminCommandJob> {
      */
     static boolean skipValidation(AdminCommand command) {
         try {
-            final Field f =
-                    command.getClass().getDeclaredField("skipParamValidation");
-            AccessController.doPrivileged(new PrivilegedAction<Object>() {
-
-                @Override
-                public Object run() {
-                    f.setAccessible(true);
-                    return null;
-                }
-            });
+            final Field f = command.getClass().getDeclaredField("skipParamValidation");
+            f.setAccessible(true);
             if (f.getType().isAssignableFrom(boolean.class)) {
                 return f.getBoolean(command);
             }
@@ -1629,17 +1613,9 @@ public class CommandRunnerImpl implements CommandRunner<AdminCommandJob> {
             // look for the name in the list of parameters passed.
             if (target instanceof Field) {
                 final Field targetField = (Field) target;
+                targetField.setAccessible(true);
                 try {
-                    Field sourceField =
-                            parameters.getClass().getField(targetField.getName());
-                    AccessController.doPrivileged(new PrivilegedAction<Object>() {
-
-                        @Override
-                        public Object run() {
-                            targetField.setAccessible(true);
-                            return null;
-                        }
-                    });
+                    Field sourceField = parameters.getClass().getField(targetField.getName());
                     Object paramValue = sourceField.get(parameters);
 
                     /*

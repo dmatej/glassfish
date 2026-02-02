@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2006, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -16,19 +17,27 @@
 
 package com.sun.security.auth.message.config;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import jakarta.security.auth.message.AuthException;
+import jakarta.security.auth.message.AuthStatus;
+import jakarta.security.auth.message.MessageInfo;
+import jakarta.security.auth.message.MessagePolicy;
+import jakarta.security.auth.message.config.AuthConfigFactory;
+import jakarta.security.auth.message.config.AuthConfigProvider;
+import jakarta.security.auth.message.config.ClientAuthConfig;
+import jakarta.security.auth.message.config.ClientAuthContext;
+import jakarta.security.auth.message.config.ServerAuthConfig;
+import jakarta.security.auth.message.config.ServerAuthContext;
+import jakarta.security.auth.message.module.ServerAuthModule;
+
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import java.security.AccessController;
-
-import javax.security.auth.callback.CallbackHandler;
-import jakarta.security.auth.message.*;
-import jakarta.security.auth.message.config.*;
-import jakarta.security.auth.message.module.*;
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
 
 /**
  * This interface is implemented by objects that can be used to obtain
@@ -199,12 +208,14 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
         return rvalue;
     }
 
+    @Override
     public ClientAuthConfig getClientAuthConfig
     (String layer, String appContext, CallbackHandler handler)
         throws AuthException {
             throw new AuthException("Not implemented");
     }
 
+    @Override
     public ServerAuthConfig getServerAuthConfig
         (String layer, String appContext, CallbackHandler handler)
         throws AuthException {
@@ -267,6 +278,7 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
         return sSAC;
     }
 
+    @Override
     public void refresh() {
     }
 
@@ -311,48 +323,22 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
             this.options = options;
 
             try {
-
-                modules  = (ServerAuthModule[]) AccessController.doPrivileged
-
-                (new java.security.PrivilegedExceptionAction() {
-
-                    public Object run() throws
-
-                        java.lang.ClassNotFoundException,
-                        java.lang.NoSuchMethodException,
-                        java.lang.InstantiationException,
-                        java.lang.IllegalAccessException,
-                        java.lang.reflect.InvocationTargetException {
-
-                        ClassLoader loader =
-                            Thread.currentThread().getContextClassLoader();
-
-                        Class c = Class.forName(clazz, true, loader);
-
-                        java.lang.reflect.Constructor constructor =
-                            c.getConstructor(PARAMS);
-
-                        return new ServerAuthModule[]
-                            { (ServerAuthModule) constructor.newInstance(ARGS),
-                              (ServerAuthModule) constructor.newInstance(ARGS)
-                            };
-                    }
-
-                });
-
-            } catch (java.security.PrivilegedActionException pae) {
-                AuthException ae = new AuthException();
-                ae.initCause(pae.getCause());
-                throw ae;
+                ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                Class<?> c = Class.forName(clazz, true, loader);
+                Constructor<?> constructor = c.getConstructor(PARAMS);
+                modules = new ServerAuthModule[] {(ServerAuthModule) constructor.newInstance(ARGS),
+                    (ServerAuthModule) constructor.newInstance(ARGS)};
+            } catch (Exception e) {
+                throw new AuthException(e);
             }
 
-            System.out.println("created ServletServerAuthConfig: " +
-                               appContext + " " + clazz);
+            System.out.println("created ServletServerAuthConfig: " + appContext + " " + clazz);
 
             mandatoryContext = null;
             optionalContext = null;
         }
 
+        @Override
         public ServerAuthContext
         getAuthContext(String authContextID, Subject serviceSubject,
                        Map properties) throws AuthException {
@@ -400,14 +386,17 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
             return rvalue;
         }
 
+        @Override
         public String getMessageLayer() {
             return HTTP_SERVLET_LAYER;
         }
 
+        @Override
         public String getAppContext() {
             return this.appContext;
         }
 
+        @Override
         public String getAuthContextID(MessageInfo messageInfo) {
             if (messageInfo.getMap().containsKey(MANDATORY_KEY)) {
                 return MANDATORY_CONTEXT_ID;
@@ -416,9 +405,11 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
             }
         }
 
+        @Override
         public void refresh() {
         }
 
+        @Override
         public boolean isProtected() {
             return true;
         }
@@ -443,6 +434,7 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
             ServletProtectionPolicy() {
             }
 
+            @Override
             public String getID() {
                 return MessagePolicy.ProtectionPolicy.AUTHENTICATE_SENDER;
             }
@@ -462,6 +454,7 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
             this.module = module;
         }
 
+        @Override
         public AuthStatus validateRequest
             (MessageInfo messageInfo, Subject clientSubject,
              Subject serviceSubject) throws AuthException {
@@ -469,12 +462,14 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
                      (messageInfo,clientSubject,serviceSubject);
         }
 
+        @Override
         public AuthStatus secureResponse
              (MessageInfo messageInfo, Subject serviceSubject)
             throws AuthException {
                 return module.secureResponse(messageInfo,serviceSubject);
         }
 
+        @Override
         public void cleanSubject(MessageInfo messageInfo, Subject subject)
             throws AuthException {
                 module.cleanSubject(messageInfo,subject);
@@ -483,9 +478,3 @@ public class ServletAuthConfigProvider implements AuthConfigProvider {
     }
 
 }
-
-
-
-
-
-

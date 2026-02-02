@@ -90,7 +90,6 @@
                 <property name="clientCmdLineString">${glassfish.home}/glassfish/bin/appclient \
                     -Djdk.tls.client.enableSessionTicketExtension=false \
                     -Djdk.tls.server.enableSessionTicketExtension=false \
-                    -Djava.security.policy=${glassfish.lib.dir}/appclient/client.policy \
                     -Dcts.tmp=${ts.home}/tmp \
                     -Djava.security.auth.login.config=${glassfish.lib.dir}/appclient/appclientlogin.conf \
                     -Djava.protocol.handler.pkgs=javax.net.ssl \

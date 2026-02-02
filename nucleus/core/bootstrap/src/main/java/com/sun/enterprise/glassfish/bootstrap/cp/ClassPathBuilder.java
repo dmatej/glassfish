@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,8 +22,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,11 +88,8 @@ final class ClassPathBuilder {
 
 
     ClassLoader build(final ClassLoader parent) {
-        PrivilegedAction<GlassfishUrlClassLoader> action = () -> {
-            URL[] urls = files.stream().map(ClassPathBuilder::toURL).toArray(URL[]::new);
-            return new GlassfishUrlClassLoader("OSGi", urls, parent);
-        };
-        return AccessController.doPrivileged(action);
+        URL[] urls = files.stream().map(ClassPathBuilder::toURL).toArray(URL[]::new);
+        return new GlassfishUrlClassLoader("OSGi", urls, parent);
     }
 
 

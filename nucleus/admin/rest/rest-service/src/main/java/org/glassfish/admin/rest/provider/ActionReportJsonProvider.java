@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -24,8 +25,6 @@ import jakarta.ws.rs.ext.Provider;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -148,21 +147,16 @@ public class ActionReportJsonProvider extends BaseProvider<ActionReporter> {
     }
 
     protected <T> T getFieldValue(final ActionReporter ar, final String name, final T type) {
-        return AccessController.doPrivileged(new PrivilegedAction<T>() {
-            @Override
-            public T run() {
-                T value = null;
-                try {
-                    final Class<?> clazz = ar.getClass().getSuperclass();
-                    final Field field = clazz.getDeclaredField(name);
-                    field.setAccessible(true);
-                    value = (T) field.get(ar);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-                return value;
-            }
-        });
+        T value = null;
+        try {
+            final Class<?> clazz = ar.getClass().getSuperclass();
+            final Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            value = (T) field.get(ar);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return value;
     }
 
     protected String decodeEol(String str) {

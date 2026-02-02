@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2006, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -46,8 +46,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -150,9 +148,8 @@ public class WebServicesDeployer extends JavaEEDeployer<WebServicesContainer, We
             final String moduleCP = getModuleClassPath(dc);
             final List<URL> moduleCPUrls = ASClassLoaderUtil.getURLsFromClasspath(moduleCP, File.pathSeparator, null);
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            PrivilegedAction<URLClassLoader> action = () -> new GlassfishUrlClassLoader("WebServicesDeployer(" + app.getName() + ")",
+            URLClassLoader newCl = new GlassfishUrlClassLoader("WebServicesDeployer(" + app.getName() + ")",
                 ASClassLoaderUtil.convertURLListToArray(moduleCPUrls), oldCl);
-            URLClassLoader newCl = AccessController.doPrivileged(action);
 
             Thread.currentThread().setContextClassLoader(newCl);
             WebServicesDescriptor wsDesc = bundle.getWebServices();
@@ -167,9 +164,7 @@ public class WebServicesDeployer extends JavaEEDeployer<WebServicesContainer, We
             bean.deploy(wsDesc, notifier);
             return true;
         } catch (Exception ex) {
-            RuntimeException re = new RuntimeException(ex.getMessage());
-            re.initCause(ex);
-            throw re;
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 

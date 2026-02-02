@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Eclipse Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -19,8 +19,6 @@ package org.glassfish.main.jul;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -519,12 +517,8 @@ public class GlassFishLogManager extends LogManager {
 
 
     private boolean callJULAddLogger(final GlassFishLogger newLogger) {
-        if (System.getSecurityManager() == null) {
-            return super.addLogger(newLogger);
-        }
         // CORBA and IMQ stand aside
-        PrivilegedAction<Boolean> action = () -> super.addLogger(newLogger);
-        return AccessController.doPrivileged(action);
+        return super.addLogger(newLogger);
     }
 
 

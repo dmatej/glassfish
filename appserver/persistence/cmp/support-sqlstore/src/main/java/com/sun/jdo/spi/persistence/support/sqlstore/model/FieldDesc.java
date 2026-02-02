@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,15 +15,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * FieldDesc.java
- *
- * Created on March 3, 2000
- *
- */
-
 package com.sun.jdo.spi.persistence.support.sqlstore.model;
-
 
 import com.sun.jdo.api.persistence.support.JDOFatalUserException;
 import com.sun.jdo.api.persistence.support.JDOUserException;
@@ -632,21 +625,16 @@ public abstract class FieldDesc implements java.io.Serializable {
     //
 
     void setupDesc(final Class classType, final String name) {
+        Field field;
+        try {
+            field = classType.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            throw new JDOFatalUserException(I18NHelper.getMessage(messages,
+                "core.configuration.loadfailed.field", // NOI18N
+                name, classType.getName()), e);
+        }
 
-        Field f = (Field) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        try {
-                            return classType.getDeclaredField(name);
-                        } catch (NoSuchFieldException e) {
-                            throw new JDOFatalUserException(I18NHelper.getMessage(messages,
-                            "core.configuration.loadfailed.field", // NOI18N
-                            name, classType.getName()), e);
-                        }
-                    }
-                });
-
-        setupDesc(f);
+        setupDesc(field);
     }
 
     protected void setupDesc(Field f) {

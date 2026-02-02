@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 1995-1997 IBM Corp. All rights reserved.
  *
@@ -15,21 +16,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//----------------------------------------------------------------------------
-//
-// Module:      LogHandle.java
-//
-// Description: Log file handle.
-//
-// Product:     com.sun.jts.CosTransactions
-//
-// Author:      Simon Holdsworth
-//
-// Date:        March, 1997
-//----------------------------------------------------------------------------
-
 package com.sun.jts.CosTransactions;
-
 
 import com.sun.enterprise.util.i18n.StringManager;
 
@@ -43,16 +30,9 @@ import java.util.Hashtable;
  *
  * @version 0.01
  *
- * @author Simon Holdsworth, IBM Corporation
+ * @author Simon Holdsworth, IBM Corporation 1997
  *
- * @see
 */
-//----------------------------------------------------------------------------
-// CHANGE HISTORY
-//
-// Version By     Change Description
-//   0.01  SAJH   Initial implementation.
-//-----------------------------------------------------------------------------
 
 class LogHandle {
     private static final StringManager sm = StringManager.getManager(LogHandle.class);
@@ -262,28 +242,33 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // IF ReadOnly log
         //   Return LOG_READ_ONLY_ACCESS
 
-        if( logControl.logReadOnly )
+        if( logControl.logReadOnly ) {
             throw new LogException(null,LogException.LOG_READ_ONLY_ACCESS,3);
+        }
 
         // Sanity check the recordType and writeMode parameters
 
-        if( recordType > RECORD_TYPE_MAX )
+        if( recordType > RECORD_TYPE_MAX ) {
             throw new LogException(null,LogException.LOG_INVALID_RECORDTYPE,5);
+        }
 
-        if( writeMode != FORCE && writeMode != BUFFER )
+        if( writeMode != FORCE && writeMode != BUFFER ) {
             throw new LogException(null,LogException.LOG_INVALID_WRITEMODE,6);
+        }
 
         // Calculate the total size of the log record by totalling size of all
         // input buffers together with the record header and record ending
@@ -295,8 +280,9 @@ class LogHandle {
         //   Unlock the log file latch
         //   Return LOG_RECORD_TOO_LARGE
 
-        if( recordSize > MAX_RECORD_SIZE )
+        if( recordSize > MAX_RECORD_SIZE ) {
             throw new LogException(null,LogException.LOG_RECORD_TOO_LARGE,7);
+        }
 
         // Calculate the remaining space in the current extent by subtracting
         // (log head LSN's offset + 2*LOG_HEADER_SIZE + LOG_ENDING_SIZE) from
@@ -326,15 +312,17 @@ class LogHandle {
             //   if it has, throw an exception.
 
             int nextExtent = logControlDescriptor.headLSN.extent+1;
-            if( nextExtent < 0 )
+            if( nextExtent < 0 ) {
                 throw new LogException(null,LogException.LOG_WRITE_FAILURE,8);
+            }
 
             // If the new extent file is already open, there is nothing we can do but
             // fail.  We cannot run the short-on-storage upcall to try to free the
             // extent as the upcall needs to write information to the offending extent.
 
-            if( extentTable.containsKey(LogExtent.modExtent(nextExtent)) )
+            if( extentTable.containsKey(LogExtent.modExtent(nextExtent)) ) {
                 throw new LogException(null,LogException.LOG_WRITE_FAILURE,9);
+            }
 
             // Create link record containing
             // - the LSN of the link record (i.e. its own LSN)
@@ -446,9 +434,9 @@ class LogHandle {
 
         boolean cushionFreed = false;
 
-        if( chunkRemaining > recordSize )
+        if( chunkRemaining > recordSize ) {
             chunkRemaining -= recordSize;
-        else {
+        } else {
 
             // CALCULATE the size of disk space to grab
 
@@ -457,8 +445,9 @@ class LogHandle {
             // IF there is NOT enough space in current extent
             //   Set the Grab size to be the size of the remaining extent
 
-            if( grabSize + logControlDescriptor.nextLSN.offset > MAX_EXTENT_SIZE )
+            if( grabSize + logControlDescriptor.nextLSN.offset > MAX_EXTENT_SIZE ) {
                 grabSize = MAX_EXTENT_SIZE - logControlDescriptor.nextLSN.offset;
+            }
 
 
             // Set the Allocate success flag to FALSE;
@@ -491,8 +480,9 @@ class LogHandle {
                             freeCushion();
                             cushionFreed = true;
                         } else {
-                            if( cushionFreed )
+                            if( cushionFreed ) {
                                 restoreCushion(false);
+                            }
 
                             throw new LogException(LogException.LOG_NO_SPACE,11, null, le);
                         }
@@ -500,9 +490,9 @@ class LogHandle {
                         try {
                             logEDP = positionFilePointer(logControlDescriptor.nextLSN,0,LogExtent.ACCESSTYPE_WRITE);
                         } catch( Throwable e ) {};
-                    }
-                    else
+                    } else {
                         allocateSuccess = false;
+                    }
                 }
                 allocateSuccess = true;
             }
@@ -537,7 +527,7 @@ class LogHandle {
             Enumeration extents = extentTable.elements();
             while( extents.hasMoreElements() ) {
                 LogExtent nextEDP = (LogExtent)extents.nextElement();
-                if( nextEDP.writtenSinceLastForce )
+                if( nextEDP.writtenSinceLastForce ) {
                     try {
                         nextEDP.fileHandle.fileSync();
                         nextEDP.writtenSinceLastForce = false;
@@ -545,6 +535,7 @@ class LogHandle {
                         throw new LogException(LogException.LOG_ERROR_FORCING_LOG, 14,
                                 sm.getString("jts.log_file_sync_failed"), le);
                     }
+                }
             }
         }
 
@@ -571,8 +562,9 @@ class LogHandle {
             recordsWritten = 0;
         }
 
-        if( cushionFreed )
+        if( cushionFreed ) {
             restoreCushion(true);
+        }
 
         // Return the written LSN as the result of the write operation.
 
@@ -603,21 +595,24 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // IF the log file is empty (head LSN equal to LOG_NULL_LSN)
         //   Unlock the log file latch
         //   Return LOG_INVALID_LSN
 
-        if( logControlDescriptor.headLSN.isNULL() )
+        if( logControlDescriptor.headLSN.isNULL() ) {
             throw new LogException(null,LogException.LOG_INVALID_LSN,3);
+        }
 
         // IF the lsn specified is LOG_HEAD_LSN or LOG_TAIL_LSN
         //   substitute the current head or tail LSN from the
@@ -631,15 +626,16 @@ class LogHandle {
 
         LogLSN lsn;
 
-        if( readLSN.equals(LogLSN.HEAD_LSN) )
+        if( readLSN.equals(LogLSN.HEAD_LSN) ) {
             lsn = logControlDescriptor.headLSN;
-        else if( readLSN.equals(LogLSN.TAIL_LSN) )
+        } else if( readLSN.equals(LogLSN.TAIL_LSN) ) {
             lsn = logControlDescriptor.tailLSN;
-        else if( readLSN.lessThan(logControlDescriptor.tailLSN) ||
-                 readLSN.greaterThan(logControlDescriptor.headLSN) )
+        } else if( readLSN.lessThan(logControlDescriptor.tailLSN) ||
+                 readLSN.greaterThan(logControlDescriptor.headLSN) ) {
             throw new LogException(null,LogException.LOG_INVALID_LSN,4);
-        else
+        } else {
             lsn = readLSN;
+        }
 
         // Position the file pointer to the LSN specified
         // IF not successful allow the error to pass to the caller.
@@ -672,8 +668,9 @@ class LogHandle {
         //   Return LOG_INVALID_LSN
 
         if( logRH.recordType == LINK ||
-            !logRH.currentLSN.equals(lsn)  )
+            !logRH.currentLSN.equals(lsn)  ) {
             throw new LogException(null,LogException.LOG_INVALID_LSN,7);
+        }
 
         // Set up a 2-element iovec array to enable the log record data and record
         // ending to be read into a separate buffers
@@ -701,8 +698,9 @@ class LogHandle {
         //   Unlock the log file latch
         //   Return LOG_CORRUPTED
 
-        if( !logRE.currentLSN.equals(lsn) )
+        if( !logRE.currentLSN.equals(lsn) ) {
             throw new LogException(null,LogException.LOG_CORRUPTED,10);
+        }
 
         // Copy the returned number of bytes into the recordLengthP parameter and
         // the record type value into the recordTypeP parameter.
@@ -730,32 +728,37 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // IF ReadOnly log
         //   Return LOG_READ_ONLY_ACCESS
 
-        if( logControl.logReadOnly )
+        if( logControl.logReadOnly ) {
             throw new LogException(null,LogException.LOG_READ_ONLY_ACCESS,3);
+        }
 
         // IF the bufferLength parameter is greater than LOG_MAX_RESTART_RECORD_SIZE
         //   Return LOG_RECORD_TOO_LARGE
 
-        if( buffer.length > MAX_RESTART_SIZE )
+        if( buffer.length > MAX_RESTART_SIZE ) {
             throw new LogException(null,LogException.LOG_RECORD_TOO_LARGE,4);
+        }
 
         // Check BlockValid field in Log_FileDescriptor block pointed to
         // by logHandle parameter, and ensure it is still valid
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,5);
+        }
 
         // Use the value in ActiveRestartVersion field showing which is the active
         // to determine which is the alternate restart record
@@ -819,27 +822,31 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // Check BlockValid field in Log_FileDescriptor block pointed to
         // by logHandle parameter, and ensure it is still valid
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,3);
+        }
 
         // IF there is no restart data (restart length in Log_FileDescriptor
         //   block is zero)
         //   Return LOG_NO_RESTART_RECORD
 
-        if( restartDataLength == 0 )
+        if( restartDataLength == 0 ) {
             return new byte[0];
+        }
 
         // Use the ActiveRestartVersion field in the Log_FileDescriptor block
         // to find out which restart record is currently the active one and
@@ -878,8 +885,9 @@ class LogHandle {
 
         if( logRD.restartValid != restartOffset ||
             logRD.restartDataLength != restartDataLength ||
-            !logRD.equals(logRDEnd) )
+            !logRD.equals(logRDEnd) ) {
             throw new LogException(null,LogException.LOG_CORRUPTED,7);
+        }
 
         // Copy the restart data length from Log_RestartDescriptor block into
         // the callers recordLengthP parameter
@@ -904,14 +912,16 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // Set the block valid to NULL
 
@@ -944,17 +954,11 @@ class LogHandle {
             // If deletion of the logfile was requested, delete it.
             //Start IASRI 4720539
             if( deleteFile ){
-                //if( !logEDP.file.delete() )
                 final LogExtent tmplogEDP =  logEDP;
-                Boolean isdeleted = (Boolean) java.security.AccessController.doPrivileged(
-                    new java.security.PrivilegedAction() {
-                        public Object run(){
-                            return tmplogEDP.file.delete();
-                        }
-                    }
-                );
-                if(!isdeleted.booleanValue())
+                Boolean isdeleted =  tmplogEDP.file.delete();
+                if(!isdeleted.booleanValue()) {
                     throw new LogException(null,LogException.LOG_CLOSE_FAILURE,6);
+                }
 
             }
             //End IASRI 4720539
@@ -972,8 +976,9 @@ class LogHandle {
         //   IF not successful allow the error to pass to the caller.
         //     Return LOG_WRITE_FAILURE
 
-        if( forced && !logControl.logReadOnly )
+        if( forced && !logControl.logReadOnly ) {
             writeControlFile();
+        }
 
         // Issue CLOSE for the control file
         // IF not successful allow the error to pass to the caller.
@@ -984,41 +989,23 @@ class LogHandle {
         // If deletion of the logfile was requested, delete it's
         // control File and the cushion file.
 
-        if( deleteFile ) {
+        if (deleteFile) {
 
             // Delete the control file.
-            // Start IASRI 4720539
-            //if( !logControl.controlFile.delete() )
-            Boolean isdeleted = (Boolean) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run(){
-                        return logControl.controlFile.delete();
-                    }
-                }
-            );
-            if( !isdeleted.booleanValue() )
-                throw new LogException(null,LogException.LOG_CLOSE_FAILURE,7);
-            // End  IASRI 4720539
+            Boolean isdeleted = logControl.controlFile.delete();
+            if (!isdeleted.booleanValue()) {
+                throw new LogException(null, LogException.LOG_CLOSE_FAILURE, 7);
+            }
             freeCushion();
 
             // Finally remove the directory.
-            // Start IASRI 4720539
-            //LogControl.directory(logFileName,logControl.directoryPath).delete();
-            java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run(){
-                        return LogControl.directory(logFileName,logControl.directoryPath).delete();
-                    }
-                }
-            );
-            // End IASRI 4720539
+            LogControl.directory(logFileName,logControl.directoryPath).delete();
         }
 
         // Unchain the Log_FileDescriptor block from the RCA chain
         // the latch will be unset and terminated by Log_RemoveFileDescriptor
 
         logControl.removeFile(this);
-
     }
 
     /**Truncates the log at the given point.
@@ -1041,20 +1028,23 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // IF ReadOnly log
         //   Return LOG_READ_ONLY_ACCESS
 
-        if( logControl.logReadOnly )
+        if( logControl.logReadOnly ) {
             throw new LogException(null,LogException.LOG_READ_ONLY_ACCESS,3);
+        }
 
         // IF the log file is empty (head LSN = LOG_NULL_LSN) &&
         // the lsn value specified is not equal to LOG_HEAD_LSN
@@ -1064,8 +1054,9 @@ class LogHandle {
         if( logControlDescriptor.headLSN.isNULL() ) {
             if( truncLSN.equals(LogLSN.HEAD_LSN) ) {
                 return;
-            } else
+            } else {
                 throw new LogException(null,LogException.LOG_NEW_TAIL_TOO_HIGH,6);
+            }
         }
 
         // IF the lsn parameter is equal to the symbolic LOG_HEAD_LSN or
@@ -1083,10 +1074,11 @@ class LogHandle {
             truncLSN.equals(logControlDescriptor.headLSN) ) {
             lsn = new LogLSN(logControlDescriptor.headLSN);
             truncateHead = true;
-        } else if( truncLSN.equals(LogLSN.TAIL_LSN) )
+        } else if( truncLSN.equals(LogLSN.TAIL_LSN) ) {
             lsn = new LogLSN(logControlDescriptor.tailLSN);
-        else
+        } else {
             lsn = new LogLSN(truncLSN);
+        }
 
         // Check the lsn parameter to ensure it is within the range of log records
         // IF lsn < log tail LSN (in Log_FileDescriptor)
@@ -1097,10 +1089,11 @@ class LogHandle {
         //     Unlock the Log_FileDescriptor latch
         //     Return LOG_NEW_TAIL_TOO_HIGH
 
-        if( lsn.lessThan(logControlDescriptor.tailLSN) )
+        if( lsn.lessThan(logControlDescriptor.tailLSN) ) {
             throw new LogException(null,LogException.LOG_NEW_TAIL_TOO_LOW,7);
-        else if( lsn.greaterThan(logControlDescriptor.headLSN) )
+        } else if( lsn.greaterThan(logControlDescriptor.headLSN) ) {
             throw new LogException(null,LogException.LOG_NEW_TAIL_TOO_HIGH,8);
+        }
 
         // IF log head is being truncated &&
         // inclusive parameter = LOG_TAIL_NOT_INCLUSIVE
@@ -1160,8 +1153,9 @@ class LogHandle {
             //   Unlock the Log_FileDescriptor latch
             //   Return LOG_INVALID_TAIL
 
-            if( recordHeader.recordType == LINK )
+            if( recordHeader.recordType == LINK ) {
                 throw new LogException(null,LogException.LOG_INVALID_TAIL,12);
+            }
 
             // Now set truncation record, and new tail LSN according to whether
             // or not LOG_TAIL_INCLUSIVE was specified
@@ -1177,8 +1171,9 @@ class LogHandle {
                 // IF the current LSN is the first record in an extent file
                 // Remember that previous extent file is to be truncated
 
-                if( lsn.offset == 0 )
+                if( lsn.offset == 0 ) {
                     truncLastExtent = true;
+                }
             } else {
 
                 // The specified LSN is to be truncated from the logfile so
@@ -1210,8 +1205,9 @@ class LogHandle {
             inclusive == TAIL_NOT_INCLUSIVE ) {
             logControlDescriptor.tailLSN.copy(newTailRecord);
             logControlDescriptor.headLSN.copy(LogLSN.NULL_LSN);
-        } else
+        } else {
             logControlDescriptor.tailLSN.copy(newTailRecord);
+        }
 
         // Write (and implicitly sync) the Log_ControlDescriptor structure
         // to the control file.  Allow any error to pass to the caller.
@@ -1224,8 +1220,9 @@ class LogHandle {
         // Note: If the TruncationRecord is a link record (last in the extent
         // file), then the LastExtent must also be processed.
 
-        if( truncLastExtent )
+        if( truncLastExtent ) {
             lastExtent++;
+        }
 
         for( int extent = firstExtent; extent <= lastExtent-1; extent++ ) {
 
@@ -1233,32 +1230,22 @@ class LogHandle {
             // Issue CLOSE for extent file
             // IF not successful allow the error to pass to the caller.
 
-            LogExtent logEDP = (LogExtent)extentTable.get(extent);
-            if( logEDP != null )
+            LogExtent logEDP = (LogExtent) extentTable.get(extent);
+            if (logEDP != null) {
                 logEDP.fileHandle.fileClose();
+                // Issue UNLINK for extent file
+                // IF not successful
+                //   Return LOG_CLOSE_FAILURE
 
-            // Issue UNLINK for extent file
-            // IF not successful
-            //   Return LOG_CLOSE_FAILURE
-
-            //Start IASRI 4720539
-            //if( !logEDP.file.delete() )
-            final LogExtent tmplogEDP = logEDP;
-            Boolean isdeleted = (Boolean) java.security.AccessController.doPrivileged(
-        new java.security.PrivilegedAction() {
-            public Object run(){
-                        return tmplogEDP.file.delete();
-                    }
+                Boolean isdeleted = logEDP.file.delete();
+                if (!isdeleted.booleanValue()) {
+                    throw new LogException(null, LogException.LOG_CLOSE_FAILURE, 15);
+                    // Unchain the Log_ExtentDescriptor block, set its BlockValid
+                    // field to binary zeroes and deallocate it.
                 }
-            );
-            if(!isdeleted.booleanValue())
-                throw new LogException(null,LogException.LOG_CLOSE_FAILURE,15);
-            //End IASRI 4720539
-            // Unchain the Log_ExtentDescriptor block, set its BlockValid
-            // field to binary zeroes and deallocate it.
-
-            extentTable.remove(extent);
-            logEDP.doFinalize();
+                extentTable.remove(extent);
+                logEDP.doFinalize();
+            }
         }
 
         // If the cushion file does not exist and at least one extents has
@@ -1269,15 +1256,17 @@ class LogHandle {
         // been called when the cushion was first freed.
 
         if( !cushionExists &&
-            firstExtent <= lastExtent - 1 )
+            firstExtent <= lastExtent - 1 ) {
             restoreCushion(false);
+        }
 
         // Call the platform specific SUPOS_LOG_FREE_FILE_STORAGE macro to
         // release any unwanted areas of the extent file containing the TAIL LSN
         // Allow any error to pass to the caller.
 
-        if( logControlDescriptor.tailLSN.offset > 0 )
+        if( logControlDescriptor.tailLSN.offset > 0 ) {
             freeFileStorage(logControlDescriptor.tailLSN);
+        }
 
         // If the log head has been set to 00000000.00000000, then ensure that
         // the next record which is written to the log causes the log control
@@ -1286,8 +1275,9 @@ class LogHandle {
         // during restart, it will be assumed that the log is empty and no
         // scanning for records 'beyond the end of the log' will take place.
 
-        if( logControlDescriptor.headLSN.isNULL() )
+        if( logControlDescriptor.headLSN.isNULL() ) {
             recordsWritten = CONTROL_FORCE_INTERVAL;
+        }
 
     }
 
@@ -1309,20 +1299,23 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // IF ReadOnly log
         //   Return LOG_READ_ONLY_ACCESS
 
-        if( logControl.logReadOnly )
+        if( logControl.logReadOnly ) {
             throw new LogException(null,LogException.LOG_READ_ONLY_ACCESS,3);
+        }
 
         // IF the lsn parameter is equal to LOG_HEAD_LSN
         //   Copy head LSN from Log_FileDescriptor into lsn
@@ -1332,12 +1325,13 @@ class LogHandle {
 
         LogLSN lsn;
 
-        if( chkLSN.equals(LogLSN.HEAD_LSN) )
+        if( chkLSN.equals(LogLSN.HEAD_LSN) ) {
             lsn = new LogLSN(logControlDescriptor.headLSN);
-        else if( chkLSN.equals(LogLSN.TAIL_LSN) )
+        } else if( chkLSN.equals(LogLSN.TAIL_LSN) ) {
             lsn = new LogLSN(logControlDescriptor.tailLSN);
-        else
+        } else {
             lsn = new LogLSN(chkLSN);
+        }
 
         // IF lsn value is less than log tail LSN
         //   Return LOG_SUCCESS
@@ -1357,8 +1351,9 @@ class LogHandle {
         // IF lsn value is greater than log head LSN
         //   Copy head LSN from Log_FileDescriptor into lsn parameter
 
-        if( lsn.greaterThan(logControlDescriptor.headLSN) )
+        if( lsn.greaterThan(logControlDescriptor.headLSN) ) {
             lsn.copy(logControlDescriptor.headLSN);
+        }
 
         // Determine the extent which contains the record to be forced (this is
         // derived from the 'extent' part of the lsn parameter) - remember this
@@ -1429,14 +1424,16 @@ class LogHandle {
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_FILE_DESCRIPTOR,1);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,2);
+        }
 
         // Allocate a Log_CursorDescriptor block
         // IF allocate fails
@@ -1474,20 +1471,23 @@ class LogHandle {
         // IF not valid Log_CursorDescriptor
         //   Return LOG_INVALID_CURSOR
 
-        if( cursor == null || cursor.blockValid != cursor )
+        if( cursor == null || cursor.blockValid != cursor ) {
             throw new LogException(null,LogException.LOG_INVALID_CURSOR,1);
+        }
 
         // Check BlockValid field in Log_FileDescriptor block pointed to
         // by field in Log_CursorDescriptor block and ensure it is valid
 
-        if( blockValid != this )
+        if( blockValid != this ) {
             throw new LogException(null,LogException.LOG_INVALID_CURSOR,2);
+        }
 
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logControl.logInitialised )
+        if( !logControl.logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,3);
+        }
 
         // Now we know the blocks are valid.
         // Remove the Log_CursorDescriptor block from the chain hung off
@@ -1549,10 +1549,11 @@ class LogHandle {
 
             try {
                 if( extent.lastAccess == LogExtent.ACCESSTYPE_UNKNOWN ||
-                    currentLSN.offset + extra < seekDist )
+                    currentLSN.offset + extra < seekDist ) {
                     extent.fileHandle.fileSeek(currentLSN.offset+extra,LogFileHandle.SEEK_ABSOLUTE);
-                else
+                } else {
                     extent.fileHandle.fileSeek(currentLSN.offset+extra-extent.cursorPosition,LogFileHandle.SEEK_RELATIVE);
+                }
             } catch( LogException le ) {
                 if( extentJustOpened ) {
                     extentTable.remove(currentLSN.extent);
@@ -1586,18 +1587,8 @@ class LogHandle {
         // If the cushion file exists, remove it.
 
         if( cushionExists ) {
-
             // Delete the cushion file.
-            // Start IASRI 4720539
-            //logControl.cushionFile.delete();
-            java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run(){
-                        return logControl.cushionFile.delete();
-                    }
-                }
-            );
-            // End IASRI 4720539
+            logControl.cushionFile.delete();
             cushionExists = false;
         }
 
@@ -1663,18 +1654,8 @@ class LogHandle {
                     cushionFH.allocFileStorage(CUSHION_SIZE);
                 } catch( LogException le ) {
                     cushionFH.destroy();
-                    // Start IASRI 4720539
-                    //logControl.cushionFile.delete();
-                    java.security.AccessController.doPrivileged(
-                        new java.security.PrivilegedAction() {
-                            public Object run(){
-                                return logControl.cushionFile.delete();
-                            }
-                        }
-                    );
-                    // End IASRI 4720539
-
-                    if( callUpcall && !upcallInProgress ) {
+                    logControl.cushionFile.delete();
+                    if (callUpcall && !upcallInProgress) {
                         upcallInProgress = true;
                         upcallTarget.upcall(CALLBACK_REASON_SOS);
                         upcallInProgress = false;
@@ -1765,8 +1746,9 @@ class LogHandle {
         //   Return LOG_OPEN_FAILURE
 
         int openOptions = LogFileHandle.OPEN_RDWR | LogFileHandle.OPEN_CREAT;
-        if( logControl.logReadOnly )
+        if( logControl.logReadOnly ) {
             openOptions = LogFileHandle.OPEN_RDONLY;
+        }
 
         LogFileHandle extentFH = new LogFileHandle(extentFile,openOptions);
 
@@ -1880,9 +1862,9 @@ class LogHandle {
                 if( logRD.equals(logRDEnd) ) {
                     restartInfo[0] = logRD.restartDataLength;
                     restartInfo[1] = logRD.timeStamp;
-                }
-                else
+                } else {
                     throw new LogException(null,LogException.LOG_CORRUPTED,1);
+                }
             }
         }
 

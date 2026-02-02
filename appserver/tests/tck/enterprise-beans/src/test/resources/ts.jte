@@ -797,7 +797,6 @@ command.testExecuteAppClient= \
         ${JAVA_HOME}/bin/java \
         ${JVMOPTS_RUNTESTCOMMAND} \
         -Djava.system.class.loader=org.glassfish.appclient.client.acc.agent.ACCAgentClassLoader  \
-        -Djava.security.policy=${javaee.home}/lib/appclient/client.policy \
         -Dcts.tmp=$harness.temp.directory \
         -Djava.security.auth.login.config=${javaee.home}/lib/appclient/appclientlogin.conf \
         -Djava.protocol.handler.pkgs=javax.net.ssl \
@@ -888,7 +887,6 @@ command.testExecuteAppClient2= \
         ${RI_JAVA_HOME}/bin/java \
         ${JVMOPTS_RUNTESTCOMMAND} \
         -Djava.system.class.loader=org.glassfish.appclient.client.acc.agent.ACCAgentClassLoader \
-        -Djava.security.policy=${javaee.home.ri}/lib/appclient/client.policy \
         -Dcts.tmp=$harness.temp.directory \
     -Djava.security.auth.login.config=${javaee.home.ri}/lib/appclient/appclientlogin.conf \
         -Djava.protocol.handler.pkgs=javax.net.ssl \

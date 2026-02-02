@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 1995-1997 IBM Corp. All rights reserved.
  *
@@ -15,19 +16,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-//----------------------------------------------------------------------------
-//
-// Module:      LogControl.java
-//
-// Description: Log control file interface.
-//
-// Product:     com.sun.jts.CosTransactions
-//
-// Author:      Simon Holdsworth
-//
-// Date:        March, 1997
-//----------------------------------------------------------------------------
-
 package com.sun.jts.CosTransactions;
 
 import com.sun.enterprise.util.i18n.StringManager;
@@ -38,30 +26,19 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**This class holds the top level information for an instance of the log,
+/**
+ * This class holds the top level information for an instance of the log,
+ * Log control file interface.
  *
- * @version 0.01
- *
- * @author Simon Holdsworth, IBM Corporation
- *
- * @see
-*/
-//----------------------------------------------------------------------------
-// CHANGE HISTORY
-//
-// Version By     Change Description
-//   0.01  SAJH   Initial implementation.
-//------------------------------------------------------------------------------
+ * @author Simon Holdsworth, IBM Corporation 1997
+ */
 
 public class LogControl {
     private static final StringManager sm = StringManager.getManager(LogControl.class);
 
     private static Logger _logger = LogDomains.getLogger(LogControl.class, LogDomains.TRANSACTION_LOGGER);
 
-    /**Constants for file name extensions.
-     */
     private final static String CUSHION_NAME = "cushion"/*#Frozen*/;
-    private final static String EXTENT_NAME  = "extent."/*#Frozen*/;
     private final static String CONTROL_NAME = "control"/*#Frozen*/;
     public final static String RECOVERY_STRING_FILE_NAME = "recoveryfile"/*#Frozen*/;
     public final static String RECOVERY_LOCK_FILE_NAME = "recoverylockfile"/*#Frozen*/;
@@ -114,8 +91,9 @@ public class LogControl {
 
         // If this is a cold start, then remove all files in the log directory
 
-        if( coldStart && !readOnly )
+        if( coldStart && !readOnly ) {
             clearDirectory(logDirectory);
+        }
 
         // Create the Vector which will hold the LogHandles.
 
@@ -151,8 +129,9 @@ public class LogControl {
         // IF not LogInitialised
         //   Return LOG_NOT_INITIALISED
 
-        if( !logInitialised )
+        if( !logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,1);
+        }
 
         // If the logid provided is an Alias name, it could be more than 8
         // characters. If so, to support the FAT file system, a unique
@@ -203,8 +182,9 @@ public class LogControl {
             File logDir = directory(logName,directoryPath);
             if( !logDir.exists() ) {
                 boolean created = logDir.mkdirs();
-                if (!created)
-                     _logger.log(Level.WARNING,"jts.exception_creating_log_directory",logDir);
+                if (!created) {
+                    _logger.log(Level.WARNING,"jts.exception_creating_log_directory",logDir);
+                }
             }
         }
 
@@ -220,8 +200,9 @@ public class LogControl {
         int openOptions = LogFileHandle.OPEN_RDWR  |
             LogFileHandle.OPEN_CREAT |
             LogFileHandle.OPEN_SYNC; // Default open options
-        if( logReadOnly )
+        if( logReadOnly ) {
             openOptions = LogFileHandle.OPEN_RDONLY;
+        }
 
         LogFileHandle controlFH;
         try {
@@ -371,7 +352,7 @@ public class LogControl {
             for( int currentExtent = logHandle.logControlDescriptor.tailLSN.extent;
                  currentExtent <= logHandle.logControlDescriptor.headLSN.extent ||
                      currentExtent <= logHandle.logControlDescriptor.nextLSN.extent;
-                 currentExtent++)
+                 currentExtent++) {
                 try {
                     logEDP = logHandle.openExtent(currentExtent);
                 } catch( LogException le ) {
@@ -379,6 +360,7 @@ public class LogControl {
                     throw new LogException(LogException.LOG_OPEN_EXTENT_FAILURE,19,
                             sm.getString("jts.log_open_extend_failed"), le);
                 }
+            }
 
             // Read the restart data for restart record one
             // If the read failed then
@@ -436,8 +418,9 @@ public class LogControl {
                 }
             }
 
-            if( logHandle.logControlDescriptor.headLSN.isNULL() )
+            if( logHandle.logControlDescriptor.headLSN.isNULL() ) {
                 logHandle.recordsWritten = LogHandle.CONTROL_FORCE_INTERVAL;
+            }
         }
 
         // Add the Log_FileDescriptor block to the head of the
@@ -578,8 +561,9 @@ public class LogControl {
                         //   Set LINKCOPY to null
 
                         if( !linkRec.currentLSN.isNULL() &&
-                            !linkRec.nextLSN.equals(extentRec.currentLSN) )
+                            !linkRec.nextLSN.equals(extentRec.currentLSN) ) {
                             linkRec = new LogRecordHeader();
+                        }
 
                     // Copy the record header to HEADERCOPY
                     // Use the NextRecord value to move the file pointer to the next record header
@@ -682,17 +666,19 @@ public class LogControl {
 
         // IF not LogInitialised Return LOG_NOT_INITIALISED
 
-        if( !logInitialised )
+        if( !logInitialised ) {
             throw new LogException(null,LogException.LOG_NOT_INITIALISED,1);
+        }
 
         // Check BlockValid field in Log_FileDescriptor block and
         // ensure it is valid
         // IF not valid Log_FileDescriptor
         //   Return LOG_INVALID_FILE_DESCRIPTOR
 
-        if( logHandle == null || logHandle.blockValid != logHandle )
+        if( logHandle == null || logHandle.blockValid != logHandle ) {
             throw new LogException(LogException.LOG_INVALID_FILE_DESCRIPTOR,2,
                 sm.getString("jts.log_invalid_file_descriptor", logHandle), (Throwable) null);
+        }
 
         // Set the block valid to NULL
 
@@ -725,8 +711,9 @@ public class LogControl {
                                     String logDirectory ) {
 
         //START IASRI 4730519
-        if(logDirectory==null)
+        if(logDirectory==null) {
             return false;
+        }
         //END IASRI 4730519
         boolean exists = controlFile(logId,logDirectory).exists();
 
@@ -794,29 +781,10 @@ public class LogControl {
                     final File logFileDir = new File(directory, allFiles[i]);
                     if (logFileDir.isDirectory()) {
                         final String[] logFiles = logFileDir.list();
-                    /*
-                    for( int j = 0; j < logFiles.length; j++ )
-                        new File(logFileDir,logFiles[j]).delete();
-                    logFileDir.delete();
-                    */
-                        java.security.AccessController.doPrivileged(
-                                new java.security.PrivilegedAction() {
-                                    public Object run() {
-                                        for (int j = 0; j < logFiles.length; j++) {
-                                            new File(logFileDir, logFiles[j]).delete();
-                                        }
-                                        return null;
-                                    }
-                                }
-                        );
-                        java.security.AccessController.doPrivileged(
-                                new java.security.PrivilegedAction() {
-                                    public Object run() {
-                                        logFileDir.delete();
-                                        return null;
-                                    }
-                                }
-                        );
+                        for (int j = 0; j < logFiles.length; j++) {
+                            new File(logFileDir, logFiles[j]).delete();
+                        }
+                        logFileDir.delete();
                     }
                     //End IASRI 4720539
                 }
@@ -834,10 +802,9 @@ public class LogControl {
      *
      * @see
      */
-    File extentFile( String logId,
-                     int    extent ) {
+    File extentFile(String logId, int extent) {
 
-        char[] buff = (char[])EXTENT_CHARS.clone();
+        char[] buff = EXTENT_CHARS.clone();
 
         int tmpExtent   = extent / LogExtent.EXTENT_RADIX;
         int extentLow  = extent % LogExtent.EXTENT_RADIX;
@@ -896,8 +863,9 @@ public class LogControl {
 
     //START IASRI 4721336
     //START IASRI 4730519
-    if(logDir==null) //It should not be null
-           return new File( "." + File.separator + logId + LOG_EXTENSION);
+    if(logDir==null) { //It should not be null
+        return new File( "." + File.separator + logId + LOG_EXTENSION);
+    }
     //END IASRI 4730519
     return new File(logDir);
     //END IASRI 4721336
@@ -912,8 +880,9 @@ public class LogControl {
         File dir = directory(logId,logDir);
         if( !dir.exists() ) {
             boolean created = dir.mkdirs();
-            if (!created)
-                 _logger.log(Level.WARNING,"jts.exception_creating_log_directory",dir);
+            if (!created) {
+                _logger.log(Level.WARNING,"jts.exception_creating_log_directory",dir);
+            }
         }
         File result = new File(dir,RECOVERY_LOCK_FILE_NAME);
         return result;

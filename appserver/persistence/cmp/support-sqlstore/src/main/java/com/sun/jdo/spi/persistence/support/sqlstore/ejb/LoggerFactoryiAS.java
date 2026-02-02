@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -19,16 +20,11 @@ package com.sun.jdo.spi.persistence.support.sqlstore.ejb;
 import com.sun.jdo.spi.persistence.utility.logging.LoggerFactoryJDK14;
 import com.sun.jdo.spi.persistence.utility.logging.LoggerJDK14;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 
 /**
- *
  * @author  Craig Russell
  * @version 1.0
  */
-
 public class LoggerFactoryiAS extends LoggerFactoryJDK14 {
 
     /** The top level of the logger domain for application server.
@@ -40,6 +36,7 @@ public class LoggerFactoryiAS extends LoggerFactoryJDK14 {
     }
 
 
+    @Override
     protected String getDomainRoot() {
         return DOMAIN_ROOT;
     }
@@ -56,24 +53,16 @@ public class LoggerFactoryiAS extends LoggerFactoryJDK14 {
      * @param bundleName the fully qualified name of the resource bundle
      * @return the logger
      */
+    @Override
     protected LoggerJDK14 createLogger (final String absoluteLoggerName,
                                         final String bundleName) {
-        return (LoggerJDK14) AccessController.doPrivileged (
-            new PrivilegedAction () {
-                public Object run () {
-                    LoggerJDK14 result = new LoggerJDK14(absoluteLoggerName, bundleName);
-                    //Handlers and Formatters will be set in addLogger().
-                    //ServerLogManager.initializeServerLogger(result);
-
-                    return result;
-                }
-            }
-        );
+        return new LoggerJDK14(absoluteLoggerName, bundleName);
     }
 
     /**
      * This method is a no-op in the Sun ONE Application server.
      */
+    @Override
     protected void configureFileHandler(LoggerJDK14 logger) {
     }
 

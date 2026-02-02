@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2025, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -35,8 +35,6 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.jvnet.hk2.annotations.Optional;
 import org.jvnet.hk2.annotations.Service;
 
-import static com.sun.enterprise.security.SecurityLoggerInfo.secMgrDisabled;
-import static com.sun.enterprise.security.SecurityLoggerInfo.secMgrEnabled;
 import static com.sun.enterprise.security.common.Util.writeConfigFileToTempDir;
 import static java.util.logging.Level.INFO;
 import static org.glassfish.api.event.EventTypes.SERVER_SHUTDOWN;
@@ -55,7 +53,6 @@ public class SecurityLifecycle implements PostConstruct, PreDestroy {
     private static final Logger _logger = SecurityLoggerInfo.getLogger();
 
     private static final String SYS_PROP_LOGIN_CONF = "java.security.auth.login.config";
-    private static final String SYS_PROP_JAVA_SEC_POLICY = "java.security.policy";
 
     @Inject
     private SecurityServicesUtil securityServicesUtil;
@@ -78,12 +75,7 @@ public class SecurityLifecycle implements PostConstruct, PreDestroy {
             if (Util.isEmbeddedServer()) {
                 // If the user-defined login.conf/server.policy are set as system properties, then they are given priority
                 setProperty(SYS_PROP_LOGIN_CONF, writeConfigFileToTempDir("login.conf").toURI().toURL().toExternalForm(), false);
-                setProperty(SYS_PROP_JAVA_SEC_POLICY, writeConfigFileToTempDir("server.policy").getAbsolutePath(), false);
             }
-
-            // security manager is set here so that it can be accessed from
-            // other lifecycles, like PEWebContainer
-            _logger.info(System.getSecurityManager() == null ? secMgrDisabled : secMgrEnabled);
         } catch (Exception ex) {
             _logger.log(Level.SEVERE, "java_security.init_securitylifecycle_fail", ex);
             throw new RuntimeException(ex.toString(), ex);

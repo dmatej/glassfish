@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2010, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -33,8 +33,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,18 +127,10 @@ public class RuntimeInfo implements AdminCommand {
         if (!OS.isAix()) {
             try {
                 final Method jm = osBean.getClass().getMethod("getTotalPhysicalMemorySize");
-                AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                    @Override
-                    public Object run() throws Exception {
-                        if (!jm.trySetAccessible()) {
-                            throw new InaccessibleObjectException("Unable to make accessible: " + jm);
-                        }
-                        return null;
-                    }
-                });
-
+                if (!jm.trySetAccessible()) {
+                    throw new InaccessibleObjectException("Unable to make accessible: " + jm);
+                }
                 top.addProperty("totalPhysicalMemorySize", "" + jm.invoke(osBean));
-
             } catch (Exception ex) {
                 logger.log(Level.SEVERE, null, ex);
             }

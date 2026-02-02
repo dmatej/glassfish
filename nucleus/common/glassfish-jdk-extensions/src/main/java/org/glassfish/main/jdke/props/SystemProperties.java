@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2025, 2026 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -16,8 +16,6 @@
 package org.glassfish.main.jdke.props;
 
 import java.lang.System.Logger;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import static java.lang.System.Logger.Level.DEBUG;
 import static java.lang.System.Logger.Level.TRACE;
@@ -43,7 +41,7 @@ public final class SystemProperties {
      * @return the old value of the property, or null if it was not set before
      */
     public static String setProperty(String key, String value, boolean force) {
-        final String oldValue = executePrivilegedAction(() -> System.getProperty(key));
+        final String oldValue = System.getProperty(key);
         if (oldValue == null) {
             LOG.log(DEBUG, "Setting property {0} to {1}", key, value);
         } else {
@@ -58,12 +56,11 @@ public final class SystemProperties {
                 return oldValue;
             }
         }
-        executePrivilegedAction(value == null ? () -> System.clearProperty(key) : () -> System.setProperty(key, value));
+        if (value == null) {
+            System.clearProperty(key);
+        } else {
+            System.setProperty(key, value);
+        }
         return oldValue;
-    }
-
-
-    private static String executePrivilegedAction(PrivilegedAction<String> action) {
-        return AccessController.doPrivileged(action);
     }
 }

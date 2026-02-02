@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -172,22 +172,10 @@ public class ActiveResourceAdapterImpl implements ActiveResourceAdapter {
 
             // always create default connector resources
             createDefaultConnectorResources();
-        } catch (ConnectorRuntimeException cre) {
-            //Connector deployment should _not_ fail if default connector
-            //connector pool and resource creation fails.
-            _logger.log(Level.SEVERE, "rardeployment.defaultpoolresourcecreation.failed", cre);
-            if(_logger.isLoggable(Level.FINE)) {
-                _logger.log(Level.FINE, "Error while trying to create the default connector, " +
-                    "connection pool and resource", cre);
-            }
         } catch (Exception e) {
             //Connector deployment should _not_ fail if default connector
             //connector pool and resource creation fails.
-            _logger.log(Level.SEVERE, "rardeployment.defaultpoolresourcecreation.failed", e);
-            if(_logger.isLoggable(Level.FINE)) {
-                _logger.log(Level.FINE, "Error while trying to create the default connector, " +
-                    "connection pool and resource", e);
-            }
+            _logger.log(Level.SEVERE, "Unable to create default resource for the resource-adapter.", e);
         }
     }
 
@@ -330,6 +318,7 @@ public class ActiveResourceAdapterImpl implements ActiveResourceAdapter {
         final String mcfClass = ccp.getConnectorDescriptorInfo().getManagedConnectionFactoryClass();
         try {
             ManagedConnectionFactory mcf = instantiateMCF(mcfClass, jcl);
+            _logger.log(Level.FINE, "Created MCF object: {0}", mcfClass);
             if (mcf instanceof ConfigurableTransactionSupport) {
                 TransactionSupport ts = ConnectionPoolObjectsUtils.getTransactionSupport(ccp.getTransactionSupport());
                 ((ConfigurableTransactionSupport)mcf).setTransactionSupport(ts);
@@ -338,9 +327,6 @@ public class ActiveResourceAdapterImpl implements ActiveResourceAdapter {
             SetMethodAction<ConnectorConfigProperty> setMethodAction = new SetMethodAction<>(mcf,
                 ccp.getConnectorDescriptorInfo().getMCFConfigProperties());
             setMethodAction.run();
-            if(_logger.isLoggable(Level.FINE)) {
-                _logger.log(Level.FINE, "Created MCF object : ", mcfClass);
-            }
             return mcf;
         } catch (ClassNotFoundException Ex) {
             _logger.log(Level.SEVERE, "rardeployment.class_not_found", new Object[]{mcfClass, Ex.getMessage()});
@@ -369,26 +355,6 @@ public class ActiveResourceAdapterImpl implements ActiveResourceAdapter {
         }
     }
 
-    /**
-     * sets the logWriter for the MCF being instantiated.<br>
-     * Resource Adapter implementer can make use of this logWriter<br>
-     *
-     * @param mcf ManagedConnectionFactory
-     */
-    private void setLogWriter(ManagedConnectionFactory mcf) {
-        PrintWriterAdapter adapter = new PrintWriterAdapter(ConnectorRuntime.getRuntime().getResourceAdapterLogWriter());
-        try {
-            mcf.setLogWriter(adapter);
-        } catch (Exception e) {
-            Object[] params = new Object[]{mcf.getClass().getName(), e.toString()};
-            _logger.log(Level.WARNING, "rardeployment.logwriter_error", params);
-            if(_logger.isLoggable(Level.FINE)) {
-                _logger.log(Level.FINE, "Unable to set LogWriter for ManagedConnectionFactory : " + mcf.getClass().getName(), e);
-            }
-        }
-    }
-
-
     protected ManagedConnectionFactory instantiateMCF(String mcfClassName, ClassLoader loader) throws Exception {
         ManagedConnectionFactory mcf = null;
         Class<?> mcfClass;
@@ -401,10 +367,26 @@ public class ActiveResourceAdapterImpl implements ActiveResourceAdapter {
             mcfClass = Thread.currentThread().getContextClassLoader().loadClass(mcfClassName);
         }
         mcf = locator.createAndInitialize((Class<ManagedConnectionFactory>)mcfClass);
-        setLogWriter(mcf);
+        if (mcf != null) {
+            setLogWriter(mcf);
+        }
         return mcf;
     }
 
+    /**
+     * sets the logWriter for the MCF being instantiated.<br>
+     * Resource Adapter implementer can make use of this logWriter<br>
+     *
+     * @param mcf ManagedConnectionFactory
+     */
+    private void setLogWriter(ManagedConnectionFactory mcf) {
+        PrintWriterAdapter adapter = new PrintWriterAdapter(ConnectorRuntime.getRuntime().getResourceAdapterLogWriter());
+        try {
+            mcf.setLogWriter(adapter);
+        } catch (Exception e) {
+            _logger.log(Level.WARNING, "Unable to set log-writer for resource-adapter " + mcf, e);
+        }
+    }
 
     /**
      * Creates default connector resource

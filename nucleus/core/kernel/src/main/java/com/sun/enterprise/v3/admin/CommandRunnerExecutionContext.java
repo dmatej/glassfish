@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -17,8 +17,6 @@ package com.sun.enterprise.v3.admin;
 
 import com.sun.enterprise.util.AnnotationUtil;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Objects;
 
 import javax.security.auth.Subject;
@@ -68,7 +66,7 @@ final class CommandRunnerExecutionContext implements CommandInvocation<AdminComm
         this.scope = scope;
         this.name = name;
         this.report = report;
-        this.subject = evaluateSubject(subject);
+        this.subject = subject;
         this.notify = notify;
         this.detach = detach;
         this.commandRunner = commandRunner;
@@ -215,19 +213,5 @@ final class CommandRunnerExecutionContext implements CommandInvocation<AdminComm
             progressStatus.complete();
         }
         commandRunner.done(command, job, false);
-    }
-
-    /**
-     * The caller should have set the subject explicitly.
-     * In case it didn't, try setting it from the current access controller context
-     * since the command framework will have set that before invoking
-     * the original command's execute method.
-     */
-    private static Subject evaluateSubject(Subject subject) {
-        if (subject != null) {
-            return subject;
-        }
-        PrivilegedAction<Subject> action = () -> Subject.getSubject(AccessController.getContext());
-        return AccessController.doPrivileged(action);
     }
 }

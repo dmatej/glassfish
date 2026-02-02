@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,8 +20,6 @@ package org.glassfish.main.jul.handler;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Timer;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.ErrorManager;
@@ -263,14 +261,10 @@ public class GlassFishLogHandler extends Handler implements ExternallyManagedLog
      */
     public void roll() {
         trace(GlassFishLogHandler.class, "roll()");
-        final PrivilegedAction<Void> action = () -> {
-            this.logFileManager.roll();
-            updateRollSchedule();
-            return null;
-        };
         lock.lock();
         try {
-            AccessController.doPrivileged(action);
+            this.logFileManager.roll();
+            updateRollSchedule();
         } finally {
             lock.unlock();
         }

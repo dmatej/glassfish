@@ -1,5 +1,5 @@
 <!--
-
+    Copyright (c) 2026 Contributors to the Eclipse Foundation.
     Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -22,14 +22,6 @@
 #include "/common/shared/configNameSection.inc"
     <!-- Text Field section -->
     <sun:propertySheetSection id="propertSectionTextField">
-        <sun:property id="securityManagerProp"  labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18nc.security.SecurityManager}"  helpText="$resource{i18nc.security.SecurityManagerHelp}">
-            <sun:checkbox  selected="#{pageSession.securityManagerStatus}" selectedValue="true"  >
-            <!beforeCreate
-                setPageSessionAttribute(key="jvmOptionsUrl", value="#{sessionScope.REST_URL}/configs/config/#{pageSession.configName}/java-config/jvm-options");
-                getSecurityManagerValue(endpoint="#{pageSession.jvmOptionsUrl}" value="#{pageSession.securityManagerStatus}")
-            />
-            </sun:checkbox>
-        </sun:property>
         <sun:property id="auditLoggingProp"  labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" label="$resource{i18nc.security.AuditLogging}" helpText="$resource{i18nc.security.AuditLoggingHelp}">
             <sun:checkbox  selected="#{pageSession.valueMap['auditEnabled']}" selectedValue="true" />
         </sun:property>

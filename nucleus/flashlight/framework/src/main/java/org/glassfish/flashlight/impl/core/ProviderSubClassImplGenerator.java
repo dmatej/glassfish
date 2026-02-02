@@ -1,6 +1,6 @@
 /*
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2009, 2018 Oracle and/or its affiliates. All rights reserved.
- * Copyright (c) 2023 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -25,8 +25,6 @@ package org.glassfish.flashlight.impl.core;
 import com.sun.enterprise.util.LocalStringManagerImpl;
 
 import java.io.InputStream;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.security.ProtectionDomain;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -89,13 +87,15 @@ public class ProviderSubClassImplGenerator {
 
         SubClassLoader scl = createSubClassLoader(providerClazz);
 
-        if(scl == null)
+        if(scl == null) {
             return null;
+        }
 
         try {
             String gcName = scl.defineClass(generatedClassName, classData, pd);
-            if (logger.isLoggable(Level.FINE))
+            if (logger.isLoggable(Level.FINE)) {
                 logger.fine("**** DEFINE CLASS SUCCEEDED for " + gcName + "," + generatedClassName);
+            }
             return (Class<T>) scl.loadClass(gcName);
         }
         catch (Throwable ex) {
@@ -109,17 +109,10 @@ public class ProviderSubClassImplGenerator {
      * Hide this ugly access control code in this method
      * @return the SubClassLoader or null if error(s)
      */
-    private SubClassLoader createSubClassLoader(final Class theClass) {
+    private SubClassLoader createSubClassLoader(final Class<?> theClass) {
         try {
-            return AccessController.doPrivileged(
-                    new PrivilegedExceptionAction<SubClassLoader>() {
-                        @Override
-                        public SubClassLoader run() throws Exception {
-                            return new SubClassLoader(theClass.getClassLoader());
-                        }
-                    });
-        }
-        catch (Exception e) {
+            return new SubClassLoader(theClass.getClassLoader());
+        } catch (Exception e) {
             return null;
         }
     }

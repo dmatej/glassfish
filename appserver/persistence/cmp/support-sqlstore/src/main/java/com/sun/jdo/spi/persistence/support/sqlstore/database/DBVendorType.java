@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -300,31 +301,24 @@ public class DBVendorType  {
         SpecialDBOperation retInstance = null;
         if (specialDBOpClassName != null) {
             final ClassLoader loader = DBVendorType.class.getClassLoader();
-            Class clz = (Class)java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        try {
-                            if (loader != null) {
-                                return Class.forName(specialDBOpClassName,
-                                    true, loader);
-                            } else {
-                                return Class.forName(specialDBOpClassName);
-                            }
-                        } catch(Exception ex) {
-                            if (logger.isLoggable()) {
-                                logger.log(Logger.INFO,
-                                    "core.configuration.cantloadclass", // NOI18N
-                                    specialDBOpClassName);
-                            }
-                            return null;
-                        }
-                    }
+            Class<?> clz;
+            try {
+                if (loader != null) {
+                    clz = Class.forName(specialDBOpClassName, true, loader);
+                } else {
+                    clz = Class.forName(specialDBOpClassName);
                 }
-            );
+            } catch (Exception ex) {
+                if (logger.isLoggable()) {
+                    logger.log(Logger.INFO, "core.configuration.cantloadclass",
+                        specialDBOpClassName);
+                }
+                return null;
+            }
 
             if (clz != null) {
                 try {
-                    retInstance = (SpecialDBOperation)clz.newInstance();
+                    retInstance = (SpecialDBOperation) clz.getConstructor().newInstance();
                     retInstance.initialize(databaseMetaData, identifier);
                 } catch(Exception ex) {
                     throw new JDOFatalUserException(
@@ -334,7 +328,7 @@ public class DBVendorType  {
                 }
             }
         }
-        return (retInstance != null)? retInstance : DEFAULT_SPECIAL_DB_OPERATION;
+        return retInstance == null ? DEFAULT_SPECIAL_DB_OPERATION : retInstance;
     }
 
     /**
@@ -343,8 +337,9 @@ public class DBVendorType  {
      */
     public String getLeftJoin() {
         String s = (String)dbMap.get(LEFT_JOIN);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getleftjoin", s); // NOI18N
@@ -403,8 +398,9 @@ public class DBVendorType  {
      */
     public String getHoldlock() {
         String s = (String)dbMap.get(HOLDLOCK);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getholdlock", s); // NOI18N
@@ -433,8 +429,9 @@ public class DBVendorType  {
      */
     public String getLeftJoinPost() {
         String s = (String)dbMap.get(LEFT_JOIN_APPEND);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getleftjoinpost", s); // NOI18N
@@ -449,8 +446,9 @@ public class DBVendorType  {
      */
     public String getRightJoin() {
         String s = (String)dbMap.get(RIGHT_JOIN);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getrightjoin", s); // NOI18N
@@ -465,8 +463,9 @@ public class DBVendorType  {
      */
     public String getRightJoinPre() {
         String s = (String)dbMap.get(RIGHT_JOIN_PRE);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getrightjoinipre", s); // NOI18N
@@ -481,8 +480,9 @@ public class DBVendorType  {
      */
     public String getIsNull() {
         String s = (String)dbMap.get(IS_NULL);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getisnull", s); // NOI18N
@@ -497,8 +497,9 @@ public class DBVendorType  {
      */
     public String getIsNotNull() {
         String s = (String)dbMap.get(IS_NOT_NULL);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getisnotnull", s); // NOI18N
@@ -527,8 +528,9 @@ public class DBVendorType  {
      */
     public String getRtrim() {
         String s = (String)dbMap.get(RTRIM);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getrtrim", s); // NOI18N
@@ -543,8 +545,9 @@ public class DBVendorType  {
      */
     public String getRtrimPost() {
         String s = (String)dbMap.get(RTRIM_POST);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getrtrimpost", s); // NOI18N
@@ -559,8 +562,9 @@ public class DBVendorType  {
      */
     public String getCharLength() {
         String s = (String)dbMap.get(CHAR_LENGTH);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getcharlength", s); // NOI18N
@@ -613,8 +617,9 @@ public class DBVendorType  {
      */
     public String getForUpdate() {
         String s = (String)dbMap.get(FOR_UPDATE);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getforupdate", s); // NOI18N
@@ -629,8 +634,9 @@ public class DBVendorType  {
      */
     public String getTableListStart() {
         String s = (String)dbMap.get(TABLE_LIST_START);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.gettableliststart", s); // NOI18N
@@ -645,8 +651,9 @@ public class DBVendorType  {
      */
     public String getTableListEnd() {
         String s = (String)dbMap.get(TABLE_LIST_END);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.gettablelistend", s); // NOI18N
@@ -661,8 +668,9 @@ public class DBVendorType  {
      */
     public String getStringConcat() {
         String s = (String)dbMap.get(STRING_CONCAT);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getstringconcat", s); // NOI18N
@@ -677,8 +685,9 @@ public class DBVendorType  {
      */
     public String getQuoteCharStart() {
         String s = (String)dbMap.get(QUOTE_CHAR_START);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getquotecharstart", s); // NOI18N
@@ -693,8 +702,9 @@ public class DBVendorType  {
      */
     public String getQuoteCharEnd() {
         String s = (String)dbMap.get(QUOTE_CHAR_END);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getquotecharend", s); // NOI18N
@@ -876,8 +886,9 @@ public class DBVendorType  {
      */
     public String getLeftLikeEscape() {
         String s = (String)dbMap.get(LEFT_LIKE_ESCAPE);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getleftlikeescape", s); // NOI18N
@@ -892,8 +903,9 @@ public class DBVendorType  {
      */
     public String getRightLikeEscape() {
         String s = (String)dbMap.get(RIGHT_LIKE_ESCAPE);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getrightlikeescape", s); // NOI18N
@@ -907,10 +919,11 @@ public class DBVendorType  {
      */
     public String getNullComparisonFunctionName() {
         String s = (String)dbMap.get(NULL_COMPARISON_FUNCTION_NAME);
-        if (s == null)
+        if (s == null) {
             s = NONE;
-        else
+        } else {
             s = s.trim();
+        }
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getNullComparisonFunctionName", s); // NOI18N
         }
@@ -948,10 +961,11 @@ public class DBVendorType  {
      */
     public String getConcatCast() {
         String s = (String)dbMap.get(CONCAT_CAST);
-        if (s == null)
+        if (s == null) {
             s = NONE;
-        else
+        } else {
             s = s.trim();
+        }
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getConcatCast", s); // NOI18N
         }
@@ -994,8 +1008,9 @@ public class DBVendorType  {
      */
     public String getNotEqual() {
         String s = (String)dbMap.get(NOT_EQUAL);
-        if (s == null)
+        if (s == null) {
             s = NONE;
+        }
 
         if (logger.isLoggable()) {
             logger.fine("sqlstore.database.dbvendor.getnotequal", s); // NOI18N

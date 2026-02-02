@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -38,8 +38,6 @@ import jakarta.resource.spi.ResourceAdapter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -116,19 +114,12 @@ public abstract class JMSDestination {
             final ActiveJmsResourceAdapter air = getMQAdapter(connectorRuntime);
             final Class<? extends ResourceAdapter> mqRAClassName = air.getResourceAdapter().getClass();
             final CommandTarget ctarget = this.getTypeForTarget(targetName);
-            final PrivilegedExceptionAction<MQJMXConnectorInfo> action = () -> {
-                if (ctarget == CommandTarget.CLUSTER || ctarget == CommandTarget.CLUSTERED_INSTANCE) {
-                    if (logger.isLoggable(Level.FINE)) {
-                        logger.log(Level.FINE, "Getting JMX connector for cluster target " + targetName);
-                    }
-                    return _getMQJMXConnectorInfoForCluster(targetName, jmsService, mqRAClassName, serverContext);
-                }
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.log(Level.FINE, "Getting JMX connector for standalone target " + targetName);
-                }
-                return createMQJMXConnectorInfo(targetName, jmsService, mqRAClassName, serverContext, config, domain);
-            };
-            return AccessController.doPrivileged(action);
+            if (ctarget == CommandTarget.CLUSTER || ctarget == CommandTarget.CLUSTERED_INSTANCE) {
+                logger.log(Level.FINE, "Getting JMX connector for cluster target {0}", targetName);
+                return _getMQJMXConnectorInfoForCluster(targetName, jmsService, mqRAClassName, serverContext);
+            }
+            logger.log(Level.FINE, "Getting JMX connector for standalone target {0}", targetName);
+            return createMQJMXConnectorInfo(targetName, jmsService, mqRAClassName, serverContext, config, domain);
         } catch (final Exception e) {
             throw new ConnectorRuntimeException(e);
         }
@@ -339,13 +330,10 @@ public abstract class JMSDestination {
      * performed in DAS.
      */
     protected ActiveJmsResourceAdapter getMQAdapter(final ConnectorRuntime connectorRuntime) throws Exception {
-        PrivilegedExceptionAction<ActiveJmsResourceAdapter> action = () -> {
-            final String module = ConnectorConstants.DEFAULT_JMS_ADAPTER;
-            final String loc = ConnectorsUtil.getSystemModuleLocation(module);
-            connectorRuntime.createActiveResourceAdapter(loc, module, null);
-            return (ActiveJmsResourceAdapter) ConnectorRegistry.getInstance().getActiveResourceAdapter(module);
-        };
-        return AccessController.doPrivileged(action);
+        final String module = ConnectorConstants.DEFAULT_JMS_ADAPTER;
+        final String loc = ConnectorsUtil.getSystemModuleLocation(module);
+        connectorRuntime.createActiveResourceAdapter(loc, module, null);
+        return (ActiveJmsResourceAdapter) ConnectorRegistry.getInstance().getActiveResourceAdapter(module);
     }
 
 

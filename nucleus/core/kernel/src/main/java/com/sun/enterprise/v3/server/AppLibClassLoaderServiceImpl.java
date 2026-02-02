@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2007, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -43,8 +43,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -154,8 +152,7 @@ public class AppLibClassLoaderServiceImpl implements EventListener {
         }
 
         final ClassLoader commonClassLoader = commonClassLoaderService.getCommonClassLoader();
-        PrivilegedAction<DelegatingClassLoader> action = () -> new DelegatingClassLoader(commonClassLoader);
-        DelegatingClassLoader appLibClassLoader = AccessController.doPrivileged(action);
+        DelegatingClassLoader appLibClassLoader = new DelegatingClassLoader(commonClassLoader);
 
         // Order of class finders is important here.
         // Connector's class finders should be added before libraries' class finders
@@ -186,8 +183,7 @@ public class AppLibClassLoaderServiceImpl implements EventListener {
      */
     public ClassFinder getAppLibClassFinder(Collection<URI> libURIs) throws MalformedURLException {
         final ClassLoader commonClassLoader = commonClassLoaderService.getCommonClassLoader();
-        DelegatingClassFinder appLibClassFinder = AccessController.doPrivileged(
-                (PrivilegedAction<DelegatingClassFinder>) () -> new DelegatingClassFinder(commonClassLoader));
+        final DelegatingClassFinder appLibClassFinder = new DelegatingClassFinder(commonClassLoader);
         addDelegates(libURIs, appLibClassFinder);
         return appLibClassFinder;
     }

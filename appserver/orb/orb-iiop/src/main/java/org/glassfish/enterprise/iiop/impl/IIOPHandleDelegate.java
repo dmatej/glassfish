@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -39,83 +39,60 @@ import static org.glassfish.api.naming.SimpleJndiName.JNDI_CTX_JAVA_COMPONENT;
 public final class IIOPHandleDelegate implements HandleDelegate {
 
     public static HandleDelegate getHandleDelegate() {
-        HandleDelegate handleDelegate =
-            (HandleDelegate) java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    @Override
-                    public Object run() {
-                        try {
-                            ClassLoader cl = new HandleDelegateClassLoader();
-                            Class c = cl.loadClass(
-                                "org.glassfish.enterprise.iiop.impl.IIOPHandleDelegate");
-                            return c.newInstance();
-                        } catch ( Exception ex ) {
-                            throw new RuntimeException("Error creating HandleDelegate", ex);
-                        }
-                    }
-                }
-            );
-        return handleDelegate;
+        try {
+            ClassLoader cl = new HandleDelegateClassLoader();
+            Class<?> c = cl.loadClass("org.glassfish.enterprise.iiop.impl.IIOPHandleDelegate");
+            return (HandleDelegate) c.getConstructor().newInstance();
+        } catch (Exception ex) {
+            throw new RuntimeException("Error creating HandleDelegate", ex);
+        }
     }
 
 
     @Override
-    public void writeEJBObject(jakarta.ejb.EJBObject ejbObject,
-            java.io.ObjectOutputStream ostream)
-        throws java.io.IOException
-    {
+    public void writeEJBObject(jakarta.ejb.EJBObject ejbObject, java.io.ObjectOutputStream ostream)
+        throws java.io.IOException {
         ostream.writeObject(ejbObject); // IIOP stubs are Serializable
     }
 
     @Override
     public jakarta.ejb.EJBObject readEJBObject(java.io.ObjectInputStream istream)
-        throws java.io.IOException, ClassNotFoundException
-    {
-        return (EJBObject)getStub(istream, EJBObject.class);
+        throws java.io.IOException, ClassNotFoundException {
+        return (EJBObject) getStub(istream, EJBObject.class);
     }
 
     @Override
-    public void writeEJBHome(jakarta.ejb.EJBHome ejbHome,
-            java.io.ObjectOutputStream ostream)
-        throws java.io.IOException
-    {
+    public void writeEJBHome(jakarta.ejb.EJBHome ejbHome, java.io.ObjectOutputStream ostream)
+        throws java.io.IOException {
         ostream.writeObject(ejbHome); // IIOP stubs are Serializable
     }
 
     @Override
     public jakarta.ejb.EJBHome readEJBHome(java.io.ObjectInputStream istream)
-        throws java.io.IOException, ClassNotFoundException
-    {
-        return (EJBHome)getStub(istream, EJBHome.class);
+        throws java.io.IOException, ClassNotFoundException {
+        return (EJBHome) getStub(istream, EJBHome.class);
     }
 
+
     private Object getStub(java.io.ObjectInputStream istream, Class stubClass)
-        throws IOException, ClassNotFoundException
-    {
+        throws IOException, ClassNotFoundException {
         // deserialize obj
         Object obj = istream.readObject();
 
-        if( StubAdapter.isStub(obj) ) {
-
+        if (StubAdapter.isStub(obj)) {
             try {
-
                 // Check if it is already connected to the ORB by getting
                 // the delegate.  If BAD_OPERATION is not thrown, then the
                 // stub is connected.  This will happen if istream is an
                 // IIOP input stream.
                 StubAdapter.getDelegate(obj);
-
             } catch(org.omg.CORBA.BAD_OPERATION bo) {
-
                 // TODO Temporary way to get the ORB.  Will need to
                 // replace with an approach that goes through the habitat
                 ORB orb = null;
                 try {
-
                     orb = (ORB) new InitialContext().lookup(JNDI_CTX_JAVA_COMPONENT + "ORB");
-
-                } catch(NamingException ne) {
-
+                } catch (NamingException ne) {
                     throw new IOException("Error acquiring orb", ne);
                 }
 
@@ -123,12 +100,9 @@ public final class IIOPHandleDelegate implements HandleDelegate {
                 // not an IIOP input stream (e.g. it's a File stream).
                 StubAdapter.connect(obj, orb);
             }
-
         } else {
-            throw new IOException("Unable to create stub for class " +
-                stubClass.getName() +
-                ", object deserialized is not a CORBA object, it's type is " +
-                obj.getClass().getName());
+            throw new IOException("Unable to create stub for class " + stubClass.getName()
+                + ", object deserialized is not a CORBA object, it's type is " + obj.getClass().getName());
         }
 
         // narrow it

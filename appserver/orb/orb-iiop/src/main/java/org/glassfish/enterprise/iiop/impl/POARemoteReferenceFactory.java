@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -43,8 +43,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.Remote;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -408,18 +406,9 @@ public final class POARemoteReferenceFactory extends org.omg.CORBA.LocalObject
                 // within the sfsb container and entity container
                 // implementations of getTargetObject, but for now let's keep
                 // the looping logic the same as it has always been.
-                if( targetObj != null ) {
+                if (targetObj != null) {
                     // get the Tie which is the POA Servant
-                    //fix for bug 6484935
-                    @SuppressWarnings("unchecked")
-                    Tie tie = (Tie)AccessController.doPrivileged(
-                        new PrivilegedAction() {
-                        @Override
-                            public Tie run()  {
-                                return presentationMgr.getTie();
-                        }
-                    });
-
+                    Tie tie = presentationMgr.getTie();
                     tie.setTarget(targetObj);
                     servant = (Servant) tie;
                 }
