@@ -22,28 +22,18 @@ DESCRIPTION
 
        Whether a restart is required depends on the type of option.
 
-       *   Restart is not required for Java system properties whose names do
-           not start with -Djava.  or -Djavax.  (including the trailing
-           period). For example, restart is not required for the following
-           Java system property:
+       * Restart is required for the following options:
 
-           -Denvironment=Production
+         * Java system properties. See https://docs.oracle.com/en/java/javase/21/docs/api/system-properties.html for details.
+         * Startup parameters for the Java application launcher. For example:
 
-       *   Restart is required for the following options:
+           `-Xmx1024m`
 
-           *   Java system properties whose names start with -Djava.  or
-               -Djavax.  (including the trailing period). For example:
+       * Restart is not required for Java system properties whose names do not
+         start with `-Djava.` or `-Djavax.` (including the trailing period). For
+         example, restart is not required for the following Java system property:
 
-               -Djava.security.manager
-
-           *   Startup parameters for the Java application launcher. For
-               example:
-
-               -client
-
-               -Xmx1024m
-
-               -d64
+         `-Denvironment=Production`
 
        To restart the DAS, use the restart-domain(1) command.
 
@@ -136,4 +126,4 @@ SEE ALSO
        *   Windows: java - the Java application launcher
            (http://docs.oracle.com/javase/6/docs/technotes/tools/windows/java.html)
 
-Jakarta EE 11                         21 Aug 2017            delete-jvm-options(1)
+Jakarta EE 11                         02 Feb 2026            delete-jvm-options(1)

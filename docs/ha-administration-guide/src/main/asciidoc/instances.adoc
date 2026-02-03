@@ -1597,19 +1597,18 @@ new-value::
   The new value of the option for locating the file.
 
 [[gksfr]]
-Example 5-17 Updating the Option for Locating a Configuration File
+Example 5-17 Updating the Memory Configuration
 
-This example updates the option for locating the `server.policy` file to
-specify a custom file for the instance `pmd`.
+This example updates changes the maximal heap size for the instance `pmd`.
 
 [source]
 ----
 asadmin> delete-jvm-options --target pmd
--Djava.security.policy=${com.sun.aas.instanceRoot}/config/server.policy
+-Xmx512m
 Deleted 1 option(s)
 Command delete-jvm-options executed successfully.
 asadmin> create-jvm-options --target pmd
--Djava.security.policy=${com.sun.aas.instanceRoot}/config/pmd-config/server.policy
+-Xmx4g
 Created 1 option(s)
 Command create-jvm-options executed successfully.
 ----
