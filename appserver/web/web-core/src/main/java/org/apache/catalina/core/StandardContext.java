@@ -271,11 +271,6 @@ public class StandardContext extends ContainerBase implements Context, ServletCo
     private String altDDName;
 
     /**
-     * The antiJARLocking flag for this Context.
-     */
-    private boolean antiJARLocking;
-
-    /**
      * Associated host name.
      */
     private String hostName;
@@ -963,24 +958,6 @@ public class StandardContext extends ContainerBase implements Context, ServletCo
         boolean oldAvailable = this.available;
         this.available = available;
         support.firePropertyChange("available", Boolean.valueOf(oldAvailable), Boolean.valueOf(this.available));
-    }
-
-    /**
-     * @return the antiJARLocking flag for this Context.
-     */
-    public boolean getAntiJARLocking() {
-        return antiJARLocking;
-    }
-
-    /**
-     * Set the antiJARLocking feature for this Context.
-     *
-     * @param antiJARLocking The new flag value
-     */
-    public void setAntiJARLocking(boolean antiJARLocking) {
-        boolean oldAntiJARLocking = this.antiJARLocking;
-        this.antiJARLocking = antiJARLocking;
-        support.firePropertyChange("antiJARLocking", oldAntiJARLocking, this.antiJARLocking);
     }
 
     @Override
