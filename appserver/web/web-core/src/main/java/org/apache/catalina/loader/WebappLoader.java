@@ -229,7 +229,7 @@ public class WebappLoader implements Lifecycle, Loader, PropertyChangeListener {
 
         // Deregister from the old Container (if any)
         if ((this.container != null) && (this.container instanceof Context)) {
-            ((Context) this.container).removePropertyChangeListener(this);
+            this.container.removePropertyChangeListener(this);
         }
 
         // Process this property change
@@ -240,7 +240,7 @@ public class WebappLoader implements Lifecycle, Loader, PropertyChangeListener {
         // Register with the new Container (if any)
         if (this.container instanceof Context) {
             setReloadable(((Context) this.container).getReloadable());
-            ((Context) this.container).addPropertyChangeListener(this);
+            this.container.addPropertyChangeListener(this);
         }
     }
 

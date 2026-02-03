@@ -38,25 +38,18 @@ of the domain administration server (DAS) and do not require a restart.
 
 Whether a restart is required depends on the type of option.
 
+* Restart is required for the following options:
+
+** Java system properties. See https://docs.oracle.com/en/java/javase/21/docs/api/system-properties.html for details.
+** Startup parameters for the Java application launcher. For example:
++
+`-Xmx1024m`
+
 * Restart is not required for Java system properties whose names do not
 start with `-Djava.` or `-Djavax.` (including the trailing period). For
 example, restart is not required for the following Java system property:
 +
 `-Denvironment=Production`
-* Restart is required for the following options:
-
-** Java system properties whose names start with `-Djava.` or `-Djavax.`
-(including the trailing period). For example:
-+
-`-Djava.security.manager`
-
-** Startup parameters for the Java application launcher. For example:
-+
-`-client`
-+
-`-Xmx1024m`
-+
-`-d64`
 
 To restart the DAS, use the
 xref:restart-domain.adoc#restart-domain[`restart-domain`(1)] command.

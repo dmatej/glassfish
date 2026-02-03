@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, 2025 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2021 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 import org.glassfish.appclient.client.jws.boot.ErrorDisplayDialog;
-import org.glassfish.appclient.client.jws.boot.LaunchSecurityHelper;
 import org.glassfish.embeddable.client.UserError;
 
 /**
@@ -93,7 +92,6 @@ public class JWSAppClientContainerMain {
             processJWSArgs();
 
             final String agentArgsText = System.getProperty("agent.args");
-            LaunchSecurityHelper.setPermissions();
 
             // Prevent the Java Web Start class loader from delegating to its parent when resolving
             // classes and resources that should come from the GlassFish-provided endorsed JARs.

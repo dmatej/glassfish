@@ -79,7 +79,6 @@ public class CLIBootstrap {
 
     static final String ENV_VAR_PROP_PREFIX = "acc.";
 
-
     private final static String SECURITY_AUTH_LOGIN_CONFIG_PROPERTY_EXPR = "-Djava.security.auth.login.config=";
     private final static String SYSPROP_SYSTEM_CLASS_LOADER = "-Djava.system.class.loader=";
 
