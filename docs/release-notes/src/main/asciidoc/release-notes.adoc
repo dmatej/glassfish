@@ -657,7 +657,7 @@ Table 1-4 Jakarta EE Standards Implementations in {productName} {product-current
 |X
 
 |https://jakarta.ee/specifications/activation/[Activation]
-|2.1
+|{jakarta-activation-api-version}
 |X
 |-
 

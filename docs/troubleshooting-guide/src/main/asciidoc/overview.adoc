@@ -113,7 +113,7 @@ be to figure out why something isn't working.
 Lists and forums are extremely helpful resources, and are accessed as follows:
 
 * GlassFish mailing lists: `https://accounts.eclipse.org/mailing-list/glassfish-dev`
-* GlassFish user forum: `https://www.eclipse.org/forums/index.php/f/419/`
+* GlassFish user forum: `https://github.com/eclipse-ee4j/glassfish/discussions`
 
 [[gathering-information]]
 
