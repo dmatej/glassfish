@@ -265,7 +265,7 @@ Client Using the `appclient` Script].
 1. Create a JMS client.
 +
 For detailed instructions on developing a JMS client, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#jakarta-messaging-examples[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/messaging/jms-examples/jms-examples.html[
 Java Message Service Examples]" in The Jakarta EE Tutorial.
 2. Next, configure a JMS resource on the {productName}.
 +
@@ -1597,7 +1597,7 @@ Deployment Guide.
 1. Create a JMS client.
 +
 For detailed instructions on developing a JMS client, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#jakarta-messaging-examples[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/messaging/jms-examples/jms-examples.html[
 Java Message Service Examples] in The Jakarta EE Tutorial.
 2. Configure a JMS resource on {productName}.
 +

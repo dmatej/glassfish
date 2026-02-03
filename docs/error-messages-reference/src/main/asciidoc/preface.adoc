@@ -163,7 +163,7 @@ The sample application is a web application that consists of a component that is
 based on the Enterprise JavaBeans specification, a JAX-RS web service,
 and a JavaServer Faces component for the web front end.
 
-* https://eclipse-ee4j.github.io/jakartaee-tutorial[The Jakarta EE Tutorial].
+* https://jakarta.ee/learn/docs/jakartaee-tutorial/current/[The Jakarta EE Tutorial].
 This comprehensive tutorial explains how to use Jakarta EE platform technologies
 and APIs to develop Jakarta EE applications.
 

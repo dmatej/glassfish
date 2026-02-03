@@ -22,7 +22,7 @@ The following topics are addressed here:
 * xref:#using-message-driven-beans[Using Message-Driven Beans]
 
 For general information about enterprise beans, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#enterprise-beans[Enterprise Beans]
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/entbeans/ejb-intro/ejb-intro.html[Enterprise Beans]
 in The Jakarta EE Tutorial.
 
 

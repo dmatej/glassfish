@@ -18,7 +18,7 @@ For information about administrative security for the {productName}, see the xre
 Security Guide].
 
 For general information about Jakarta EE security, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#security-2[Security]
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/security/security.html[Security]
 in The Jakarta EE Tutorial.
 
 The following topics are addressed here:
@@ -80,7 +80,7 @@ Containers as included in the Jakarta EE specification and defined by
 http://www.jcp.org/en/jsr/detail?id=196[JSR 196]
 (`http://www.jcp.org/en/jsr/detail?id=196`).
 * Support for Web Services Interoperability Technologies (WSIT) as described in
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#web-services-interoperability-and-jakarta-xml-web-services[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/websvcs/xml-websvcs/xml-websvcs.html[
 Jakarta EE Tutorial].
 * Support for the Jakarta EE Security API as included in the Jakarta EE
 specification and defined by https://jcp.org/en/jsr/detail?id=375[JSR
@@ -200,7 +200,7 @@ There is also a proprietary Glassfish API for programmatic login. See
 xref:#programmatic-login-using-the-programmaticlogin-class[Programmatic Login Using the ProgrammaticLogin Class].
 
 For more information about programmatic security, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#using-programmatic-security-with-web-applications[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/#using-programmatic-security-with-web-applications[
 Using Programmatic Security] in the The Jakarta EE Tutorial.
 
 [[roles-principals-and-principal-to-role-mapping]]
@@ -410,7 +410,7 @@ available at `https://jakarta.ee/specifications/authentication/` and
 
 For general information about realms and login modules, see the section
 about working with realms, users, groups, and roles in
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#security-2[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/security/security.html[
 Introduction to Security in the Jakarta EE Platform]
 in The Jakarta EE Tutorial.
 
@@ -1090,7 +1090,7 @@ xref:webservices.adoc#developing-web-services[Developing Web Services].
 
 For more information about message security, see the following:
 
-* "https://eclipse-ee4j.github.io/jakartaee-tutorial/#security-2[Introduction to
+* "https://jakarta.ee/learn/docs/jakartaee-tutorial/current/security/security.html[Introduction to
 Security in the Jakarta EE Platform]" in The Jakarta EE Tutorial
 * xref:security-guide.adoc#GSSCG[{productName} Security Guide]
 * http://www.jcp.org/en/jsr/detail?id=196[JSR 196]

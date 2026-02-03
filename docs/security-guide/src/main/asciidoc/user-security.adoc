@@ -33,7 +33,7 @@ for writing providers that can authenticate users against Identity
 Stores. It also provides two built-in providers. This mechanism is
 conceptually similar to Authentication Realms, but can be configured and
 managed by applications. See
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#working-with-identity-stores[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/security/security.html[
 Working with Identity Stores]
 in The Jakarta EE Tutorial for more information about Identity Stores.
 ====

@@ -857,7 +857,7 @@ Protection Policies].
 
 For additional information about message security, see the following documentation:
 
-* https://eclipse-ee4j.github.io/jakartaee-tutorial/#security-2[
+* https://jakarta.ee/learn/docs/jakartaee-tutorial/current/security/security.html[
 Introduction to Security in the Jakarta EE Platform] in The Jakarta EE Tutorial
 * "xref:application-development-guide.adoc#securing-applications[Securing Applications]"
 in {productName} Application Development Guide

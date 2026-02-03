@@ -34,7 +34,7 @@ and Eclipse do this automatically.
 ====
 
 
-"https://eclipse-ee4j.github.io/jakartaee-tutorial/#web-services[Web Services]"
+"https://jakarta.ee/learn/docs/jakartaee-tutorial/current/websvcs/xml-websvcs/xml-websvcs.html[Web Services]"
 in The Jakarta EE Tutorial shows how to deploy simple web services to
 {productName}.
 
@@ -62,7 +62,7 @@ Metro WSIT Guide]
 === Creating Portable Web Service Artifacts
 
 For a tutorial that shows how to use the `wsimport` and `wsgen`
-commands, see "https://eclipse-ee4j.github.io/jakartaee-tutorial/#web-services[
+commands, see "https://jakarta.ee/learn/docs/jakartaee-tutorial/current/websvcs/xml-websvcs/xml-websvcs.html[
 Web Services]" in The Jakarta EE Tutorial.
 
 [[deploying-a-web-service]]

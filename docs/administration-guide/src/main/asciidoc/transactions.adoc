@@ -31,7 +31,7 @@ For more information about the Java Transaction API (JTA) see the following site
 `https://jakarta.ee/specifications/transactions/`.
 
 You might also want to read
-"https://eclipse-ee4j.github.io/jakartaee-tutorial/#transactions[Transactions]"
+"https://jakarta.ee/learn/docs/jakartaee-tutorial/current/supporttechs/transactions/transactions.html[Transactions]"
 in The Jakarta EE Tutorial.
 
 [[about-transactions]]

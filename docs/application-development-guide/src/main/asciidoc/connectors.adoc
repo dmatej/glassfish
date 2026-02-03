@@ -36,7 +36,7 @@ involve inbound communication features are supported. Other connector
 features are supported only in the full {productName}.
 ====
 For more information about connectors, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#resource-adapters-and-contracts[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/supporttechs/connectors/connectors.html[
 Resource Adapters and Contracts] in The Jakarta EE Tutorial.
 
 For information about deploying a connector to the {productName}, see

@@ -21,7 +21,7 @@ The following topics are addressed here:
 * xref:#advanced-web-application-features[Advanced Web Application Features]
 
 For general information about web applications, see
-"https://eclipse-ee4j.github.io/jakartaee-tutorial/#getting-started-with-web-applications[
+"https://jakarta.ee/learn/docs/jakartaee-tutorial/current/web/webapp/webapp.html[
 The Web Tier]" in The Jakarta EE Tutorial.
 
 
