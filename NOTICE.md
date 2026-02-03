@@ -61,7 +61,7 @@ The project maintains the following source code repositories. An up to date list
 
 This project leverages the following third party content.
 
-The complete information is provided in the SBOM artifacts released in Maven Central as `cyclonedx.json` files, together with the main release artifact. For example, the [SBOM for GlassFish 7.0.25 Jakarta EE 10 Platform edition](https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/7.0.25/glassfish-7.0.25-cyclonedx.json).
+The complete information is provided in the SBOM artifacts released in Maven Central as `cyclonedx.json` files, together with the main release artifact. For example, the [SBOM for GlassFish 8.0.0 Jakarta EE 11 Platform edition](https://repo1.maven.org/maven2/org/glassfish/main/distributions/glassfish/8.0.0/glassfish-8.0.0-cyclonedx.json).
 
 Ant Contrib (1.0)
 
