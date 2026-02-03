@@ -47,7 +47,7 @@ Open the following local file in your browser: glassfish8/glassfish/docs/quickst
 
 Make sure to also check the GlassFish ${project.version} Documentation contains important information : https://glassfish.org/docs/#current
 
-If you are new to Jakarta EE, the Jakarta EE Tutorial (https://eclipse-ee4j.github.io/jakartaee-tutorial/) is a good way to learn more. The examples are tailored to run with GlassFish and this will help you get oriented.
+If you are new to Jakarta EE, the Jakarta EE Tutorial (https://jakarta.ee/learn/docs/jakartaee-tutorial/current/) is a good way to learn more. The examples are tailored to run with GlassFish and this will help you get oriented.
 
 The Jakarta EE Examples Project also has useful code samples https://projects.eclipse.org/projects/ee4j.jakartaee-examples
 

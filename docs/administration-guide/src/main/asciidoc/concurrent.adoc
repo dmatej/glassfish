@@ -42,7 +42,7 @@ Concurrent resources are resources of the following types:
 * Managed scheduled executor services. <<Configuring Managed Scheduled Executor Services>>.
 
 For detailed information about concurrent resources, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#jakarta-concurrency-2[Concurrency Utilities]
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/supporttechs/concurrency-utilities/concurrency-utilities.html[Concurrency Utilities]
 in The Jakarta EE Tutorial. Also see
 http://jcp.org/en/jsr/detail?id=236[
 Java Specification Request 236: Concurrency Utilities for Jakarta EE].

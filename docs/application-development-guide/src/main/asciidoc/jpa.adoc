@@ -53,7 +53,7 @@ For the JPA 2.0 Specification, see
 http://jcp.org/aboutJava/communityprocess/pfd/jsr317/index.html[Java
 Specification Request (JSR) 317]. For basic information about the Java
 Persistence API, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#persistence[Persistence]
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-intro/persistence-intro.html[Persistence]
 in The Jakarta EE Tutorial.
 * Java Architecture for XML Binding (JAXB) 2.0. The EclipseLink JAXB
 implementation, plus EclipseLink extensions, is called MOXy. The
@@ -119,7 +119,7 @@ see the links in the steps.
 Administering Database Connectivity]"
 in {productName} Administration Guide.
 2. Create the application. For guidance in writing your application,
-see https://eclipse-ee4j.github.io/jakartaee-tutorial/#persistence[Persistence]
+see https://jakarta.ee/learn/docs/jakartaee-tutorial/current/persist/persistence-intro/persistence-intro.html[Persistence]
 in The Jakarta EE Tutorial.
 3. Create the `persistence.xml` file. See xref:#specifying-the-database-for-an-application[Specifying the
 Database for an Application] for considerations specific to {productName}.

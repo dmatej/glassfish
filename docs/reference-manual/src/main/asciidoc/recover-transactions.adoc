@@ -122,7 +122,7 @@ xref:unfreeze-transaction-service.adoc#unfreeze-transaction-service[`unfreeze-tr
 "xref:administration-guide.adoc#administering-transactions[Administering Transactions]"
 in {productName} Administration Guide
 
-"https://eclipse-ee4j.github.io/jakartaee-tutorial/#transactions[Transactions]"
+"https://jakarta.ee/learn/docs/jakartaee-tutorial/current/supporttechs/transactions/transactions.html[Transactions]"
 in The Jakarta EE Tutorial
 
 

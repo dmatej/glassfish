@@ -39,7 +39,7 @@ applications and stores information about jobs in a job repository. In
 
 For detailed information about batch jobs, batch processing, and the
 batch processing framework, see
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#batch-processing[Batch Processing]
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/supporttechs/batch-processing/batch-processing.html[Batch Processing]
 in The Jakarta EE Tutorial. Also see
 http://jcp.org/en/jsr/detail?id=352[Java Specification Request 352:
 Batch Applications for the Java Platform]

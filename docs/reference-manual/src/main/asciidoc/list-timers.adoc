@@ -75,7 +75,7 @@ xref:asadmin.adoc#asadmin[`asadmin`(1M)]
 
 xref:migrate-timers.adoc#migrate-timers[`migrate-timers`(1)]
 
-https://eclipse-ee4j.github.io/jakartaee-tutorial/#using-the-timer-service[
+https://jakarta.ee/learn/docs/jakartaee-tutorial/current/entbeans/ejb-intro/ejb-intro.html[
 Using the Timer Service] in The Jakarta EE Tutorial
 
 "xref:application-development-guide.adoc#ejb-timer-service[EJB Timer Service]"
