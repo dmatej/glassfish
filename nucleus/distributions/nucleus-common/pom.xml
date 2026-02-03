@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
+    Copyright (c) 2026 Contributors to the Eclipse Foundation.
     Copyright (c) 2010, 2021 Oracle and/or its affiliates. All rights reserved.
 
     This program and the accompanying materials are made available under the
@@ -38,6 +39,7 @@
                 <filtering>false</filtering>
                 <excludes>
                     <exclude>config/osgi.properties</exclude>
+                    <exclude>docs/*.html</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -45,6 +47,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>config/osgi.properties</include>
+                    <include>docs/*.html</include>
                 </includes>
             </resource>
         </resources>
@@ -63,6 +66,22 @@
                         <delimiter>@</delimiter>
                     </delimiters>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>parse-version</id>
+                        <goals>
+                            <goal>parse-version</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <propertyPrefix>product</propertyPrefix>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

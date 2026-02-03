@@ -2,8 +2,8 @@
 <html lang="en">
 <!--
 
+    Copyright (c) 2023, 2026 Contributors to the Eclipse Foundation.
     Copyright (c) 2010, 2020 Oracle and/or its affiliates. All rights reserved.
-    Copyright (c) 2023 Contributors to the Eclipse Foundation.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -36,7 +36,7 @@
   a:visited{color:#917E9C}
   a:hover {text-decoration:underline}
 </style>
-<title>GlassFish Server 7 Quick Start Guide</title>
+<title>GlassFish Server ${product.majorVersion} Quick Start Guide</title>
 </head>
 <body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
 link="#594fbf" vlink="#1005fb" alink="#333366"><table width="100%" border="0"
@@ -46,13 +46,13 @@ cellspacing="4" cellpadding="2">
 <td align="right" valign="top"> <a href="https://glassfish.org/">glassfish.org</a> </td>
 </tr>
 <tr>
-<td align="left" valign="top" bgcolor="#587993"> <font color="#ffffff"><b>GlassFish Server 7</b></font></td>
+<td align="left" valign="top" bgcolor="#587993"> <font color="#ffffff"><b>GlassFish Server ${product.majorVersion}</b></font></td>
 </tr>
 </tbody>
 </table><div class="maincontent">
-<a name="aboaa"></a><h1>GlassFish Server 7 Quick Start Guide</h1>
+<a name="aboaa"></a><h1>GlassFish Server ${product.majorVersion} Quick Start Guide</h1>
 <p>GlassFish Server provides a server for the development and deployment of Jakarta EE Platform applications
-and web technologies based on Java technology. GlassFish Server 7 provides the following:</p>
+and web technologies based on Java technology. GlassFish Server ${product.majorVersion} provides the following:</p>
 <ul>
 <li><p>A lightweight and extensible core based on OSGi Alliance standards</p></li>
 <li><p>A web container</p></li>
@@ -67,15 +67,15 @@ and web technologies based on Java technology. GlassFish Server 7 provides the f
 <li><p><a href="#gglmh">Starting and Stopping the Database Server</a></p></li>
 <li><p><a href="#ggllq">Starting the Administration Console</a></p></li>
 <li><p><a href="#geyvr">Deploying and Undeploying Applications</a></p></li>
-<li><p><a href="#ghgqg">Removing GlassFish Server 7 Software</a></p></li>
+<li><p><a href="#ghgqg">Removing GlassFish Server ${product.majorVersion} Software</a></p></li>
 <li><p><a href="#ggkzh">For More Information</a></p></li>
 </ul>
 <a id="ghgpe" name="ghgpe"></a><a id="GSQSG00030" name="GSQSG00030"></a>
 <h2>About This Quick Start Guide</h2>
 <p>This <i>Quick Start Guide</i> demonstrates key features of GlassFish Server and enables you to quickly learn the basics.
 Step-by-step procedures introduce you to product features and enable you to use them immediately.</p>
-<p>This guide assumes that you have already obtained and installed the GlassFish Server 7 software. For more information
-about installing GlassFish Server 7, see the <a href="https://glassfish.org/docs/latest/installation-guide.html"><cite>Installation Guide</cite></a>.</p>
+<p>This guide assumes that you have already obtained and installed the GlassFish Server ${product.majorVersion} software. For more information
+about installing GlassFish Server ${product.majorVersion}, see the <a href="https://glassfish.org/docs/latest/installation-guide.html"><cite>Installation Guide</cite></a>.</p>
 <p>Instructions and examples in this guide that apply to all supported operating systems use the forward slash character
 (<code>/</code>) as path separators in all file names and commands. Ensure that you use the correct character for the
 system on which GlassFish Server is installed. For example:</p>
@@ -87,9 +87,9 @@ system on which GlassFish Server is installed. For example:</p>
 other entities mentioned in this guide, see <a href="#ggkzh">For More Information</a>.</p>
 <p>To review additional details about this release before you begin using the software,
 see the <a href="https://glassfish.org/docs/latest/release-notes.html"><cite>Release Notes</cite></a>.
-The <i>Release Notes</i> provide important information about the GlassFish Server 7 release,
+The <i>Release Notes</i> provide important information about the GlassFish Server ${product.majorVersion} release,
 including details about new features, information about known issues and possible workarounds,
-and tips for installing and working with GlassFish Server 7 software.</p>
+and tips for installing and working with GlassFish Server ${product.majorVersion} software.</p>
 
 
 <a id="ghpfg" name="ghpfg"></a><a id="GSQSG00031" name="GSQSG00031"></a>
@@ -644,7 +644,7 @@ For this example, use the default domain, <code>domain1</code>, in the default <
 
 <a id="ghgqg" name="ghgqg"></a><a id="GSQSG00039" name="GSQSG00039"></a>
 
-<h2>Removing GlassFish Server 7 Software</h2>
+<h2>Removing GlassFish Server ${product.majorVersion} Software</h2>
 <p>Before removing the GlassFish Server software, stop the following processes:</p>
 <ul>
 <li><p>All domains and other related processes</p></li>
@@ -658,7 +658,7 @@ For this example, use the default domain, <code>domain1</code>, in the default <
 <a id="ggkzh" name="ggkzh"></a><a id="GSQSG00040" name="GSQSG00040"></a>
 
 <h2>For More Information</h2>
-<p>Additional resources are available to help you learn more about GlassFish Server 7 and related technologies.</p>
+<p>Additional resources are available to help you learn more about GlassFish Server ${product.majorVersion} and related technologies.</p>
 <p>The following resources are described here:</p>
 <ul>
 <li><p><a href="#ghhir">Product Documentation</a></p></li>
@@ -682,14 +682,14 @@ For this example, use the default domain, <code>domain1</code>, in the default <
 
 <h3>GlassFish Community</h3>
 <ul>
-<li><p><a href="https://www.eclipse.org/forums/index.php/f/419/">GlassFish Forum</a>: Public online discussion forum that provides community support and tips for working with GlassFish Server.</p></li>
+<li><p><a href="https://github.com/eclipse-ee4j/glassfish/discussions">GlassFish Forum</a>: Public online discussion forum that provides community support and tips for working with GlassFish Server.</p></li>
 </ul>
 
 
 <a id="giyjo" name="giyjo"></a><a id="GSQSG00052" name="GSQSG00052"></a>
 
 <h3>Tutorials</h3>
-<p>The following tutorials provide working examples and detailed instructions for creating enterprise applications for the Jakarta EE Platform 10.</p>
+<p>The following tutorials provide working examples and detailed instructions for creating enterprise applications for the Jakarta EE Platform ${jakartaee}.</p>
 <ul>
 <li><p><a href="https://eclipse-ee4j.github.io/jakartaee-firstcup">Your First Cup: An Introduction to the Jakarta EE Platform</a>: Provides a short tutorial for beginning Jakarta EE programmers that shows how to develop a simple enterprise application from scratch. The sample application consists of four main components: a Jakarta RESTful web service, an enterprise bean, a Jakarta Persistence entity, and a web application created with Jakarta Faces Facelets technology.</p></li>
 <li><p><a href="https://eclipse-ee4j.github.io/jakartaee-tutorial">The Jakarta EE Tutorial</a>: Provides a beginner's guide to developing enterprise applications for GlassFish Server. The tutorial includes working examples and instructions for creating applications with Jakarta EE technologies, including Jakarta Servlets, Jakarta Faces Facelets, Jakarta RESTful Web Services, Jakarta Enterprise Beans, Jakarta Persistence, Jakarta Contexts and Dependency Injection for the Jakarta EE Platform, and more.</p></li>
@@ -706,5 +706,5 @@ For this example, use the default domain, <code>domain1</code>, in the default <
 <h3>GlassFish Samples</h3>
 <p>The sample applications that are delivered with older Java EE SDK. The samples are available from the <a href="https://github.com/eclipse-ee4j/glassfish-samples">GlassFish samples downloads page</a>.</p>
 </div> <hr style="width: 80%; height: 2px;"> <p
-class="copy">Copyright &copy; 2023 Eclipse Foundation &nbsp;&nbsp;|&nbsp;&nbsp; <a
+class="copy">Copyright &copy; 2026 Eclipse Foundation &nbsp;&nbsp;|&nbsp;&nbsp; <a
 href="./copyright.html">Legal Notices</a></p></body></html>
