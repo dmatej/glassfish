@@ -1323,7 +1323,7 @@ a probable memory leak. ::
 +
   Action: Check the list of resources
 
-[[sthref250]]AS-WEB-UTIL-00028 The clearReferencesStatic is not consistent in context.xml for virtual servers ::
+[[sthref250]]AS-WEB-UTIL-00028 The [\{0}] attribute is not consistent in context.xml for virtual servers ::
   Cause: As described in the message.
 +
   Action: Resolve the situation described in the message, if necessary.
