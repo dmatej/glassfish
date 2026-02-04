@@ -30,7 +30,7 @@
 
     <groupId>org.glassfish.main</groupId>
     <artifactId>glassfish-main-aggregator</artifactId>
-    <version>8.0.0</version>
+    <version>8.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Eclipse GlassFish Aggregator POM</name>
@@ -68,7 +68,7 @@
     </distributionManagement>
 
     <properties>
-        <project.build.outputTimestamp>2026-02-04T17:20:24Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-02-04T18:29:02Z</project.build.outputTimestamp>
     </properties>
 
     <build>
