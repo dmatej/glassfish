@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  * Copyright 2004 The Apache Software Foundation
  *
@@ -155,9 +155,9 @@ public class LogFacade {
     public static final String CLASSPATH_ERROR = PREFIX + "00027";
 
     @LogMessageInfo(
-            message = "The clearReferencesStatic is not consistent in context.xml for virtual servers",
+            message = "The [{0}] attribute is not consistent in context.xml for virtual servers",
             level = "WARNING")
-    public static final String INCONSISTENT_CLEAR_REFERENCE_STATIC = PREFIX + "00028";
+    public static final String INCONSISTENT_CONTEXT_XML_ATTRIBUTE = PREFIX + "00028";
 
     @LogMessageInfo(
             message = "class-loader attribute dynamic-reload-interval in sun-web.xml not supported",

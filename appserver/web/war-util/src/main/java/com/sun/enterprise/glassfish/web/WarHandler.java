@@ -37,6 +37,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -146,7 +147,7 @@ public class WarHandler extends AbstractArchiveHandler {
             WebXmlParser webXmlParser = getWebXmlParser(context.getSource());
             configureLoaderAttributes(cloader, webXmlParser, base);
             configureLoaderProperties(cloader, webXmlParser, base);
-            configureContextXmlAttribute(cloader, base, context);
+            configureContextXmlAttributes(cloader, base, context);
         } catch(XMLStreamException | IOException xse) {
             LOG.log(SEVERE, xse.getMessage(), xse);
         }
@@ -258,7 +259,7 @@ public class WarHandler extends AbstractArchiveHandler {
     }
 
 
-    protected void configureContextXmlAttribute(WebappClassLoader cloader, File base, DeploymentContext dc)
+    protected void configureContextXmlAttributes(WebappClassLoader cloader, File base, DeploymentContext dc)
         throws XMLStreamException, IOException {
         Boolean clearReferencesStatic = null;
         Boolean antiJARLocking = null;
@@ -266,8 +267,8 @@ public class WarHandler extends AbstractArchiveHandler {
         File warContextXml = new File(base.getAbsolutePath(), WAR_CONTEXT_XML);
         if (warContextXml.exists()) {
             ContextXmlParser parser = new ContextXmlParser(warContextXml);
-            clearReferencesStatic = parser.getClearReferencesStatic();
-            antiJARLocking = parser.getAntiJARLocking();
+            clearReferencesStatic = getContextXmlAttribute(ContextXmlParser::getClearReferencesStatic, List.of(parser));
+            antiJARLocking = getContextXmlAttribute(ContextXmlParser::getAntiJARLocking, List.of(parser));
         }
 
         if (clearReferencesStatic == null || antiJARLocking == null) {
@@ -319,20 +320,22 @@ public class WarHandler extends AbstractArchiveHandler {
         return defaultParsers;
     }
 
-    private Boolean getContextXmlAttribute(Function<ContextXmlParser, Boolean> attribute, List<ContextXmlParser> parsers) {
-        Boolean contextXmlAttribute = null;
+    private <T> T getContextXmlAttribute(Function<ContextXmlParser, XmlAttribute<T>> attribute,
+        List<ContextXmlParser> parsers) {
+        T attributeValue = null;
         for (ContextXmlParser parser : parsers) {
-            Boolean attributeValue = attribute.apply(parser);
-            if (attributeValue != null) {
-                if (contextXmlAttribute != null && !attributeValue.equals(contextXmlAttribute)) {
-                    LOG.log(WARNING, LogFacade.INCONSISTENT_CLEAR_REFERENCE_STATIC);
-                    contextXmlAttribute = null;
+            XmlAttribute<T> xmlAttribute = attribute.apply(parser);
+            if (xmlAttribute != null) {
+                T value = xmlAttribute.getValue();
+                if (attributeValue != null && !attributeValue.equals(value)) {
+                    LOG.log(WARNING, LogFacade.INCONSISTENT_CONTEXT_XML_ATTRIBUTE, xmlAttribute.getName());
+                    attributeValue = null;
                     break;
                 }
-                contextXmlAttribute = attributeValue;
+                attributeValue = value;
             }
         }
-        return contextXmlAttribute;
+        return attributeValue;
     }
 
     /**
@@ -417,6 +420,25 @@ public class WarHandler extends AbstractArchiveHandler {
             }
         }
 
+    }
+
+    protected static class XmlAttribute<T> {
+
+        private final String name;
+        private final T value;
+
+        protected XmlAttribute(String name, T value) {
+            this.name = Objects.requireNonNull(name, "The name cannot be null");
+            this.value = Objects.requireNonNull(value, "The value cannot be null");
+        }
+
+        protected String getName() {
+            return name;
+        }
+
+        protected T getValue() {
+            return value;
+        }
     }
 
     protected abstract static class WebXmlParser extends BaseXmlParser {
@@ -641,8 +663,8 @@ public class WarHandler extends AbstractArchiveHandler {
 
     protected static class ContextXmlParser extends BaseXmlParser {
 
-        private Boolean clearReferencesStatic;
-        private Boolean antiJARLocking;
+        private XmlAttribute<Boolean> clearReferencesStatic;
+        private XmlAttribute<Boolean> antiJARLocking;
 
         ContextXmlParser(File contextXmlFile) throws XMLStreamException, IOException {
             if (contextXmlFile.exists()) {
@@ -664,27 +686,28 @@ public class WarHandler extends AbstractArchiveHandler {
         protected void read(InputStream input) throws XMLStreamException {
             parser = getXMLInputFactory().createXMLStreamReader(input);
 
-            int event = 0;
+            int event;
             while (parser.hasNext() && (event = parser.next()) != END_DOCUMENT) {
                 if (event == START_ELEMENT) {
                     String name = parser.getLocalName();
                     if ("Context".equals(name)) {
                         String path = null;
-                        Boolean crs = null;
                         int count = parser.getAttributeCount();
                         for (int i = 0; i < count; i++) {
                             String attrName = parser.getAttributeName(i).getLocalPart();
                             if ("clearReferencesStatic".equals(attrName)) {
-                                crs = Boolean.valueOf(parser.getAttributeValue(i));
+                                clearReferencesStatic = new XmlAttribute<>(attrName,
+                                    Boolean.parseBoolean(parser.getAttributeValue(i)));
                             } else if ("path".equals(attrName)) {
                                 path = parser.getAttributeValue(i);
                             } else if ("antiJARLocking".equals(attrName)) {
-                                antiJARLocking = Boolean.valueOf(parser.getAttributeValue(i));
+                                antiJARLocking = new XmlAttribute<>(attrName,
+                                    Boolean.parseBoolean(parser.getAttributeValue(i)));
                             }
                         }
                         // make sure no path associated to it
-                        if (path == null) {
-                            clearReferencesStatic = crs;
+                        if (path != null) {
+                            clearReferencesStatic = null;
                             break;
                         }
                     } else {
@@ -694,11 +717,11 @@ public class WarHandler extends AbstractArchiveHandler {
             }
         }
 
-        Boolean getClearReferencesStatic() {
+        XmlAttribute<Boolean> getClearReferencesStatic() {
             return clearReferencesStatic;
         }
 
-        Boolean getAntiJARLocking() {
+        XmlAttribute<Boolean> getAntiJARLocking() {
             return antiJARLocking;
         }
     }
