@@ -127,11 +127,6 @@ public class CULoggerInfo {
     public static final String missingURLEntry = LOGMSG_PREFIX + "-00012";
 
     @LogMessageInfo(
-            message = "Error closing zip file for duplicate class path entry {0}",
-            level = "INFO")
-    public static final String exceptionClosingDupUrlEntry = LOGMSG_PREFIX + "-00013";
-
-    @LogMessageInfo(
             message = "Exception in ASURLClassLoader",
             level = "INFO")
     public static final String exceptionInASURLClassLoader = LOGMSG_PREFIX + "-00014";

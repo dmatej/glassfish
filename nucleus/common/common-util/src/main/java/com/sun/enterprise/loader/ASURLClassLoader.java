@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.lang.ref.Cleaner;
+import java.lang.ref.Cleaner.Cleanable;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -67,6 +69,7 @@ import org.glassfish.hk2.api.PreDestroy;
 import org.glassfish.main.jdke.cl.GlassfishUrlClassLoader;
 
 import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.WARNING;
 
 /**
  * Class loader used by the ejbs of an application or stand-alone module.
@@ -190,11 +193,7 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
             // closes the jar handles and sets the url entries to null
             for (URLEntry u : this.urlSet) {
                 if (u.zip != null) {
-                    try {
-                        u.zip.reallyClose();
-                    } catch (IOException ioe) {
-                        _logger.log(INFO, CULoggerInfo.getString(CULoggerInfo.exceptionClosingURLEntry, u.source), ioe);
-                    }
+                    u.zip.reallyClose();
                 }
                 if (u.table != null) {
                     u.table.clear();
@@ -270,11 +269,7 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
                 _logger.log(Level.FINE, "[ASURLClassLoader] Ignoring duplicate URL: {0}", url);
                 // Clean up the unused entry or it could hold open a jar file.
                 if (entry.zip != null) {
-                    try {
-                        entry.zip.reallyClose();
-                    } catch (IOException ioe) {
-                        _logger.log(INFO, CULoggerInfo.getString(CULoggerInfo.exceptionClosingDupUrlEntry, url), ioe);
-                    }
+                    entry.zip.reallyClose();
                 }
             }
 
@@ -787,6 +782,10 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
      * @author fkieviet
      */
     private static final class ProtectedJarFile extends JarFile {
+
+        private static final Cleaner CLEANER = Cleaner.create();
+        private final Cleanable cleanable;
+
         /**
          * Constructor
          *
@@ -795,26 +794,13 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
          */
         public ProtectedJarFile(File file) throws IOException {
             super(file, true, OPEN_READ, Runtime.version());
+            cleanable = CLEANER.register(this, this::closeInternally);
         }
 
         /**
-         * Do nothing
+         * Do nothing, see javadoc of the class
          *
          * @see java.util.zip.ZipFile#close()
-         *
-         * Byron sez:  I wonder what's going on here?!?  This looks quite weird.
-         * Why not just get rid of both reallyClose() and close() and finalize()
-         * -- and just rely on the superclass?
-         * At any rate I am not messing with it today, 1/9/2013.  Mainly because
-         * maybe close() is called outside and we do NOT want it to really close?
-         * Here is what happens at finalize time:
-         * 1. ASURLClassLoader$ProtectedJarFile.finalize()
-         * 2. java.util.zip.ZipFile.finalize()
-         * 3. ASURLClassLoader$ProtectedJarFile.close()
-         * 4. dumps a WARNING log message
-         * 5. reallyClose()
-         * 6. java.util.zip.ZipFile.close()
-         * I
          */
         @Override
         public void close() {
@@ -823,24 +809,16 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
 
         /**
          * Really close the jar file
-         *
-         * @throws IOException from parent
          */
-        public void reallyClose() throws IOException {
-            super.close();
+        private void reallyClose() {
+            cleanable.clean();
         }
 
-        /**
-         * @see java.lang.Object#finalize()
-         */
-        @Override
-        @Deprecated(since = "6.1.0", forRemoval = true)
-        protected void finalize() throws IOException {
+        private void closeInternally() {
             try {
-                super.finalize();
-                reallyClose();
-            } catch (Throwable t) {
-                throw new IOException(t);
+                super.close();
+            } catch (IOException ioe) {
+                _logger.log(WARNING, "Failed to close " + getName(), ioe);
             }
         }
     }
@@ -857,13 +835,13 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
          * file of the url,
          * ensure thread visibility by making it 'volatile'
          */
-        volatile File file = null;
+        volatile File file;
 
         /**
          * jar file if url is a jar else null,
          * ensure thread visibility by making it 'volatile'
          */
-        volatile ProtectedJarFile zip = null;
+        volatile ProtectedJarFile zip;
 
         /**
          * true if url is a jar,
@@ -872,7 +850,7 @@ public class ASURLClassLoader extends GlassfishUrlClassLoader implements JasperA
         volatile boolean isJar = false;
 
         /** ensure thread visibility by making it 'volatile' */
-        volatile HashMap<String, String> table = null;
+        volatile HashMap<String, String> table;
 
         /**
          * ProtectionDomain with signers if jar is signed,
