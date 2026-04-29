@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2025, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,12 +15,6 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  */
 
-/*
- * ConnectionImpl.java
- *
- * Create on March 3, 2000
- */
-
 package com.sun.jdo.spi.persistence.support.sqlstore.connection;
 
 import com.sun.jdo.api.persistence.support.JDODataStoreException;
@@ -28,6 +23,8 @@ import com.sun.jdo.spi.persistence.support.sqlstore.ejb.EJBHelper;
 import com.sun.jdo.spi.persistence.utility.Linkable;
 
 import java.lang.System.Logger;
+import java.lang.ref.Cleaner;
+import java.lang.ref.Cleaner.Cleanable;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -47,7 +44,9 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 import static com.sun.jdo.spi.persistence.support.sqlstore.LogHelperSQLStore.RESOURCE_BUNDLE;
+import static java.lang.System.Logger.Level.ERROR;
 import static java.lang.System.Logger.Level.TRACE;
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * This class implements the <code>java.sql.Connection</code>
@@ -56,10 +55,19 @@ import static java.lang.System.Logger.Level.TRACE;
  * type instead of this class.
  */
 public class ConnectionImpl implements Connection, Linkable {
+
+    private static final Cleaner CLEANER = Cleaner.create();
+
+    /**
+     * The logger
+     */
+    private static final Logger LOG = System.getLogger(ConnectionImpl.class.getName(), RESOURCE_BUNDLE);
+
+
     /*
      * The associated JDBC Connection.
      */
-    private Connection connection;
+    private final Connection connection;
 
     /*
      * The datasource url; e.g. "jdbc:oracle:oci7:@ABYSS_ORACLE".
@@ -74,12 +82,12 @@ public class ConnectionImpl implements Connection, Linkable {
     /*
      * Previous ConnectionImpl in a chain.
      */
-    Linkable previous;
+    private Linkable previous;
 
     /*
      * Next ConnectionImpl in a chain.
      */
-    Linkable next;
+    private Linkable next;
 
     /*
      * Indicates whether this ConnectionImpl is pooled.
@@ -95,7 +103,7 @@ public class ConnectionImpl implements Connection, Linkable {
      * Indicates whether this ConnectionImpl is to be freed on
      * transaction termination.
      */
-    boolean freePending;
+    private  boolean freePending;
 
     /*
      * The resource interface that is registered with a transaction
@@ -108,11 +116,7 @@ public class ConnectionImpl implements Connection, Linkable {
      */
     ConnectionManager connectionManager;
 
-    /**
-     * The logger
-     */
-    private static final Logger LOG = System.getLogger(ConnectionImpl.class.getName(), RESOURCE_BUNDLE);
-
+    private final Cleanable cleanable;
 
     /**
      * Create a new ConnectionImpl object and keep a reference to
@@ -130,8 +134,8 @@ public class ConnectionImpl implements Connection, Linkable {
         this.pooled = false;
         this.transaction = null;
         this.freePending = false;
-        //        this.resource = null;
         this.connectionManager = connMgr;
+        this.cleanable = CLEANER.register(this, this::closeInternalConnection);
     }
 
     //----------------------------------------------------------------------
@@ -235,12 +239,8 @@ public class ConnectionImpl implements Connection, Linkable {
             this.connection.commit();
             if (this.freePending) {
                 if (this.connectionManager.shutDownPending) {
-                    try {
-                        this.connection.close();
-                        LOG.log(TRACE, "sqlstore.connectionimpl.commit");
-                    } catch (SQLException se) {
-                        ;
-                    }
+                    this.cleanable.clean();
+                    LOG.log(TRACE, "sqlstore.connectionimpl.commit");
                 } else {
                     this.freePending = false;
                     this.connectionManager.freeList.insertAtTail(this);
@@ -291,36 +291,28 @@ public class ConnectionImpl implements Connection, Linkable {
         closeInternal();
     }
 
-    private synchronized void closeInternal() throws SQLException {
-
+    private synchronized void closeInternal() {
         ConnectionImpl conn = this;
-
         LOG.log(TRACE, "sqlstore.connectionimpl.close_arg", conn);
-
-        try {
-            conn.connectionManager.busyList.removeFromList(conn);
-            if (conn.xactPending() == true) {
-                conn.setFreePending(true);
-                LOG.log(TRACE, "sqlstore.connectionimpl.close.freepending");
-            } else if ((conn.getPooled() == true) && (conn.connectionManager.shutDownPending == false)) {
-                conn.connectionManager.freeList.insertAtTail(conn);
-                LOG.log(TRACE, "sqlstore.connectionimpl.close.putfreelist");
+        conn.connectionManager.busyList.removeFromList(conn);
+        if (conn.xactPending() == true) {
+            conn.setFreePending(true);
+            LOG.log(TRACE, "sqlstore.connectionimpl.close.freepending");
+        } else if ((conn.getPooled() == true) && (conn.connectionManager.shutDownPending == false)) {
+            conn.connectionManager.freeList.insertAtTail(conn);
+            LOG.log(TRACE, "sqlstore.connectionimpl.close.putfreelist");
+        } else {
+            if (EJBHelper.isManaged()) {
+                // RESOLVE: do we need it here?
+                this.cleanable.clean();
+                LOG.log(TRACE, "sqlstore.connectionimpl.close.exit");
             } else {
-                if (EJBHelper.isManaged()) {
-                    // RESOLVE: do we need it here?
-                    this.connection.close();
-                    LOG.log(TRACE, "sqlstore.connectionimpl.close.exit");
-                } else {
-                    // Save reference to this connection and close it only when
-                    // another free becomes available. This reduces time to
-                    // get a new connection.
-                    this.connectionManager.replaceFreeConnection(this);
-                    LOG.log(TRACE, "sqlstore.connectionimpl.close.replaced");
-                }
+                // Save reference to this connection and close it only when
+                // another free becomes available. This reduces time to
+                // get a new connection.
+                this.connectionManager.replaceFreeConnection(this);
+                LOG.log(TRACE, "sqlstore.connectionimpl.close.replaced");
             }
-
-        } catch (SQLException se) {
-            throw se;
         }
     }
 
@@ -329,11 +321,7 @@ public class ConnectionImpl implements Connection, Linkable {
      * becomes available
      */
     protected void release() {
-        try {
-            this.connection.close();
-        } catch (SQLException se) {
-            // ignore
-        }
+        cleanable.clean();
         LOG.log(TRACE, "sqlstore.connectionimpl.close.connrelease");
     }
 
@@ -856,8 +844,7 @@ public class ConnectionImpl implements Connection, Linkable {
                     this.connectionManager.disassociateXact(this.transaction, this, false);
                     // Make sure the last things done are the only things
                     // that can throw exceptions.
-                    this.connection.close();
-
+                    cleanable.clean();
                     LOG.log(TRACE, "sqlstore.connectionimpl.clearxact.close");
                 }
             } else {
@@ -882,8 +869,6 @@ public class ConnectionImpl implements Connection, Linkable {
     @Override
     public synchronized String toString() {
         int xactIsolation = 0;
-        String buffer = "Connect@";
-
         String strTran = (this.transaction == null) ?
                 "  NULL" : this.transaction.toString();
         int hash = this.hashCode();
@@ -894,22 +879,21 @@ public class ConnectionImpl implements Connection, Linkable {
             xactIsolation = -1;
         }
 
-        buffer = buffer + hash + "\n" +
+        return "Connect@" + hash + "\n" +
                 "  pooled = " + this.pooled + "\n" +
                 "  freePending = " + this.freePending + "\n" +
                 "  xactIsolation = " + xactIsolation + "\n" +
                 "  Tran = " + strTran + "\n";
-
-        return buffer;
     }
 
-    @Override
-    protected void finalize() {
+    private void closeInternalConnection() {
         try {
-            this.connection.close();
-            LOG.log(TRACE, "sqlstore.connectionimpl.finalize");
-        } catch (SQLException se) {
-            ;
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+                LOG.log(WARNING, "Internal connection closed by the cleaner.");
+            }
+        } catch (SQLException e) {
+            LOG.log(ERROR, "Failed to close the connection " + connection, e);
         }
     }
 

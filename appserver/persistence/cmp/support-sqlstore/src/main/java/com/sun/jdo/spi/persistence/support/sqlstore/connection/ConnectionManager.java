@@ -1167,7 +1167,7 @@ public class ConnectionManager {
             this.busyList.insertAtTail(conn);
         }
         conn.setFreePending(false);
-        return (conn);
+        return conn;
     }
 
     /**
@@ -1245,7 +1245,7 @@ public class ConnectionManager {
         conn.setFreePending(false);
         conn.setPooled(false);
         this.busyList.insertAtTail(conn);
-        return (conn);
+        return conn;
     }
 
     /**
@@ -1326,7 +1326,7 @@ public class ConnectionManager {
         conn.setFreePending(false);
         conn.setPooled(false);
         this.busyList.insertAtTail(conn);
-        return (conn);
+        return conn;
     }
 
     /**
@@ -2013,10 +2013,10 @@ public class ConnectionManager {
 
         if (tran == null || xactConn.equals(conn)) {
             if (free == true) {
-                if (conn.connectionManager.shutDownPending == false) {
-                    this.freeList.insertAtTail(conn);
-                } else {
+                if (conn.connectionManager.shutDownPending) {
                     conn.close();
+                } else {
+                    this.freeList.insertAtTail(conn);
                 }
             }
         } else {
