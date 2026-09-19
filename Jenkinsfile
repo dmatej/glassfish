@@ -377,11 +377,13 @@ def runOnNode(String job, String label, boolean archiveServerLogs, Closure actio
                      infraError = true
                      infraRetries++
                      if (infraRetries >= maxInfraRetries) {
+                        echo "Stack trace:\n${org.codehaus.groovy.runtime.StackTraceUtils.sanitize(e).stackTrace.join('\n')}"
                         throw e
                      }
                      echo "⚠️ K8s Infrastructure failure detected (${errorMsg}). Spawning fresh pod (Attempt ${infraRetries}/${maxInfraRetries})..."
                   } else {
                      echo "❌ Failure: ${errorMsg}"
+                     echo "Stack trace:\n${org.codehaus.groovy.runtime.StackTraceUtils.sanitize(e).stackTrace.join('\n')}"
                      throw e
                   }
                } finally {
