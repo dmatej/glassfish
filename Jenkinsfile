@@ -60,7 +60,6 @@ def ant_light_jobs = [
     "ejb_group_2",
     "ejb_group_embedded",
     "jdbc_group1",
-    "jdbc_group5",
     "connector_group_2",
     "connector_group_3",
     "jdbc_group2",
