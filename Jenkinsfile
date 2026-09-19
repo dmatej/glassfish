@@ -381,6 +381,9 @@ def runOnNode(String job, String label, boolean archiveServerLogs, Closure actio
                         throw e
                      }
                      echo "⚠️ K8s Infrastructure failure detected (${errorMsg}). Spawning fresh pod (Attempt ${infraRetries}/${maxInfraRetries})..."
+                  } else if (e instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException) {
+                     e.getCauses().each { cause -> echo "❌ Interruption cause: ${cause}" }
+                     throw e
                   } else {
                      echo "❌ Failure: ${errorMsg}"
                      echo "Stack trace:\n${org.codehaus.groovy.runtime.StackTraceUtils.sanitize(e).stackTrace.join('\n')}"
