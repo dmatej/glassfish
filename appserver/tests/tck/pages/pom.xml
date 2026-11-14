@@ -23,7 +23,7 @@ Note requires both :jakarta-pages-tck and :java from the tck-download module
 
 E.g. from the root of GF use the following for the first invocation:
 
-mvn clean install -Ptck -pl :jakarta-pages-tck,:javatest,:glassfish-external-tck-pages
+mvn clean install -Ptck -pl :tck-pages-download,:tck-pages
 
 -->
 
