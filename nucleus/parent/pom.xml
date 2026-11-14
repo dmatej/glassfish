@@ -142,7 +142,7 @@
 
         <!-- Jakarta Faces -->
         <jakarta.faces-api.version>4.1.2</jakarta.faces-api.version>
-        <mojarra.version>4.1.17</mojarra.version>
+        <mojarra.version>4.1.20</mojarra.version>
 
         <!-- Jakarta WebSocket -->
         <jakarta.websocket-api.version>2.2.0</jakarta.websocket-api.version>
