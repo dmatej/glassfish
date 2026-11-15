@@ -48,6 +48,7 @@
         <module>expression-language</module>
         <module>enterprise-beans</module>
         <module>faces</module>
+        <module>jdbc</module>
 
         <module>platform-tck-runner</module>
 
@@ -74,6 +75,7 @@
         <glassfish.directoryName>glassfish8</glassfish.directoryName>
         <glassfish.home>${glassfish.root}/${glassfish.directoryName}</glassfish.home>
         <glassfish.asadmin>${glassfish.home}/glassfish/bin/asadmin</glassfish.asadmin>
+        <glassfish.lib.dir>${glassfish.home}/glassfish/lib</glassfish.lib.dir>
 
         <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
 
