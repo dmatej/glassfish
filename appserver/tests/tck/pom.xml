@@ -48,6 +48,7 @@
         <module>enterprise-beans</module>
         <module>faces</module>
         <module>jdbc</module>
+        <module>json</module>
 
         <module>platform-tck-runner</module>
 
@@ -62,8 +63,6 @@
         <module>mvc</module>
         <module>validation</module>
         <module>websocket</module>
-        <module>jsonp</module>
-        <module>jsonp_pluggability</module>
     </modules>
 
     <properties>
