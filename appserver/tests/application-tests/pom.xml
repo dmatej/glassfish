@@ -27,7 +27,6 @@
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.glassfish.main.tests.application-tests</groupId>
     <artifactId>application-tests-individual</artifactId>
     <packaging>pom</packaging>
 
