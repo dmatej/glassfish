@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2024 Contributors to the Eclipse Foundation.
+    Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,19 +22,15 @@
 
     <parent>
         <groupId>org.glassfish.main.tests.tck</groupId>
-        <artifactId>tck</artifactId>
+        <artifactId>tck-json</artifactId>
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>glassfish-external-tck-jsonp-pluggability</artifactId>
-
-    <name>Jakarta JSON Processing Pluggability TCK run on GlassFish</name>
-    <description>This verifies the compliance of Eclipse Glassfish using the Jakarta JSON Processing Pluggability standalone TCK</description>
+    <artifactId>tck-jsonp-pluggability</artifactId>
+    <name>TCK: JSON Processing Pluggability</name>
 
     <properties>
         <tck.version>2.1.1</tck.version>
-        <glassfish.artifact.id>glassfish</glassfish.artifact.id>
-        <skip.surefire.report>true</skip.surefire.report>
     </properties>
 
     <dependencies>
@@ -101,36 +97,6 @@
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-test-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <linkXRef>false</linkXRef>
-                    <outputName>test-report</outputName>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <outputDirectory>${project.build.directory}/surefire-reports</outputDirectory>
-    </reporting>
-
-    <profiles>
-        <profile>
-            <id>web</id>
-            <properties>
-                <glassfish.artifact.id>web</glassfish.artifact.id>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2024 Contributors to the Eclipse Foundation.
+    Copyright (c) 2024, 2026 Contributors to the Eclipse Foundation.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -22,39 +22,28 @@
 
     <parent>
         <groupId>org.glassfish.main.tests.tck</groupId>
-        <artifactId>tck</artifactId>
+        <artifactId>tck-json</artifactId>
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>glassfish-external-tck-jsonp</artifactId>
-
-    <name>Jakarta JSON Processing TCK run on GlassFish</name>
-    <description>This verifies the compliance of Eclipse Glassfish using the Jakarta JSON Processing standalone TCK</description>
+    <artifactId>tck-jsonb</artifactId>
+    <name>TCK: JSONB</name>
 
     <properties>
-        <tck.version>2.1.1</tck.version>
-        <glassfish.artifact.id>glassfish</glassfish.artifact.id>
-        <skip.surefire.report>true</skip.surefire.report>
+        <tck.version>3.0.4</tck.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-tck-common</artifactId>
-            <version>${tck.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-tck-tests</artifactId>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-tck</artifactId>
             <version>${tck.version}</version>
             <scope>test</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>jakarta.json.bind</groupId>
+                    <artifactId>jakarta.json.bind-api</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>jakarta.json</groupId>
                     <artifactId>jakarta.json-api</artifactId>
@@ -64,6 +53,10 @@
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>sigtest-maven-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish.main</groupId>
@@ -103,48 +96,23 @@
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <dependenciesToScan>
-                        <dependency>jakarta.json:jakarta.json-tck-tests</dependency>
+                        <dependency>jakarta.json.bind:jakarta.json.bind-tck</dependency>
                     </dependenciesToScan>
                     <systemPropertyVariables>
+                        <java.locale.providers>COMPAT</java.locale.providers>
                         <jimage.dir>${project.build.directory}/jdk-bundle</jimage.dir>
-                        <signature.sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.json-api.jar:${project.build.directory}/jdk-bundle/java.base:${project.build.directory}/jdk-bundle/java.rmi:${project.build.directory}/jdk-bundle/java.sql:${project.build.directory}/jdk-bundle/java.naming</signature.sigTestClasspath>
+                        <signature.sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.json.bind-api.jar:${project.build.directory}/jdk-bundle/java.base:${project.build.directory}/jdk-bundle/java.rmi:${project.build.directory}/jdk-bundle/java.sql:${project.build.directory}/jdk-bundle/java.naming</signature.sigTestClasspath>
                     </systemPropertyVariables>
                     <additionalClasspathElements>
+                        <additionalClasspathElement>${glassfish.home}/glassfish/modules/jakarta.json.bind-api.jar</additionalClasspathElement>
                         <additionalClasspathElement>${glassfish.home}/glassfish/modules/jakarta.json-api.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.home}/glassfish/modules/jakarta.enterprise.cdi-api.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.home}/glassfish/modules/jakarta.inject-api.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.home}/glassfish/modules/yasson.jar</additionalClasspathElement>
                         <additionalClasspathElement>${glassfish.home}/glassfish/modules/parsson.jar</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-test-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <linkXRef>false</linkXRef>
-                    <outputName>test-report</outputName>
-                    <skipSurefireReport>${skip.surefire.report}</skipSurefireReport>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <outputDirectory>${project.build.directory}/surefire-reports</outputDirectory>
-    </reporting>
-
-    <profiles>
-        <profile>
-            <id>web</id>
-            <properties>
-                <glassfish.artifact.id>web</glassfish.artifact.id>
-            </properties>
-        </profile>
-    </profiles>
 </project>
