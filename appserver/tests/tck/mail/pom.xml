@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0, which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the
+ * Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ * version 2 with the GNU Classpath Exception, which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.tests.tck</groupId>
+        <artifactId>tck</artifactId>
+        <version>8.0.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tck-mail</artifactId>
+    <name>TCK: Java Mail</name>
+
+    <properties>
+        <tck.common.version>11.1.1</tck.common.version>
+        <tck.arquillian.version>11.1.3</tck.arquillian.version>
+        <tck.workDirectory>${project.build.directory}/work</tck.workDirectory>
+        <tck.tsjte>${project.build.testOutputDirectory}/ts.jte</tck.tsjte>
+
+        <mailboxes.dir>${project.basedir}/src/test/resources/mailboxes</mailboxes.dir>
+        <javamail.mailbox>test1</javamail.mailbox>
+        <!-- mail connection properties -->
+        <javamail.password>1234</javamail.password>
+        <javamail.protocol>imap</javamail.protocol>
+        <javamail.root.path></javamail.root.path>
+        <javamail.server>localhost</javamail.server>
+        <javamail.username>user01@james.local</javamail.username>
+        <jndiName>mail/Session</jndiName>
+        <escaped.javamail.username>user01%40james.local</escaped.javamail.username>
+        <destinationURL>imap://${escaped.javamail.username}:${javamail.password}@${javamail.server}:${imap.port}</destinationURL>
+
+        <mail.from>user01@james.local</mail.from>
+        <mail.host>localhost</mail.host>
+        <mail.password>1234</mail.password>
+        <mail.user>user01</mail.user>
+        <imap.port>30535</imap.port>
+        <smtp.port>30536</smtp.port>
+        <ts.home>${project.build.testOutputDirectory}</ts.home>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>javamail</artifactId>
+            <version>11.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>jakarta.tck</groupId>-->
+<!--            <artifactId>common</artifactId>-->
+<!--            <version>${tck.common.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>signaturetest</artifactId>
+            <version>${tck.common.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+         <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-lib</artifactId>
+            <version>${tck.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-common</artifactId>
+            <version>${tck.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-javatest</artifactId>
+            <version>${tck.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-appclient</artifactId>
+            <version>${tck.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>tck-porting-lib</artifactId>
+            <version>${tck.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ee.omnifish.arquillian</groupId>
+            <artifactId>arquillian-glassfish-server-managed</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>arquillian.xml</include>
+                    <include>appclient-arquillian.xml</include>
+                    <include>ts.jte</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>certificates/**</include>
+                    <include>mailboxes/**</include>
+                    <include>tssql.stmt</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-glassfish</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.glassfish.main.distributions</groupId>
+                                    <artifactId>${glassfish-artifact-id}</artifactId>
+                                    <version>${glassfish.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${glassfish.root}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-arquillian-libs</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>jakarta.tck.arquillian</groupId>
+                                    <artifactId>arquillian-protocol-lib</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${glassfish.lib.dir}</outputDirectory>
+                                    <destFileName>arquillian-protocol-lib.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jakarta.tck.arquillian</groupId>
+                                    <artifactId>arquillian-protocol-lib</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/protocol</outputDirectory>
+                                    <destFileName>protocol.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.49.0</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>greenmail/standalone:2.1.15</name>
+                            <alias>mail</alias>
+                            <run>
+                                <env>
+                                    <GREENMAIL_OPTS>-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled</GREENMAIL_OPTS>
+                                </env>
+                                <ports>
+                                    <port>${smtp.port}:3025</port>
+                                    <port>${imap.port}:3143</port>
+                                </ports>
+                                <memory>1073741824</memory>
+                                <cpus>2</cpus>
+                                <wait>
+                                    <log>Starting GreenMail standalone</log>
+                                    <time>60000</time>
+                                </wait>
+                                <log>
+                                    <file>${project.build.directory}/mailserver-container.log</file>
+                                    <prefix>mail: </prefix>
+                                    <date>DEFAULT</date>
+                                </log>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-mailserver</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-mailserver</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>populate-mailbox</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <mainClass>com.sun.ts.tests.javamail.ee.util.fpopulate</mainClass>
+                            <arguments>
+                                <argument>-s</argument>
+                                <argument>${mailboxes.dir}</argument>
+                                <argument>-d</argument>
+                                <argument>${destinationURL}</argument>
+                                <argument>-user</argument>
+                                <argument>${javamail.username}</argument>
+                                <argument>-password</argument>
+                                <argument>${javamail.password}</argument>
+                                <argument>-host</argument>
+                                <argument>${javamail.server}</argument>
+                                <argument>-port</argument>
+                                <argument>${imap.port}</argument>
+                                <argument>-protocol</argument>
+                                <argument>${javamail.protocol}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${glassfish.lib.dir}/angus-mail.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.lib.dir}/jakarta.mail-api.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.lib.dir}/mail-connector.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.lib.dir}/mail-runtime.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.lib.dir}/glassfish-naming.jar</additionalClasspathElement>
+                        <additionalClasspathElement>${glassfish.lib.dir}/javamail.jar</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <dependenciesToScan>
+                        <dependency>jakarta.tck:javamail</dependency>
+                    </dependenciesToScan>
+                    <systemPropertyVariables>
+                        <glassfish.home>${glassfish.home}</glassfish.home>
+                        <glassfish.postBootCommands>
+create-mail-resource --mailhost ${mail.host} --mailuser ${mail.user} --fromaddress ${mail.from} --property mail.smtp.port=${smtp.port} ${jndiName}
+                        </glassfish.postBootCommands>
+                        <java.naming.factory.initial>com.sun.enterprise.naming.impl.SerialInitContextFactory</java.naming.factory.initial>
+                        <project.basedir>${project.basedir}</project.basedir>
+                        <ts.home>${ts.home}</ts.home>
+                        <ts.work.dir>${project.build.directory}</ts.work.dir>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mail-tests-appclient</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*EJB*.*</include>
+                                <include>**/*AppClient*.*</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>mail-tests-javatest</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*JSP*.*</include>
+                                <include>**/*Servlet*.*</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
