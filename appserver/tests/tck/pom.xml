@@ -49,6 +49,7 @@
         <module>faces</module>
         <module>jdbc</module>
         <module>json</module>
+        <module>mail</module>
 
         <module>platform-tck-runner</module>
 
@@ -74,6 +75,7 @@
         <glassfish.home>${glassfish.root}/${glassfish.directoryName}</glassfish.home>
         <glassfish.asadmin>${glassfish.home}/glassfish/bin/asadmin</glassfish.asadmin>
         <glassfish.lib.dir>${glassfish.home}/glassfish/lib</glassfish.lib.dir>
+        <glassfish.domain.dir>${glassfish.home}/glassfish/domains/domain1</glassfish.domain.dir>
 
         <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
 
