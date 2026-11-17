@@ -51,6 +51,7 @@
         <module>jdbc</module>
         <module>json</module>
         <module>mail</module>
+        <module>messaging</module>
 
         <module>platform-tck-runner</module>
 
