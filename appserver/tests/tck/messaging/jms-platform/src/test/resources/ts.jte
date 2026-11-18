@@ -20,7 +20,7 @@
 ##   JavaTest Environment file for Java EE Compatibility Test Suite
 ##
 ##   Environment specific properties in this file will likely
-##   have to be modified prior to running the Java EE CTS. 
+##   have to be modified prior to running the Java EE CTS.
 ##   Instructions for modifying these properties are contained in this
 ##   file.
 ##
@@ -52,10 +52,10 @@
 jte.version=@JTE_VERSION@
 
 ########################################################################
-## Javatest batch mode work directory and report directory, and policy for 
+## Javatest batch mode work directory and report directory, and policy for
 ## handling existing work and report directories.  These properties affects
 ## runclient and report targets, but not gui target.
-## To disable generating test report, unset report.dir, or set it to "none" 
+## To disable generating test report, unset report.dir, or set it to "none"
 ## either here or from command line, as in the following command:
 ##               ant runclient -Dreport.dir="none"
 ##
@@ -67,8 +67,8 @@ jte.version=@JTE_VERSION@
 # report.dir will be handled, and it must be one of the following values:
 # overwrite     overwrites all content in work.dir and report.dir
 # backup        moves all content in work.dir and report.dir to
-#               work.dir_time_day_bak and report.dir_time_day_bak, 
-#               respectively 
+#               work.dir_time_day_bak and report.dir_time_day_bak,
+#               respectively
 # append        reuses and preserves the existing work.dir and report.dir
 # auto          lets the build files decide which mode to use
 #               (overwrite, backup or append).  the value is determined
@@ -82,9 +82,9 @@ jte.version=@JTE_VERSION@
 #                  else
 #                    if.existing.work.report.dirs = value in this file
 #                  end if
-######################################################################## 
-work.dir=/home/jenkins/agent/workspace/jakartaee-tck_master/JTWork
-report.dir=/home/jenkins/agent/workspace/jakartaee-tck_master/JTReport
+########################################################################
+work.dir=${tck.workDirectory}
+report.dir=${tck.reportDirectory}
 if.existing.work.report.dirs=auto
 
 ########################################################################
@@ -99,82 +99,82 @@ if.existing.work.report.dirs=auto
 #
 # Note that javatest.timeout.factor can be a positive real number, such as 1.5
 ########################################################################
-javatest.timeout.factor=1
+javatest.timeout.factor=2.0
 
 ########################################################################
 ## Level of Vendor Java EE Implementation
 # @javaee.level The level of Java EE support for the implementation under test.
-#	   This property serves two purposes:  First, it is used to determine
+#     This property serves two purposes:  First, it is used to determine
 #          whether the impl under test is a Java EE Full profile (full) or Java
 #          EE Web profile (web).  Either "full" or "web" must be specified in
 #          the list values. "full" will tell the harness to deploy ears.  "web"
 #          will tell the harness to deploy wars.
 #          This property is also used to help determine which apis (in the
-#          signature tests) are to be tested.  
-#          
-#          NOTE:  This property does not determine which CTS tests to run for 
+#          signature tests) are to be tested.
+#
+#          NOTE:  This property does not determine which CTS tests to run for
 #          different profiles and optional technologies.  That is done using
-#          keywords.  Please refer to the keywords functionality in the CTS 
+#          keywords.  Please refer to the keywords functionality in the CTS
 #          User's Guide for information on how to use keywords when
 #          running CTS tests.
 #
 #          Currently, there are 4 settings supported for this property:
-#	    1. full:  This is the minimal set of signature requirements that vendors
+#      1. full:  This is the minimal set of signature requirements that vendors
 #                     must support.  Specifying a javaee.level of "full"  with nothing
 #                     else implies there are NO additional technologies existing within
-#                     the vendors implementation.  Again, "full" only covers the 
+#                     the vendors implementation.  Again, "full" only covers the
 #                     REQUIRED Technologies for Jakarta EE 8 Full profile
-#		      ex/   javaee.level=full
+#          ex/   javaee.level=full
 #
-#	    2. web :  This is the minimal set of signature requirements that vendors
-#                     must support for Web Profile.  Specifying a javaee.level of "web"  
-#                     with nothing else implies there are NO additional technologies 
-#                     existing within the vendors implementation.  Again, "web" only 
+#      2. web :  This is the minimal set of signature requirements that vendors
+#                     must support for Web Profile.  Specifying a javaee.level of "web"
+#                     with nothing else implies there are NO additional technologies
+#                     existing within the vendors implementation.  Again, "web" only
 #                     covers REQUIRED Technologies for Jakarta EE 8 Web profile
-#		      ex/   javaee.level=web
+#          ex/   javaee.level=web
 #
-#	    3. full + optional_technologies: This covers REQUIRED Technologies for
-#		      Java EE 8 Full Profile and any combination of the optional
-#		      technologies.
+#      3. full + optional_technologies: This covers REQUIRED Technologies for
+#          Java EE 8 Full Profile and any combination of the optional
+#          technologies.
 #                     Known optional technologies for CTS8 full profile include:
 #                          "jaxr".
-#		      ex 1/   javaee.level=full jaxr  
-#		      ex 2/   javaee.level=full jaxr
-#		      ex 3/   javaee.level=full  
-#		      ex 4/   etc...
+#          ex 1/   javaee.level=full jaxr
+#          ex 2/   javaee.level=full jaxr
+#          ex 3/   javaee.level=full
+#          ex 4/   etc...
 #
-#	    4. web + optional_technologies: This covers REQUIRED Technologies for
-#		      Java EE 8 Web Profile and any combination of optional
-#		      technologies.  
+#      4. web + optional_technologies: This covers REQUIRED Technologies for
+#          Java EE 8 Web Profile and any combination of optional
+#          technologies.
 #                     Known optional technologies for Web Profile include:
-#                            "jaxr", "connector", "jaxb", 
-#                            "jms", "javamail", "jacc", "jaspic", "wsmd" 
-#		      ex 1/   javaee.level=web connector jms jacc 
-#		      ex 2/   javaee.level=web jaspic
-#		      ex 3/   javaee.level=web jms connector
-#		      ex 4/   etc...
+#                            "jaxr", "connector", "jaxb",
+#                            "jms", "javamail", "jacc", "jaspic", "wsmd"
+#          ex 1/   javaee.level=web connector jms jacc
+#          ex 2/   javaee.level=web jaspic
+#          ex 3/   javaee.level=web jms connector
+#          ex 4/   etc...
 #
 # Note 1:  spaces separate multiple entries
 #
 # Note 2:  optional technologies for full/javaee profile are listed
-#	   in the Java EE 8 spec, in Table EE.6-1.  Currently, the only
+#     in the Java EE 8 spec, in Table EE.6-1.  Currently, the only
 #          optional technologies for full profile are: "jaxr" (JAXR 1.0)
 #
 # Note 3:  The list of optional technologies for Web Profile includes any OPTIONAL
 #          technology explicitly called out in the Web Profile spec (if applicable)
-#          as well as any additional technology which is listed within 
+#          as well as any additional technology which is listed within
 #          JavaEE Profile 8 spec *but* not included/Required in the
-#          Web Profile spec.  
-#          
+#          Web Profile spec.
+#
 # Note 4:  Two different examples of javaee.level are provided immediately
 #          following this comment block.  One is for running CTS8 against
 #          the EE 8 (full) Profile RI and the other is for running CTS8
-#          against the EE 8 Web Profile RI.  Notice that optional technologies 
+#          against the EE 8 Web Profile RI.  Notice that optional technologies
 #          are supplied here since the RI for CTS8 contains those optional
 #          technologies in it.  It's very possible vendors may provider different
-#          optional technologies in their implementations.  If so, the list of 
+#          optional technologies in their implementations.  If so, the list of
 #          optional technologies will need to be adjusted here to suite each
-#          vendors implementation. 
+#          vendors implementation.
 #
 # Note 5:  For EE 8 (RI) Web Profile, you can uncomment and use the line
 #          below which starts with:  javaee.level=web ....
@@ -197,9 +197,9 @@ javaee.level=full
 # @orb.port    The port number the vendor implementation is listening
 #              to for service requests.
 ########################################################################
-javaee.home=
+javaee.home=/Users/alwjosep/Documents/jakartaee-tck/glassfish-runner/jms-platform-tck/target/glassfish8
 orb.host=localhost
-orb.port=3699
+orb.port=4848
 
 ########################################################################
 ## JVMOPTS_RUNTESTCOMMAND is a marker that implementations may replace with
@@ -216,7 +216,7 @@ orb.port=3699
 #                 requests.
 ########################################################################
 javaee.home.ri=
-orb.host.ri=localhost
+orb.host.ri=
 orb.port.ri=3700
 
 ###################################################################
@@ -264,7 +264,7 @@ endorsed.dirs.ri=${javaee.home.ri}/modules/endorsed
 # @ri.admin.passwd   -- The Java EE RI asadmin user password
 # @ri.admin.host     -- The Java EE RI host
 # @ri.admin.port     -- The Java EE RI port
-# @ri.admin          -- The Java EE RI admin command 
+# @ri.admin          -- The Java EE RI admin command
 # @ri.server         -- The Java EE RI server instance being used
 # @ri.domain.dir     -- Points to where your domains are installed.
 # @ri.domain.name    -- The Java EE RI domain being used
@@ -273,7 +273,7 @@ endorsed.dirs.ri=${javaee.home.ri}/modules/endorsed
 # @ri.imqbin.loc     -- location of the IMQ bin directory
 # @ri.lib            -- Library directory for other Java EE RI
 #                       jars
-# @ri.imq.share.lib  -- Shared library directory for imq 
+# @ri.imq.share.lib  -- Shared library directory for imq
 # @ri.jvm.options    -- Java options needed by the Java EE RI
 #                       note, the second option is not needed
 #                       but is required to work around asadmin
@@ -283,7 +283,7 @@ endorsed.dirs.ri=${javaee.home.ri}/modules/endorsed
 #                       with connector tests.
 # @ri.applicationRoot-- Location of application repository
 #                       Only needed when running on windows
-# @ri.and.vi.run.on.same.host  - set to true if interop tests are run 
+# @ri.and.vi.run.on.same.host  - set to true if interop tests are run
 #                       with both RI and VI on same machine.  set to
 #                       false if they are run on different machines.
 #                       This is used to work around an orb issue
@@ -291,7 +291,7 @@ endorsed.dirs.ri=${javaee.home.ri}/modules/endorsed
 #
 # @ri.orb.iiop.orbserverid - This is used to set a similarly
 #                       named jvm option in the RI.  It is only used
-#                       when we are running interop where remote EJBs 
+#                       when we are running interop where remote EJBs
 #                       try to access target EJB's on the same host with
 #                       zero port configuration for ssl.
 #                       This only gets used when ri.and.vi.run.on.same.host=true.
@@ -327,7 +327,7 @@ ri.orb.iiop.orbserverid=200
 # @vi.admin.passwd   -- The Java EE VI asadmin user password
 # @vi.admin.host     -- The Java EE VI host
 # @vi.admin.port     -- The Java EE VI port
-# @vi.admin          -- The Java EE VI admin command 
+# @vi.admin          -- The Java EE VI admin command
 # @vi.server         -- The Java EE VI server instance being used
 # @vi.domain.dir     -- Points to where your domains are installed.
 # @vi.domain.name    -- The Java EE VI domain being used
@@ -336,7 +336,7 @@ ri.orb.iiop.orbserverid=200
 # @vi.imqbin.loc     -- location of the IMQ bin directory
 # @vi.lib            -- Library directory for other Java EE VI
 #                       jars
-# @vi.imq.share.lib  -- Shared library directory for imq 
+# @vi.imq.share.lib  -- Shared library directory for imq
 # @vi.jvm.options    -- Java options needed by the Java EE VI
 #                       note, the second option is not needed
 #                       but is required to work around asadmin
@@ -386,7 +386,7 @@ vi.applicationRoot=c:
 # @s1as.imqbin.loc     -- location of the IMQ bin directory
 # @s1as.lib            -- Library directory for other Java EE RI
 #                         jars
-# @s1as.imq.share.lib  -- Shared library directory for imq 
+# @s1as.imq.share.lib  -- Shared library directory for imq
 # @s1as.jvm.options    -- Java options needed by SJSAS
 #                         The xxxlogin and xxxpassword are used
 #                         to set known server side creds for use
@@ -420,7 +420,7 @@ s1as.applicationRoot=c:
 # @sjsas.das.securedWebServicePort -- HTTPS listener port for the DAS
 # @sjsas.nodeagent.name            -- Name of node agent used by
 #                                     the remote instance.
-# @sjsas.nodeinstance.name         -- Name of the remote instance 
+# @sjsas.nodeinstance.name         -- Name of the remote instance
 # @sjsas.master.password           -- Used to create a node agent only
 #                                     applicable to EE.  Defaults to changeit. This
 #                                     can be changed at EE install time.
@@ -499,7 +499,7 @@ tz=US/Eastern
 ###############################################################
 # @jdbc.lib.class.path - This property is used by the
 #                        database.classes properties to point to
-#                        where the JDBC drivers live.  
+#                        where the JDBC drivers live.
 ###############################################################
 jdbc.lib.class.path=${ts.home}/internal/lib
 
@@ -913,11 +913,11 @@ derby.properties.ri=DatabaseName\=\"${derby.dbName.ri}\":user\=${derby.user.ri}:
 derby.startup.delay.ri=5
 ###############################################################
 # @alt.dtd.dir DTD location for Java EE and RI xml files.  Used
-#              for xml validation when building tests. If 
+#              for xml validation when building tests. If
 #              javaee.home.ri is set, <javaee.home.ri>/lib/dtds
 #              will be used and alt.dtd.dir is ignored.
 # @alt.schema.dir schema location for Java EE and RI xml files.
-#                 Used for xml validation when building tests. 
+#                 Used for xml validation when building tests.
 #                 If javaee.home.ri is set,
 #                 <javaee.home.ri>/lib/schemas will be used and
 #                 alt.schema.dir is ignored.
@@ -928,7 +928,7 @@ alt.schema.dir=${ts.home}/lib/schemas
 ###############################################################
 ## Configure the behavior of which tables CTS will create when
 ## ant init.[datbaseName] is invoked.
-# 
+#
 # @create.cmp.tables       - When set to false, the appserver is
 #                            responsible for creating cmp tables
 #                            at deployment of the ejb/ear
@@ -1006,16 +1006,16 @@ jdbc.db.classes=${derby.classes}
 ## backend RDBMS.
 ##
 # @user1     - Set this to the user for the jdbc/DB1 resource
-# @password1 - Set this to the password for the jdbc/DB1 resource 
+# @password1 - Set this to the password for the jdbc/DB1 resource
 # @user2     - Set this to the user for the jdbc/DB2 resource
 # @password2 - Set this to the password for the jdbc/DB2 resource
 # @user3     - Set this to the user for the jdbc/DBTimer resource
 # @password3 - Set this to the password for the jdbc/DBTimer resource
 ###############################################################
-user1=${derby.user}
-password1=${derby.passwd}
-user2=${derby.user}
-password2=${derby.passwd}
+user1=cts1
+password1=cts1
+user2=cts1
+password2=cts1
 user3=${derby.user}
 password3=${derby.passwd}
 
@@ -1029,7 +1029,7 @@ db.dml.file.ri=${derby.dml.file}
 
 ###############################################################
 ## Configure the DB specific information needed by JSTL
-# @jstl.db.driver   - JDBC driver 
+# @jstl.db.driver   - JDBC driver
 # @jstl.db.url      - DB URL
 ###############################################################
 jstl.db.driver=${derby.driver}
@@ -1053,7 +1053,7 @@ jtaJarClasspath=${s1as.modules}/jakarta.transaction-api.jar
 #                           appclient container.
 # @ts.harness.classpath --  Classes required by javatest
 # @ts.classpath         --  Classes used to build the CTS tests
-# @ts.lib.classpath     --  Classes used to build cts.jar 
+# @ts.lib.classpath     --  Classes used to build cts.jar
 ###############################################################
 implementation.classes.ri=${ri.modules}/orb-connector.jar${pathsep}${ri.modules}/deployment-client.jar${pathsep}${ri.modules}/security-ee.jar${pathsep}${ri.modules}/security.jar${pathsep}${ri.modules}/common-util.jar${pathsep}${ri.modules}/glassfish-corba-omgapi.jar${pathsep}${ri.modules}/glassfish-corba-orb.jar${pathsep}${ri.modules}/internal-api.jar${pathsep}${ri.modules}/deployment-common.jar${pathsep}${ri.modules}/gmbal.jar${pathsep}${ri.modules}/bean-validator.jar${pathsep}${ri.modules}/jersey-client.jar${pathsep}${ri.modules}/jersey-common.jar${pathsep}${ri.modules}/jersey-hk2.jar${pathsep}${ri.modules}/jersey-media-jaxb.jar${pathsep}${ri.modules}/jersey-media-sse.jar${pathsep}${ri.modules}/jersey-media-json-processing.jar${pathsep}${ri.modules}/jsonp-jaxrs.jar${pathsep}${ri.modules}/jersey-media-json-binding.jar${pathsep}${ri.modules}/jersey-server.jar${pathsep}${ri.modules}/jersey-container-servlet.jar${pathsep}${ri.modules}/jersey-container-servlet-core.jar${pathsep}${ri.modules}/guava.jar${pathsep}${ri.modules}/jakarta.el.jar${pathsep}${ri.modules}/jakarta.el-api.jar${pathsep}${ri.modules}/tyrus-websocket-core.jar${pathsep}${ri.modules}/tyrus-client.jar${pathsep}${ri.modules}/tyrus-container-grizzly-client.jar${pathsep}${ri.modules}/tyrus-core.jar${pathsep}${ri.modules}/tyrus-container-grizzly.jar${pathsep}${ri.modules}/tyrus-container-grizzly-client.jar${pathsep}${ri.modules}/glassfish-grizzly-extra-all.jar${pathsep}${ri.modules}/nucleus-grizzly-all.jar${pathsep}${ri.modules}/tyrus-server.jar${pathsep}${ri.modules}/tyrus-container-servlet.jar${pathsep}${ri.modules}/tyrus-spi.jar${pathsep}${ri.modules}/yasson.jar${pathsep}${ri.modules}/jakarta.websocket-client-api.jar${pathsep}${ri.modules}/parsson.jar${pathsep}${ri.modules}/parsson-media.jar${pathsep}${ri.modules}/angus-activation.jar${pathsep}${ri.modules}/angus-mail.jar${pathsep}${ri.modules}/expressly.jar
 
@@ -1091,7 +1091,7 @@ s1as.classpathsuffix=${javaee.home}/lib/tsprovider.jar
 ########################################################################
 ## Common environment for both ts_unix and ts_win32
 #
-# @command.testExecute - This command is used to execute any test 
+# @command.testExecute - This command is used to execute any test
 #                        clients which are not run inside an
 #                        application client container.  For example,
 #                        any URL clients or standalone java clients
@@ -1124,7 +1124,7 @@ command.testExecute=com.sun.ts.lib.harness.ExecTSTestCmd \
         ${ts.home}/lib/xalan-2.7.2.jar${pathsep}\
         ${ts.home}/lib/serializer-2.7.2.jar${pathsep}\
         ${ts.home}/lib/xml-apis-1.4.01.jar${pathsep}\
-	${ts.home}/lib/unboundid-ldapsdk.jar${pathsep}\
+  ${ts.home}/lib/unboundid-ldapsdk.jar${pathsep}\
         ${jdbc.db.classes} \
         DISPLAY=${ts.display} \
         HOME="${user.home}" \
@@ -1155,7 +1155,7 @@ command.testExecute=com.sun.ts.lib.harness.ExecTSTestCmd \
 #
 # @command.testExecuteAppClient - This command is used to execute
 #                                 the application client container for
-#                                 the vendor implementation (vi).  
+#                                 the vendor implementation (vi).
 #                                 Please note that $TS_HOME/classes
 #                                 should not be in the classpath for
 #                                 this command since all client classes
@@ -1204,36 +1204,36 @@ command.testExecuteAppClient= \
 
 #-Ddeliverable.class=${deliverable.class} -javaagent:${javaee.home}/modules/gf-client.jar=arg=-configxml,arg=${s1as.domain}/config/sun-acc.xml,client=jar=$testExecuteArgs
 #-Xbootclasspath/a:${pathsep}${ts.home}/lib/tsharness.jar${pathsep}${ts.home}/lib/cts.jar
-        
+
 ########################################################################
 # @command.testExecuteEjbEmbed - Command line for standalone embedded EJB tests.
 #                        Its classpath must include all the APIs required
 #                        by EJB Lite, vendor's implementation classes and
 #                        configuration for embeddable EJB container, and
 #                        JDBC driver classes (e.g., ${db2.classes},
-#                        ${oracle.classes}, etc). 
+#                        ${oracle.classes}, etc).
 #
 #                        Current test archives are dynamically added to
 #                        the classpath by the harness, and need not be
 #                        included in the classpath here.
-#                        
-#                        Most test directories contain one test archive, 
-#                        all named ejbembed_vehicle_ejb.jar.  If certain 
-#                        tooling and pre-processing of test archives are 
-#                        needed, the resulting test archives must remain 
+#
+#                        Most test directories contain one test archive,
+#                        all named ejbembed_vehicle_ejb.jar.  If certain
+#                        tooling and pre-processing of test archives are
+#                        needed, the resulting test archives must remain
 #                        the same name and location.
 #
 #                        ${ts.home}/classes must not be in the classpath
 #                        since all the required test classes are packaged
 #                        in the test archive (ejbembed_vehicle_ejb.jar). In
 #                        addition, including ${ts.home}/classes in the
-#                        classpath would incorrectly expose all EJBs in 
+#                        classpath would incorrectly expose all EJBs in
 #                        cts to EJB container bootstrapping process.
 ########################################################################
 command.testExecuteEjbEmbed=com.sun.ts.lib.harness.ExecTSTestCmd \
         CLASSPATH=${ts.home}/lib/tsharness.jar${pathsep}\
         ${ts.home}/lib/cts.jar${pathsep}\
-	${ts.home}/lib/glassfishporting.jar${pathsep}\
+  ${ts.home}/lib/glassfishporting.jar${pathsep}\
         ${ts.home}/lib/commons-lang3-3.3.2.jar${pathsep}\
         ${jdbc.db.classes}${pathsep}\
         ${javaee.home}/lib/embedded/glassfish-embedded-static-shell.jar \
@@ -1249,31 +1249,31 @@ command.testExecuteEjbEmbed=com.sun.ts.lib.harness.ExecTSTestCmd \
         -Dtest.ejb.stateful.timeout.wait.seconds=${test.ejb.stateful.timeout.wait.seconds} \
         -Ddeliverable.class=${deliverable.class} $testExecuteClass $testExecuteArgs
 
-       
+
 ########################################################################
 ## Appclient Command line for the Java EE RI (Do not modify)
 ########################################################################
 command.testExecuteAppClient2= \
         com.sun.ts.lib.harness.ExecTSTestCmd DISPLAY=${ts.display} HOME="${user.home}" \
-	LD_LIBRARY_PATH=${javaee.home.ri}/lib \
+  LD_LIBRARY_PATH=${javaee.home.ri}/lib \
         TMP=${TMP} \
         windir=${windir} \
         SYSTEMROOT=${SYSTEMROOT} \
         PATH="${javaee.home.ri}/nativelib" \
         APPCPATH=${ts.home}/lib/tsharness.jar${pathsep}${ts.home}/lib/cts.jar${pathsep}${ts.home}/lib/glassfishporting.jar${pathsep}${ts.home}/lib/riinterceptors.jar \
-	TZ=${tz} \
+  TZ=${tz} \
         ${RI_JAVA_HOME}/bin/java \
         ${JVMOPTS_RUNTESTCOMMAND} \
         -Djava.system.class.loader=org.glassfish.appclient.client.acc.agent.ACCAgentClassLoader \
         -Djava.security.policy=${javaee.home.ri}/lib/appclient/client.policy \
         -Dcts.tmp=$harness.temp.directory \
-	-Djava.security.auth.login.config=${javaee.home.ri}/lib/appclient/appclientlogin.conf \
+  -Djava.security.auth.login.config=${javaee.home.ri}/lib/appclient/appclientlogin.conf \
         -Djava.protocol.handler.pkgs=javax.net.ssl \
-	-Dcom.sun.enterprise.home=${javaee.home.ri} \
+  -Dcom.sun.enterprise.home=${javaee.home.ri} \
         -Djavax.net.ssl.keyStore=${bin.dir}/certificates/clientcert.jks \
         -Djavax.net.ssl.keyStorePassword=changeit \
         -Dcom.sun.aas.installRoot=${javaee.home.ri} \
-	-Dcom.sun.aas.imqLib=${javaee.home.ri}/../mq/lib \
+  -Dcom.sun.aas.imqLib=${javaee.home.ri}/../mq/lib \
         -Djavax.net.ssl.trustStore=${ri.domain}/config/cacerts.jks \
         -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl \
         -Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl \
@@ -1294,7 +1294,7 @@ command.testExecuteAppClient2= \
         -Ddeliverable.class=${deliverable.class} -javaagent:${javaee.home.ri}/lib/gf-client.jar=arg=-configxml,arg=${ts.home}/tmp/appclient/ri.sun-acc.xml,client=jar=$testExecuteArgs
 
 ########################################################################
-## Command line for standalone clients running against the 
+## Command line for standalone clients running against the
 ## Java EE RI (Do not modify)
 ########################################################################
 command.testExecute2=com.sun.ts.lib.harness.ExecTSTestCmd \
@@ -1319,7 +1319,7 @@ command.testExecute2=com.sun.ts.lib.harness.ExecTSTestCmd \
         ${ts.home}/lib/xalan-2.7.2.jar${pathsep}\
         ${ts.home}/lib/serializer-2.7.2.jar${pathsep}\
         ${ts.home}/lib/xml-apis-1.4.01.jar \
-	${ts.home}/lib/unboundid-ldapsdk.jar\
+  ${ts.home}/lib/unboundid-ldapsdk.jar\
         DISPLAY=${ts.display} \
         HOME="${user.home}" \
         TMP=${TMP} \
@@ -1366,9 +1366,9 @@ env.ts_win32.menu=true
 #                    in sigTestClasspath
 # @sigTestClasspath: This property must be set when running signature
 #                    tests.  This property should be set to a list of
-#                    jar files and/or directories which contain your 
-#                    Java EE and Java SE classes. Paths must be 
-#                    separated by the appropriate path separator 
+#                    jar files and/or directories which contain your
+#                    Java EE and Java SE classes. Paths must be
+#                    separated by the appropriate path separator
 #                    (';' windows, ':' Unixes).
 #########################################################################
 
@@ -1387,9 +1387,9 @@ sigTestClasspath=${s1as.modules}/glassfish-corba-omgapi.jar${pathsep}${s1as.modu
 ##   optional.tech.packages.to.ignore=javax.foo.pkg1,javax.bar.pkg2,com.blah.foo.pkg3
 ##
 ##  Additional notes:
-##    - always ignore the optional JAXB packages: 
-##           optional.tech.packages.to.ignore=jakarta.xml.bind 
-##   
+##    - always ignore the optional JAXB packages:
+##           optional.tech.packages.to.ignore=jakarta.xml.bind
+##
 #########################################################################
 optional.tech.packages.to.ignore=jakarta.xml.bind
 
@@ -1472,22 +1472,22 @@ deployment_port.2=${impl.ri.port}
 # Here are the common properties that need to be defined for the common
 # implementation functionality:
 #
-# @impl.vi		      This property must be set to the Vendor implementation
-#			          under test.
+# @impl.vi          This property must be set to the Vendor implementation
+#                under test.
 # @impl.vi.deploy.dir This property must be set to the deploy directory for
-#			          the Vendor implementation.
-# @impl.vi.host		  This property must be set to the admin host where
-#			          the Vendor implementation is running.
-# @impl.vi.port		  This property must be set to the admin port where
-#			          the Vendor implementation is running.
-# @impl.ri		      This property must be set to the RI implementation
-#			          under test.
+#                the Vendor implementation.
+# @impl.vi.host      This property must be set to the admin host where
+#                the Vendor implementation is running.
+# @impl.vi.port      This property must be set to the admin port where
+#                the Vendor implementation is running.
+# @impl.ri          This property must be set to the RI implementation
+#                under test.
 # @impl.ri.deploy.dir This property must be set to the deploy directory for
-#			          the RI implementation.
-# @impl.ri.host		  This property must be set to the admin host where
-#			          the RI implementation is running.
-# @impl.ri.port		  This property must be set to the admin port where
-#			          the RI implementation is running.
+#                the RI implementation.
+# @impl.ri.host      This property must be set to the admin host where
+#                the RI implementation is running.
+# @impl.ri.port      This property must be set to the admin port where
+#                the RI implementation is running.
 #
 # @impl.deploy.timeout.multiplier  The time it will wait for deployment to
 #                                   succeed or fail
@@ -1512,7 +1512,7 @@ impl.deploy.timeout.multiplier=240
 # @porting.ts.deploy.class.1 This property must point to an implementation
 # of com.sun.ts.lib.porting.TSDeploymentInterface.  The default
 # value for this property points to an impl that deploys via copying/deleting
-# to/from the RI autodeploy directory.  More details about setting  
+# to/from the RI autodeploy directory.  More details about setting
 # porting.ts.deploy.class.1:
 #
 # 1.  Set this property to deploy/undeploy to/from your impl in
@@ -1524,11 +1524,11 @@ impl.deploy.timeout.multiplier=240
 # 2.  Note that Jakarta Deployment is removed, so do not use either of the following classes:
 #     com.sun.ts.lib.deliverable.cts.deploy.StandardDeployment14
 #     com.sun.ts.lib.porting.TSDeploymentInterface2
-#     com.sun.ts.lib.implementation.sun.javaee.SunRIDeployment2 
+#     com.sun.ts.lib.implementation.sun.javaee.SunRIDeployment2
 #
-#     
+#
 # @porting.ts.deploy.class.2 This property must point to an implementation
-# of com.sun.ts.lib.porting.TSDeploymentInterface. 
+# of com.sun.ts.lib.porting.TSDeploymentInterface.
 # The default value for this property points to an impl that deploys via copying/deleting
 # to/from the RI autodeploy directory.  This should be left unchanged...
 #
@@ -1544,7 +1544,7 @@ porting.ts.deploy.class.2=com.sun.ts.lib.implementation.sun.javaee.glassfish.Aut
 ########################################################################
 
 ########################################################################
-## Following are no longer used, were settings for pruned Jakarta Deployment 
+## Following are no longer used, were settings for pruned Jakarta Deployment
 ########################################################################
 #deployManagerJarFile.1
 #deployManageruri.1
@@ -1591,7 +1591,7 @@ porting.ts.deploy.class.2=com.sun.ts.lib.implementation.sun.javaee.glassfish.Aut
 #    com.sun.ts.lib.porting.TSHttpsURLConnectionInterface
 ###############################################################
 porting.ts.login.class.1=com.sun.ts.lib.implementation.sun.javaee.GlassFishLoginContext
-porting.ts.url.class.1=com.sun.ts.lib.implementation.sun.common.SunRIURL
+porting.ts.url.class.1=com.sun.ts.lib.porting.implementation.SunRIURL
 porting.ts.jms.class.1=com.sun.ts.lib.implementation.sun.javaee.SunRIJMSAdmin
 porting.ts.HttpsURLConnection.class.1=com.sun.ts.lib.implementation.sun.javaee.SunRIHttpsURLConnection
 
@@ -1626,7 +1626,7 @@ certLoginUserAlias=cts
 ## or JSP API tests and interoperability tests.
 ##
 ## These properties must specify the host and port of the web server,
-## in which the servlets and JSPs are deployed.  
+## in which the servlets and JSPs are deployed.
 #
 # @webServerHost  hostname for the Vendor's Java EE Web Server
 # @webServerPort  port number of the Vendor's Java EE Web Server
@@ -1646,7 +1646,7 @@ certLoginUserAlias=cts
 webServerHost=${orb.host}
 webServerPort=8080
 webServerHost.2=${orb.host.ri}
-webServerPort.2=8181
+webServerPort.2=8002
 ServletClientThreads=2
 
 ####################################################################
@@ -1668,20 +1668,8 @@ EJBServer2TxInteropEnabled=true
 ## JNDI name bindings.  You should not change these.  The TSDeploymentInterface
 ## will pass these values as a properties object.  See the SunRIDeployment.java
 ## file for usage patterns.
-whitebox-tx=java:comp/env/eis/whitebox-tx
-whitebox-notx=java:comp/env/eis/whitebox-notx
-whitebox-xa=java:comp/env/eis/whitebox-xa
-whitebox-tx-param=java:comp/env/eis/whitebox-tx-param
-whitebox-notx-param=java:comp/env/eis/whitebox-notx-param
-whitebox-xa-param=java:comp/env/eis/whitebox-xa-param
-whitebox-anno_no_md=java:comp/env/eis/whitebox-anno_no_md
-whitebox-ibanno_no_md=java:comp/env/eis/whitebox-ibanno_no_md
-whitebox-mixedmode=java:comp/env/eis/whitebox-mixedmode
-whitebox-multianno=java:comp/env/eis/whitebox-multianno
-whitebox-mdcomplete=java:comp/env/eis/whitebox-mdcomplete
-whitebox-permissiondd=java:comp/env/eis/whitebox-permissiondd
 
-## Embedded resource adapter property 
+## Embedded resource adapter property
 whitebox-embed=java:comp/env/eis/ejb_Deployment_whitebox-tx.rar
 
 whitebox-embed-xa="__SYSTEM/resource/ejb_Tsr#whitebox-xa#com.sun.ts.tests.common.connector.whitebox.TSConnectionFactory"
@@ -1705,7 +1693,7 @@ JDBCwhitebox-xa-param=java:comp/env/eis/JDBCwhitebox-xa-param
 ##
 # @xa.properties: These are the properties required by the XA driver.  The
 #                 managed connection factory will set these properties via
-#                 reflection on the class specified by the 
+#                 reflection on the class specified by the
 #                 xa.xadatasource.class property.
 #
 #    Note: The xa.properties value is the set of properties that will be set on
@@ -1722,11 +1710,11 @@ JDBCwhitebox-xa-param=java:comp/env/eis/JDBCwhitebox-xa-param
 #
 #          For example: The following xa.properties property:
 #
-#		 xa.properties=user=admin:password=some-password:DatabaseName='jdbc:pointbase:server://localhost:9092/cts,new'
+#     xa.properties=user=admin:password=some-password:DatabaseName='jdbc:pointbase:server://localhost:9092/cts,new'
 #
 #          Would result in the following setters being called on the supplied XA JDBC driver denoted
 #          by the xa.xadatasource.class property.
-# 
+#
 #             XADataSource.setUser("admin");
 #             XADataSource.setPassword("some-password");
 #             XADataSource.setDatabaseName("jdbc:pointbase:server://localhost:9092/cts,new");
@@ -1734,7 +1722,7 @@ JDBCwhitebox-xa-param=java:comp/env/eis/JDBCwhitebox-xa-param
 #          Please map the property xa.properties to the property name XAProps and map the
 #          xa.xadatasource.class property to the property name XADataSourceName.  This will
 #          ensure the appropriate setters will be called to make these properties
-#          available to the managed connection factory.  See section 17.4.2 of the Connector 
+#          available to the managed connection factory.  See section 17.4.2 of the Connector
 #          specification version 1.5.
 #
 # @xa.xadatasource.class: The implementation of the XADataSource interface.
@@ -1744,8 +1732,8 @@ JDBCwhitebox-xa-param=java:comp/env/eis/JDBCwhitebox-xa-param
 #                         server's extension directory.
 #
 # @connector_connectionURL: The URL for your JDBC driver.  Should be the
-#			same as the one used for the rest of the TS.
-#			
+#      same as the one used for the rest of the TS.
+#
 #########################################################################
 
 ### Cloudscape/Derby properties for XA
@@ -1754,12 +1742,12 @@ xa.xadatasource.class=org.apache.derby.jdbc.EmbeddedXADataSource
 connector_connectionURL="jdbc\\:derby\\:${derbyEmbedded.dbName}\\;create\\=true"
 
 #########################################################################
-## The following properties must be set before running any security 
+## The following properties must be set before running any security
 ## related tests.  The properties user, password, authuser, authpassword,
-## and nobodyuser must be set. 
+## and nobodyuser must be set.
 ##
-## The value for user, password, authuser, and authpassword need to be set 
-## exactly as they are set in the container/server.  
+## The value for user, password, authuser, and authpassword need to be set
+## exactly as they are set in the container/server.
 #
 # @user           User defined to exercise rolemapping feature
 # @password       Associated password for the user
@@ -1771,7 +1759,7 @@ connector_connectionURL="jdbc\\:derby\\:${derbyEmbedded.dbName}\\;create\\=true"
 # @user_ri        Username for the reference implementation used in
 #                 interop tests
 # @password_ri    Associated password for the RI user
-# @nobodyuser     This value must be the same value returned by a call to 
+# @nobodyuser     This value must be the same value returned by a call to
 #                 getCallerPrincipal().getName() from the ejb-tier when
 #                 an unauthenticated caller in the web tier invokes an
 #                 ejb method.
@@ -1810,7 +1798,7 @@ client.cert.test.jdk.tls.client.protocols=TLSv1.2
 login=default
 
 ################################################################################
-##These properties are needed for jms tests.  
+##These properties are needed for jms tests.
 #
 # @jms_timeout - this is the amount of time in milliseconds that synchronous
 #                receives will wait for a message
@@ -1833,13 +1821,13 @@ ejb_wait=60000
 
 ###############################################################################
 ## This property is needed for ejb30 stateful timeout tests.
-# @test.ejb.stateful.timeout.wait.seconds - the minimum amount of time in seconds 
+# @test.ejb.stateful.timeout.wait.seconds - the minimum amount of time in seconds
 #       the test client waits before verifying the status of the target stateful
 #       bean.  Its value must be an integer number.  Its default value in ts.jte
 #       file is 480 seconds.  It may be set to a smaller number (e.g., 240 seconds)
 #       to speed up testing, depending on the stateful timeout implementation
 #       strategy in the target server.
-#     
+#
 #       For these stateful timeout tests, the property javatest.timeout.factor
 #       must be set to a value such that the JavaTest harness does not timeout
 #       before the test completes.  Usually setting javatest.timeout.factor to
@@ -1886,14 +1874,14 @@ create.manifest.extension.entries=true
 
 ######################################################################
 ## Deliverables must set this property to the name of the deliverable
-## specific library jar file (iff create.manifest.extension.entries 
+## specific library jar file (iff create.manifest.extension.entries
 ## is set to true)
 ######################################################################
 tslib.name=cts
 
 ###############################################################
-## These properties are used by connector tests and are non configurable 
-## and must specify valid username,password to establish TSeis connection. 
+## These properties are used by connector tests and are non configurable
+## and must specify valid username,password to establish TSeis connection.
 ###############################################################
 rauser1=cts1
 rapassword1=cts1
@@ -1901,7 +1889,7 @@ rauser2=cts2
 rapassword2=cts2
 
 ###############################################################
-## These properties are for JSTL 
+## These properties are for JSTL
 ###############################################################
 jstl.db.user=${user1}
 jstl.db.password=${password1}
@@ -1921,10 +1909,10 @@ command.testExecuteSameJVM=com.sun.ts.lib.harness.ExecuteTSTestSameJVMCmd \
 ## These properties are used for the JDBC specific tests,
 ## they do not need to be changed.
 ###############################################################
-DriverManager=yes
-Driver=org.apache.derby.jdbc.ClientDriver
-db1=jdbc:derby://localhost:1527/derbyDB;create=true
-db2=jdbc:derby://localhost:1527/derbyDB;create=true
+DriverManager=no
+Driver=DriverOnlyUsedIfDriverManagerIsYes
+db1=db1OnlyUsedIfDriverManagerIsYes
+db2=db1OnlyUsedIfDriverManagerIsYes
 ptable=ctstable1
 ftable=ctstable2
 cofSize=5
@@ -1938,7 +1926,7 @@ ts_home=${ts.home}
 #######################################################################
 ## platform.mode is used by jpa tests to know whether to use
 ## the Java EE Programming Model for service and port access.
-## platform.mode=jakartaEE		Java EE Programming Model
+## platform.mode=jakartaEE    Java EE Programming Model
 ######################################################################
 platform.mode=jakartaEE
 
@@ -1946,7 +1934,7 @@ platform.mode=jakartaEE
 # tools.jar should be set to the location of the tools.jar from the installed
 # jdk
 ###########################################################################
-tools.jar=/home/jenkins/agent/workspace/jakartaee-tck_master/modules/webservices-tools.jar:/home/jenkins/agent/workspace/jakartaee-tck_master/modules/webservices-api.jar
+tools.jar=/home/jenkins/agent/workspace/jakartaee-tck_10.0.x/modules/webservices-tools.jar:/home/jenkins/agent/workspace/jakartaee-tck_10.0.x/modules/webservices-api.jar
 
 ###########################################################################
 # various flags used by the generation tools
@@ -2069,7 +2057,7 @@ ts.wrappers.classes.web.server=\
     ${ts.wrappers.web.root}/WebUtil.class, \
     ${ts.wrappers.web.root}/JSPBeanWrapper.class, \
     ${ts.wrappers.web.root}/ServletWrapper.class
- 
+
 ## Classes to package in client module for Servlet wrapper
 ts.wrappers.classes.servlet.client=${ts.wrappers.classes.web.client}
 
@@ -2091,20 +2079,20 @@ ts.wrappers.classes.jsp.server=\
 ## DO NOT MODIFY ANY PROPERTIES BELOW THIS LINE.
 ###############################################################################
 
-#classpath used by standard deployment server to deploy to the RI in a separate 
+#classpath used by standard deployment server to deploy to the RI in a separate
 #VM (DO NOT MODIFY)
 ts.standard.deployment.server.classpath=${ant.jars}:${pathsep}${ts.run.classpath.ri}${pathsep}${ts.home}/lib/javatest.jar${pathsep}${ts.home}/lib/jdom-1.1.3.jar${pathsep}${ri.modules}/admin-cli.jar
 
 harness.deployment.server.port=2002
 
-java.naming.factory.initial=com.sun.enterprise.naming.impl.SerialInitContextFactory
+java.naming.factory.initial=foo
 org.omg.CORBA.ORBClass=foo
 undeploy_redeploy_apps=${UNDEPLOY_REDEPLOY_FLAG}
 
 ###############################################################################
 # The following properties are aliases for the old J2EE properties.  These
 # properties are now named javaee instead of j2ee and will eventually be phased
-# out of the CTS.  These props are necessary until the props are renamed 
+# out of the CTS.  These props are necessary until the props are renamed
 # through out all CTS.
 ###############################################################################
 j2ee.home=${javaee.home}
@@ -2115,7 +2103,7 @@ j2ee.home.ri=${javaee.home.ri}
 ##    that needs to programatically login from with the appclient
 ##    container and propogate that login context to test code running
 ##    within the EJB container.  The value is a no-op.  The fact that
-##    the test includes the property is sufficient to cause the 
+##    the test includes the property is sufficient to cause the
 ##    EJBVehicleRunner to programatically login.  To have a test
 ##    include this property simply add it to the javatest props list
 ##    of the test.
@@ -2123,7 +2111,7 @@ j2ee.home.ri=${javaee.home.ri}
 secured.ejb.vehicle.client=true
 
 ####################################################################
-#     This property is used to point to the location of the 
+#     This property is used to point to the location of the
 #     implementation of VariableMapper. The value for sjsas 9.x is
 #
 #     variable.mapper=org.glassfish.expressly.lang.VariableMapperImpl
@@ -2146,7 +2134,7 @@ port.range.min=1025
 port.range.max=10000
 
 ################################################################
-# @http.server.supports.endpoint.publish 
+# @http.server.supports.endpoint.publish
 #     Does HTTP server-side support endpoint publish API's.
 # @http.server.supports.endpoint.publish.2
 #    Does the RI HTTP server-side support endpoint publish API's.
@@ -2211,7 +2199,7 @@ jaxrs_impl_name=jersey
 #   container.  (true = compatible to JSR 115, false = not compatible.)
 #
 # @soap.is.jsr115.compatible  This may used by JASPIC tests to
-#   determin if the SOAP container is  JSR 115 compatible.  This is 
+#   determin if the SOAP container is  JSR 115 compatible.  This is
 #   only used when running SOAP profile tests.
 #
 # @provider.configuration.file
@@ -2219,13 +2207,13 @@ jaxrs_impl_name=jersey
 #             AuthConfig Provider and points at an xml file which is used
 #             to register the JASPIC test providers into the current
 #             ACF.  This file contaiins known/expected test provider info.
-#             Only app-context-id element can be edited to suit the 
+#             Only app-context-id element can be edited to suit the
 #             impl under test.
 #
 # @schema.file.location
-#              This points to the directory that the provider-configuration.xsd 
+#              This points to the directory that the provider-configuration.xsd
 #              file will live.  The provider-configuration.xsd is used to
-#              describe the provider.configuration.file (above). 
+#              describe the provider.configuration.file (above).
 #
 # @logical.hostname.servlet
 #              This used to identify the the name of a logical host that
@@ -2273,33 +2261,33 @@ appclient.log.output=true
 vendor.authconfig.factory=com.sun.enterprise.security.jmac.config.GFAuthConfigFactory
 
 ##########################################################################
-# @servlet_waittime:   Time in seconds to wait after HttpSession expires 
+# @servlet_waittime:   Time in seconds to wait after HttpSession expires
 #                      to access the session
-# @servlet_async_wait: Time in seconds to wait between sending asynchronous messages 
+# @servlet_async_wait: Time in seconds to wait between sending asynchronous messages
 ##########################################################################
 servlet_waittime=10
 servlet_async_wait=4
 
 ##########################################################################################
-# The following properties are ONLY used if testing a Standalone JMS Resource Adapter. 
+# The following properties are ONLY used if testing a Standalone JMS Resource Adapter.
 # Since support for a JMS Resource Adapter is OPTIONAL by the JMS 2.0 Specification
 # this funtionality is USE AT YOUR OWN RISK. We WILL NOT support it. Its here in the
 # case that a vendor wants to test a Standalone JMS Resource Adapter which is OPTIONAL.
 #
-# test.sa.jmsra		// Set to true ONLY if testing a standalone JMS Resource Adapter
-# jmsra.rarfile		// Location of the standalone JMS Resource Adapter RAR file 
-# jmsra.jarfile		// Location of the standalone JMS Resource Adapter JAR file 
+# test.sa.jmsra    // Set to true ONLY if testing a standalone JMS Resource Adapter
+# jmsra.rarfile    // Location of the standalone JMS Resource Adapter RAR file
+# jmsra.jarfile    // Location of the standalone JMS Resource Adapter JAR file
 #
-# A standalone JMS Resource Adapter requires deployment/configuration to the Vendor 
+# A standalone JMS Resource Adapter requires deployment/configuration to the Vendor
 # Implementation under test (Example: Java EE 8 RI). If not testing a standalone JMS
 # Resource Adapter then these properties MUST NOT be used and the value of the property
 # (test.sa.jmsra) MUST BE SET to false (which is the DEFAULT setting). If you set the
 # property (test.sa.jmsra=true) then you are testing a standalone JMS Resource Adapter
 # and the (jmsra.rarfile and jmsra.jarfile) properties must point to the location of
-# the standalone JMS Resource Adapter RAR and JAR files. During CTS configuration the 
-# (config.vi) ant task will call another script that will deploy the standalone JMS 
+# the standalone JMS Resource Adapter RAR and JAR files. During CTS configuration the
+# (config.vi) ant task will call another script that will deploy the standalone JMS
 # Resource Adapter, configure the standalone JMS Resource Adapter, create the JMS
-# connector connection pools, create the JMS connector resources, and finally create 
+# connector connection pools, create the JMS connector resources, and finally create
 # the JMS administration objects. The ant scripts that handles all of these steps for
 # the (Java EE 8 RI) are the following:
 #
@@ -2307,50 +2295,50 @@ servlet_async_wait=4
 # $TS_HOME/bin/xml/impl/glassfish/templates/create.jmsra.template
 #
 # These scripts work for the Standalone Generic JMS Resource Adapter (GenericJMSRA)
-# located at: (http://genericjmsra.java.net/). If testing another standalone JMS 
-# Resource Adapter then these scripts will need to be rewritten/modified for that 
+# located at: (http://genericjmsra.java.net/). If testing another standalone JMS
+# Resource Adapter then these scripts will need to be rewritten/modified for that
 # JMS Resource Adapter.
 #
-# Here is the summary of steps of what the (jmsra.xml) script does. It configures the JMS 
-# resource adapter by doing a resource-adapter-config, it deploys the JMS resource adapter 
-# RAR file specified in the "jmsra.rarfile" property to the (Java EE 8 RI), it copies the 
+# Here is the summary of steps of what the (jmsra.xml) script does. It configures the JMS
+# resource adapter by doing a resource-adapter-config, it deploys the JMS resource adapter
+# RAR file specified in the "jmsra.rarfile" property to the (Java EE 8 RI), it copies the
 # JMS Resource Adapter JAR file specified in the "jmsra.jarfile" property to the (Java EE
 # 8 RI) lib directory under $JAVAEE_HOME/lib. It copies some of the JMS client library jars
-# to the $JAVAEE_HOME/lib directory. it then creates the JMS connector connection pools, 
-# the JMS connector resources, and the JMS administration objects that are needed by CTS. 
-# When the (config.vi) ant task completes the Java EE 8 environment will be ready to run 
+# to the $JAVAEE_HOME/lib directory. it then creates the JMS connector connection pools,
+# the JMS connector resources, and the JMS administration objects that are needed by CTS.
+# When the (config.vi) ant task completes the Java EE 8 environment will be ready to run
 # the JMS CTS tests. One final step is needed to the JMS MDB CTS tests which is to modify
 # the sun-ejb-jar runtime xml files by adding the <mdb-resource-adapter> deployment info.
-# 
+#
 # Here are the manual steps for the Standalone Generic JMS Resource Adapter (GenericJMSRA)
 # after the (config.vi) ant task completes.
 #
 # (1) Edit the ts.jte file and add the following:
-#	  Add "-Dgenericra.inAppClientContainer=true" to the "command.testExecuteAppClient"
-#	  property and then add "${pathsep}${jmsra.jarfile}" to the end of APPCPATH variable
+#    Add "-Dgenericra.inAppClientContainer=true" to the "command.testExecuteAppClient"
+#    property and then add "${pathsep}${jmsra.jarfile}" to the end of APPCPATH variable
 #         in the same "command.testExecuteAppClient" property. You can refer to the Generic
-#	  JMS Resource Adapter (GenericJMSRA) user guide for more information on this.
-# (2) Modify the sun-ejb-jar runtime xml files for the JMS MDB tests by adding the 
+#    JMS Resource Adapter (GenericJMSRA) user guide for more information on this.
+# (2) Modify the sun-ejb-jar runtime xml files for the JMS MDB tests by adding the
 #     <mdb-resource-adapter> deployment info.
-#	  cd $TS_HOME/bin
-#	  ant -f xml/impl/glassfish/jmsra.xml modify-jmsmdbejbxml
+#    cd $TS_HOME/bin
+#    ant -f xml/impl/glassfish/jmsra.xml modify-jmsmdbejbxml
 # (3) Now you can run the JMS CTS tests. After you are done running the JMS CTS tests ypu
-#     can unconfigure the Java EE 8 RI and restore the original sun-ejb-jar runtime xml 
+#     can unconfigure the Java EE 8 RI and restore the original sun-ejb-jar runtime xml
 #     files.
-#	  cd $TS_HOME/bin
-#	  ant -f xml/impl/glassfish/jmsra.xml restore-jmsmdbejbxml
-#	  ant clean.vi
+#    cd $TS_HOME/bin
+#    ant -f xml/impl/glassfish/jmsra.xml restore-jmsmdbejbxml
+#    ant clean.vi
 # (4) Finally reset the properties back to there defaults. Set (test.sa.jmsra=false) and unset
 #     (jmsra.rarfile and jmsra.jarfile). Remove the "-Dgenericra.inAppClientContainer=true"
 #     and "${pathsep}${jmsra.jarfile}" from the ts.jte file from step 1.
 #
-# If using a different Java EE environment from the Java EE RI than a vendor will need to 
-# provide his own JMS Resource Adapter support scripts needed for that Java EE environment. 
+# If using a different Java EE environment from the Java EE RI than a vendor will need to
+# provide his own JMS Resource Adapter support scripts needed for that Java EE environment.
 # It can reuse/modify the (Java EE 8 RI) scripts above or simply write their own scripts. A
-# vendor can use the Java EE 8 RI or any Java EE 8 implementation of its choice as the Java 
-# EE 8 environment for testing its Standalone JMS Resource Adapter. The Standalone JMS Resource 
+# vendor can use the Java EE 8 RI or any Java EE 8 implementation of its choice as the Java
+# EE 8 environment for testing its Standalone JMS Resource Adapter. The Standalone JMS Resource
 # Adapter MUST pass all of the JMS CTS tests under: (TS_HOME/src/com/sun/ts/tests/jms) in order
-# to be declared fully JMS 2.0 compliant. 
+# to be declared fully JMS 2.0 compliant.
 #
 # See the JMS 2.0 Specification and the CTS 8 User's Guide for more information.
 ##########################################################################################
@@ -2361,18 +2349,18 @@ jmsra.jarfile=
 ##########################################################################################
 # The following property specifies the name of the JMS Resource Adapter under test. The
 # Java EE 8 RI contains its own builtin JMS Resource Adapter (JMSRA). Its name is "jmsra".
-# So we set (jmsra.name=jmsra) as the default value for the Java EE 8 RI. 
+# So we set (jmsra.name=jmsra) as the default value for the Java EE 8 RI.
 #
 # Change the value of this property for the JMS Resource Adapter that is under test. This
 # hardcoded value is specific to the Java EE 8 RI.
 #
-# jmsra.name		// Name of JMS Resource Adapter for the implementation under test
+# jmsra.name    // Name of JMS Resource Adapter for the implementation under test
 ##########################################################################################
 jmsra.name=jmsra
 
 
 ##########################################################################
-# The following property is for WebSocket tests. 
+# The following property is for WebSocket tests.
 #
 # @ws_wait:  waiting time in seconds for socket to send/receive a message
 ##########################################################################
@@ -2380,9 +2368,9 @@ ws_wait=5
 
 ############################################################################################
 # These following properties are needed for Javamail tests.
-# 
-#  @mailHost  hostname of the mail server 
-#  @mailuser1 must be set to a valid email address where test mails will be sent to. 
+#
+#  @mailHost  hostname of the mail server
+#  @mailuser1 must be set to a valid email address where test mails will be sent to.
 #  @mailFrom  reply to address set in the email messages generated by the javamail tests
 #  @javamail.username user account name on server
 #  @javamail.password password for the mailuser1
@@ -2460,3 +2448,4 @@ jakarta.persistence.jdbc.driver=${derby.driver}
 jakarta.persistence.jdbc.url=${derby.url}
 jakarta.persistence.jdbc.user=${derby.user}
 jakarta.persistence.jdbc.password=${derby.passwd}
+
