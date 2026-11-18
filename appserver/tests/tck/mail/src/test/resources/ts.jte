@@ -83,8 +83,8 @@ jte.version=@JTE_VERSION@
 #                    if.existing.work.report.dirs = value in this file
 #                  end if
 ########################################################################
-work.dir=/home/jenkins/agent/workspace/jakartaee-tck_master/JTWork
-report.dir=/home/jenkins/agent/workspace/jakartaee-tck_master/JTReport
+work.dir=${tck.workDirectory}
+report.dir=${tck.reportDirectory}
 if.existing.work.report.dirs=auto
 
 ########################################################################

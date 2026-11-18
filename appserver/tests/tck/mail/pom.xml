@@ -33,11 +33,6 @@
     <name>TCK: Java Mail</name>
 
     <properties>
-        <tck.common.version>11.1.1</tck.common.version>
-        <tck.arquillian.version>11.1.3</tck.arquillian.version>
-        <tck.workDirectory>${project.build.directory}/work</tck.workDirectory>
-        <tck.tsjte>${project.build.testOutputDirectory}/ts.jte</tck.tsjte>
-
         <mailboxes.dir>${project.basedir}/src/test/resources/mailboxes</mailboxes.dir>
         <javamail.mailbox>test1</javamail.mailbox>
         <!-- mail connection properties -->
@@ -70,22 +65,13 @@
             <artifactId>glassfish-tck-runner</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>jakarta.tck</groupId>-->
-<!--            <artifactId>common</artifactId>-->
-<!--            <version>${tck.common.version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>signaturetest</artifactId>
-            <version>${tck.common.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>sigtest-maven-plugin</artifactId>
-            <scope>test</scope>
         </dependency>
 
          <dependency>
@@ -96,43 +82,31 @@
         <dependency>
             <groupId>jakarta.tck.arquillian</groupId>
             <artifactId>arquillian-protocol-lib</artifactId>
-            <version>${tck.arquillian.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck.arquillian</groupId>
             <artifactId>arquillian-protocol-common</artifactId>
-            <version>${tck.arquillian.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck.arquillian</groupId>
             <artifactId>arquillian-protocol-javatest</artifactId>
-            <version>${tck.arquillian.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck.arquillian</groupId>
             <artifactId>arquillian-protocol-appclient</artifactId>
-            <version>${tck.arquillian.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck.arquillian</groupId>
             <artifactId>tck-porting-lib</artifactId>
-            <version>${tck.arquillian.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ee.omnifish.arquillian</groupId>

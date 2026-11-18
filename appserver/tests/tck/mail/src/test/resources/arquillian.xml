@@ -29,11 +29,11 @@
             <protocol type="javatest" default="true">
                 <property name="runClient">true</property>
                 <property name="runAsVehicle">true</property>
-                <property name="clientEarDir">target/appclient</property>
+                <property name="clientEarDir">${project.build.directory}/appclient</property>
                 <property name="unpackClientEar">true</property>
                 <property name="clientDir">${project.basedir}</property>
-                <property name="workDir">${ts.work.dir}/tmp</property>
-                <property name="tsJteFile">${ts.home}/ts.jte</property>
+                <property name="workDir">${ts.workDirectory}</property>
+                <property name="tsJteFile">${tck.tsjte}</property>
                 <property name="tsSqlStmtFile">${ts.home}/tssql.stmt</property>
                 <property name="trace">true</property>
                 <property name="clientTimeout">20000</property>
