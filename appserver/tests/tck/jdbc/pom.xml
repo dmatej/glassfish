@@ -159,7 +159,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish-artifact-id}</artifactId>
+                                    <artifactId>${glassfish.artifactId}</artifactId>
                                     <version>${glassfish.version}</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>

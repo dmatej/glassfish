@@ -321,14 +321,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish-artifact-id>glassfish</glassfish-artifact-id>
+                <glassfish.artifactId>glassfish</glassfish.artifactId>
                 <excluded.groups>se</excluded.groups>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish-artifact-id>web</glassfish-artifact-id>
+                <glassfish.artifactId>web</glassfish.artifactId>
                 <excluded.groups>javaee-full,se</excluded.groups>
             </properties>
         </profile>
