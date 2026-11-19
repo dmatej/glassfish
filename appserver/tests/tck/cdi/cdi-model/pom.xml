@@ -106,7 +106,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish-artifact-id}</artifactId>
+                                    <artifactId>${glassfish.artifactId}</artifactId>
                                     <version>${glassfish.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
@@ -159,13 +159,13 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish-artifact-id>glassfish</glassfish-artifact-id>
+                <glassfish.artifactId>glassfish</glassfish.artifactId>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish-artifact-id>web</glassfish-artifact-id>
+                <glassfish.artifactId>web</glassfish.artifactId>
             </properties>
         </profile>
     </profiles>

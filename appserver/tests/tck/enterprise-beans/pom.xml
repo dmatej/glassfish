@@ -354,14 +354,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish-artifact-id>glassfish</glassfish-artifact-id>
+                <glassfish.artifactId>glassfish</glassfish.artifactId>
                 <tck.groups>platform,tck-javatest</tck.groups>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish-artifact-id>web</glassfish-artifact-id>
+                <glassfish.artifactId>web</glassfish.artifactId>
                 <tck.groups>web,tck-javatest</tck.groups>
             </properties>
         </profile>

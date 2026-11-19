@@ -37,15 +37,14 @@
     </modules>
 
     <properties>
-        <glassfish.artifact.id>glassfish</glassfish.artifact.id>
-        <skip.surefire.report>true</skip.surefire.report>
+        <glassfish.artifactId>glassfish</glassfish.artifactId>
     </properties>
 
     <profiles>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish.artifact.id>web</glassfish.artifact.id>
+                <glassfish.artifactId>web</glassfish.artifactId>
             </properties>
         </profile>
     </profiles>
