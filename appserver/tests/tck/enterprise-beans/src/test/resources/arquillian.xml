@@ -31,17 +31,17 @@
             <protocol type="appclient">
                 <property name="runClient">true</property>
                 <property name="runAsVehicle">true</property>
-                <property name="clientEarDir">${tck.clientDirectory}</property>
+                <property name="clientEarDir">target/appclient</property>
                 <property name="unpackClientEar">true</property>
                 <!-- Need to populate from ts.jte command.testExecuteAppClient setting for glassfish -->
                 <property name="clientCmdLineString">${java.home}/bin/java \
                     --add-opens \
                     java.base/java.lang=ALL-UNNAMED \
                     --module-path \
-                    ${glassfish.home}/glassfish/lib/bootstrap \
+                    ${glassfish.lib.dir}/bootstrap \
                     --add-modules ALL-MODULE-PATH \
                     -cp \
-                    ${glassfish.home}/glassfish/lib/gf-client.jar:${clientStubJar} \
+                    ${glassfish.lib.dir}/gf-client.jar:${clientStubJar} \
                     -Djava.system.class.loader=org.glassfish.appclient.client.acc.agent.ACCAgentClassLoader \
                     -Dcom.sun.aas.configRoot=${glassfish.home}/glassfish/config \
                     -Dcts.tmp=${ts.home}/tmp \
@@ -63,7 +63,7 @@
                     get-client-stubs \
                     --appName \
                     ${deploymentName} \
-                    target
+                    ${project.build.directory}
                 </property>
                 <property name="clientStubsJarSuffix">Client</property>
                 <property name="workDir">${tck.workDirectory}</property>
@@ -84,7 +84,7 @@
             <protocol type="appclient">
                 <property name="runClient">true</property>
                 <property name="runAsVehicle">true</property>
-                <property name="clientEarDir">${tck.clientDirectory}</property>
+                <property name="clientEarDir">target/appclient</property>
                 <property name="unpackClientEar">true</property>
                 <!-- Need to populate from ts.jte command.testExecuteAppClient setting for glassfish -->
                 <property name="clientCmdLineString">${glassfish.home}/glassfish/bin/appclient \
@@ -96,13 +96,12 @@
                     -Djavax.net.ssl.keyStore=${tck.certificateDirectory}/clientcert.p12 \
                     -Djavax.net.ssl.keyStorePassword=changeit \
                     -Djavax.net.ssl.trustStore=${glassfish.domain.dir}/config/cacerts.p12 \
+                    -Djavax.net.ssl.trustStorePassword=changeit \
                     -Djavax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl \
                     -Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl \
                     -Djavax.xml.transform.TransformerFactory=com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl \
                     -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser \
                     -Dorg.xml.sax.parser=org.xml.sax.helpers.XMLReaderAdapter \
-                    -Doracle.jdbc.J2EE13Compliant=true \
-                    -Doracle.jdbc.mapDateToTimestamp \
                     -Dstartup.login=false \
                     -Dauth.gui=false \
                     -Dlog.file.location=${glassfish.domain.dir}/logs \
@@ -117,7 +116,7 @@
                 <!-- Pass ENV vars here -->
                 <property name="clientEnvString">PATH=${env.PATH};LD_LIBRARY_PATH=${glassfish.lib.dir};AS_DEBUG=true;
                    APPCPATH=${clientEarLibClasspath}:${glassfish.home}/glassfish/modules/security.jar</property>
-                <property name="clientDir">${tck.clientDirectory}</property>
+                <property name="clientDir">${project.basedir}</property>
                 <property name="workDir">${tck.workDirectory}</property>
                 <property name="tsJteFile">${tck.tsjte}</property>
                 <property name="tsSqlStmtFile">${tck.tssql}</property>
@@ -125,6 +124,5 @@
                 <property name="clientTimeout">20000</property>
             </protocol>
         </container>
-
     </group>
 </arquillian>

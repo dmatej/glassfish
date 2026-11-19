@@ -38,10 +38,9 @@
                 get-client-stubs \
                 --appName \
                 ${deploymentName} \
-                target
+                ${project.build.directory}
             </property>
             <property name="clientStubsJarSuffix">Client</property>
-            <property name="clientDir">${tck.clientDirectory}</property>
             <property name="workDir">${tck.workDirectory}</property>
             <property name="tsJteFile">${tck.tsjte}</property>
             <property name="tsSqlStmtFile">${tck.tssql}</property>

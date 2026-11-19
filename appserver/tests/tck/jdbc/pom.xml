@@ -31,12 +31,12 @@
 
     <artifactId>tck-jdbc</artifactId>
     <name>TCK: JDBC</name>
-    <description>Aggregates dependencies and runs the JDBC TCK on GlassFish</description>
 
     <properties>
         <jdbc.db>derby</jdbc.db>
         <ts.home>${project.build.testOutputDirectory}</ts.home>
         <sql.directory>${project.basedir}/sql</sql.directory>
+        <tck.certificatesDirectory>${project.basedir}/jakartaeetck/bin/certificates</tck.certificatesDirectory>
     </properties>
 
     <dependencies>
@@ -337,7 +337,7 @@ CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.classpath', 'CTS1.CS
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
-                    <!-- FIXME: Same tests, same results, despite it seems it is something different. -->
+                    <!-- FIXME: Same tests, same results, just need much more time. -->
 <!--                    <execution>-->
 <!--                        <id>jdbc-tests-appclient</id>-->
 <!--                        <goals>-->
