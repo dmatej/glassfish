@@ -18,7 +18,7 @@
 <arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://jboss.org/schema/arquillian https://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <engine>
-        <property name="deploymentExportPath">target/deployments</property>
+        <property name="deploymentExportPath">${project.build.directory}/deployments</property>
     </engine>
     <group qualifier="glassfish" default="true">
         <container qualifier="tck-javatest" default="true">
@@ -29,7 +29,7 @@
             <protocol type="javatest" default="true">
                 <property name="runClient">true</property>
                 <property name="runAsVehicle">true</property>
-                <property name="clientEarDir">${project.build.directory}/appclient</property>
+                <property name="clientEarDir">target/appclient</property>
                 <property name="unpackClientEar">true</property>
                 <property name="clientDir">${project.basedir}</property>
                 <property name="workDir">${ts.workDirectory}</property>

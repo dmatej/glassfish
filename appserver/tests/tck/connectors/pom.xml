@@ -388,22 +388,6 @@
 
                 <executions>
                     <execution>
-                        <id>tck-appclient</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <groups>tck-appclient</groups>
-                            <includes>
-                                <include>**/ClientTest.*</include>
-                                <include>**/*EjbTest.*</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <arquillian.xml>arquillian-client.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>tck-javatest</id>
                         <goals>
                             <goal>integration-test</goal>
@@ -417,6 +401,22 @@
                             </includes>
                             <systemPropertyVariables>
                                 <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tck-appclient</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <groups>tck-appclient</groups>
+                            <includes>
+                                <include>**/ClientTest.*</include>
+                                <include>**/*EjbTest.*</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <arquillian.xml>arquillian-client.xml</arquillian.xml>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
