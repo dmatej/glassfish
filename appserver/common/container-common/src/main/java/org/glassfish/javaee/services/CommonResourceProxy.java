@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2022 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -33,7 +33,7 @@ import org.glassfish.hk2.api.PerLookup;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.internal.api.Globals;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 
 import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.deriveResourceName;
@@ -79,8 +79,7 @@ public class CommonResourceProxy implements NamingObjectProxy.InitializationNami
 
 
     protected ResourceDeployer getResourceDeployer(Object resource) {
-        return serviceLocator.<ResourceManagerFactory> getService(ResourceManagerFactory.class)
-            .getResourceDeployer(resource);
+        return serviceLocator.getService(ResourceDeployerFactory.class).getResourceDeployer(resource);
     }
 
 

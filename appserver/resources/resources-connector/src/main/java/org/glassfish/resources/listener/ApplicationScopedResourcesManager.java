@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2010, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -45,7 +45,7 @@ import org.glassfish.resourcebase.resources.ResourceTypeOrderProcessor;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceInfo;
 import org.glassfish.resourcebase.resources.api.ResourcesBinder;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.glassfish.resourcebase.resources.util.ResourceUtil;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.Changed;
@@ -71,7 +71,7 @@ public class ApplicationScopedResourcesManager implements PostConstruct, PreDest
     private ResourcesBinder resourcesBinder;
 
     @Inject
-    private Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     @Inject
     private ClassLoaderHierarchy clh;
@@ -280,7 +280,7 @@ public class ApplicationScopedResourcesManager implements PostConstruct, PreDest
      * @return ResourceDeployer
      */
     private ResourceDeployer getResourceDeployer(Object resource){
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private void  debug(String message){

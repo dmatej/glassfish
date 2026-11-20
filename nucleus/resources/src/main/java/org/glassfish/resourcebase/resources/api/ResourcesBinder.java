@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -26,7 +27,6 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 
-import org.glassfish.api.naming.GlassfishNamingManager;
 import org.glassfish.logging.annotation.LogMessagesResourceBundle;
 import org.glassfish.logging.annotation.LoggerInfo;
 import org.glassfish.resourcebase.resources.ResourceLoggingConstansts;
@@ -43,16 +43,13 @@ import org.jvnet.hk2.annotations.Service;
 @Service
 public class ResourcesBinder {
 
-    @Inject
-    private GlassfishNamingManager manager;
-
     @LogMessagesResourceBundle
     public static final String LOGMESSAGE_RESOURCE = "org.glassfish.resourcebase.resources.LogMessages";
 
     @LoggerInfo(subsystem="RESOURCE", description="Nucleus Resource", publish=true)
-
     public static final String LOGGER = "jakarta.enterprise.resources.api";
-    private static final Logger logger = Logger.getLogger(LOGGER, LOGMESSAGE_RESOURCE);
+
+    private static final Logger LOG = Logger.getLogger(LOGGER, LOGMESSAGE_RESOURCE);
 
     @Inject
     private Provider<org.glassfish.resourcebase.resources.api.ResourceProxy> resourceProxyProvider;
@@ -70,7 +67,7 @@ public class ResourcesBinder {
             bindResource(resourceInfo, resource);
         }catch(NamingException ne){
             Object[] params = {resourceInfo, ne};
-            logger.log(Level.SEVERE,ResourceLoggingConstansts.BIND_RESOURCE_FAILED, params);
+            LOG.log(Level.SEVERE,ResourceLoggingConstansts.BIND_RESOURCE_FAILED, params);
         }
     }
 

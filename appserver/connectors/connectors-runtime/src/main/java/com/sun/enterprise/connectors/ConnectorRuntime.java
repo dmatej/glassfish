@@ -79,6 +79,7 @@ import jakarta.transaction.SystemException;
 import jakarta.transaction.Transaction;
 
 import java.io.PrintWriter;
+import java.lang.System.Logger;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -90,8 +91,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 import javax.security.auth.callback.CallbackHandler;
@@ -108,9 +107,9 @@ import org.glassfish.connectors.config.WorkSecurityMap;
 import org.glassfish.deployment.common.SecurityRoleMapperFactory;
 import org.glassfish.hk2.api.PostConstruct;
 import org.glassfish.hk2.api.PreDestroy;
+import org.glassfish.hk2.api.ServiceHandle;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.internal.api.ClassLoaderHierarchy;
-import org.glassfish.internal.api.ConnectorClassLoaderService;
 import org.glassfish.internal.api.DelegatingClassLoader;
 import org.glassfish.internal.data.ApplicationRegistry;
 import org.glassfish.resourcebase.resources.api.PoolInfo;
@@ -118,7 +117,7 @@ import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceInfo;
 import org.glassfish.resourcebase.resources.listener.ResourceManager;
 import org.glassfish.resourcebase.resources.naming.ResourceNamingService;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.glassfish.resources.api.ResourcesRegistry;
 import org.glassfish.server.ServerEnvironmentImpl;
 import org.jvnet.hk2.annotations.Service;
@@ -129,7 +128,8 @@ import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.getRarNameF
 import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.isApplicationScopedResource;
 import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.isModuleScopedResource;
 import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.isStandAloneRA;
-import static com.sun.logging.LogDomains.RSR_LOGGER;
+import static java.lang.System.Logger.Level.DEBUG;
+import static java.lang.System.Logger.Level.TRACE;
 
 /**
  * This class is the entry point to connector backend module. It exposes different API's called by external entities
@@ -142,8 +142,8 @@ import static com.sun.logging.LogDomains.RSR_LOGGER;
 @Singleton
 public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api.ConnectorRuntime, PostConstruct, PreDestroy {
 
+    private static final Logger LOG = System.getLogger(ConnectorRuntime.class.getName());
     private static ConnectorRuntime _runtime;
-    private final Logger _logger = LogDomains.getLogger(ConnectorRuntime.class, RSR_LOGGER);
     private ConnectorConnectionPoolAdminServiceImpl ccPoolAdmService;
     private ConnectorResourceAdminServiceImpl connectorResourceAdmService;
     private ConnectorService connectorService;
@@ -173,7 +173,7 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     private Provider<WorkManagerFactory> workManagerFactoryProvider;
 
     @Inject
-    private Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     @Inject
     private Provider<ApplicationRegistry> applicationRegistryProvider;
@@ -231,9 +231,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     private Provider<Domain> domainProvider;
 
     @Inject
-    private Provider<ResourceManager> resourceManagerProvider;
-
-    @Inject
     private ProcessEnvironment processEnvironment;
 
     @Inject
@@ -241,9 +238,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
 
     @Inject
     private ConnectorJavaBeanValidator connectorBeanValidator;
-
-    @Inject
-    private ConnectorClassLoaderService connectorClassLoaderService;
 
     @Inject
     private ServerEnvironmentImpl serverEnvironmentImpl;
@@ -258,7 +252,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     private ServiceLocator serviceLocator;
 
     private Resources globalResources;
-    private ResourceManager resourceManager;
 
     // performance improvement, cache the lookup of transaction manager.
     private JavaEETransactionManager transactionManager;
@@ -370,8 +363,7 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
      * @return PrintWriter
      */
     public PrintWriter getResourceAdapterLogWriter() {
-        Logger logger = LogDomains.getLogger(ConnectorRuntime.class, LogDomains.RSR_LOGGER);
-
+        java.util.logging.Logger logger = LogDomains.getLogger(ConnectorRuntime.class, LogDomains.RSR_LOGGER);
         return new PrintWriter(new RAWriterAdapter(logger));
     }
 
@@ -406,9 +398,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
         resourceAdapterAdmService.createActiveResourceAdapter(moduleDir, moduleName, loader);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void createActiveResourceAdapter(ConnectorDescriptor connectorDescriptor, String moduleName, String moduleDir, ClassLoader loader) throws ConnectorRuntimeException {
         resourceAdapterAdmService.createActiveResourceAdapter(connectorDescriptor, moduleName, moduleDir, loader);
     }
@@ -496,17 +485,17 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
         }
         try {
             return connectorResourceAdmService.lookup(ri);
-        } catch (NamingException ne) {
+        } catch (NamingException e) {
             if (force && isDAS()) {
-                _logger.log(Level.FINE, "jdbc.unable_to_lookup_resource", ri);
+                LOG.log(DEBUG, () -> "Lookup of the PM resource failed for: " + ri, e);
                 try {
                     return lookupDataSourceInDAS(ri);
                 } catch (ConnectorRuntimeException ex) {
-                    ne.addSuppressed(ex);
-                    throw ne;
+                    e.addSuppressed(ex);
+                    throw e;
                 }
             }
-            throw ne;
+            throw e;
         }
     }
 
@@ -533,17 +522,17 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
         }
         try {
             return connectorResourceAdmService.lookup(ri);
-        } catch (NamingException ne) {
+        } catch (NamingException e) {
             if (force && isDAS()) {
-                _logger.log(Level.FINE, "jdbc.unable_to_lookup_resource", ri);
+                LOG.log(DEBUG, () -> "Lookup of the NON-TX resource failed for: " + ri, e);
                 try {
                     return lookupDataSourceInDAS(ri);
                 } catch (ConnectorRuntimeException ex) {
-                    ne.addSuppressed(ex);
-                    throw ne;
+                    e.addSuppressed(ex);
+                    throw e;
                 }
             }
-            throw ne;
+            throw e;
         }
     }
 
@@ -772,11 +761,7 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
 
         if (isServer() || isEmbedded()) {
             poolMonitoringLevelListener = poolMonitoringLevelListenerProvider.get();
-
-            // Force initialization of the ResourceManager
-            getResourceManager();
         }
-
     }
 
     /**
@@ -841,28 +826,17 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
         ccPoolAdmService.createConnectorConnectionPool(ccp, connectionDefinitionName, rarName, props, securityMaps);
     }
 
-    private synchronized org.glassfish.resourcebase.resources.listener.ResourceManager getResourceManager() {
-        if (resourceManager == null) {
-            try {
-                resourceManager = resourceManagerProvider.get();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        return resourceManager;
-    }
-
     @Override
     public void cleanUpResourcesAndShutdownAllActiveRAs() {
         Domain domain = domainProvider.get();
         if (domain != null) {
-            org.glassfish.resourcebase.resources.listener.ResourceManager rm = getResourceManager();
-            if (rm != null) {
+            // avoiding the reinitialization of the service
+            List<ServiceHandle<ResourceManager>> handles = serviceLocator.getAllServiceHandles(ResourceManager.class);
+            final ResourceManager resourceManager;
+            if (!handles.isEmpty() && handles.getFirst().isActive()) {
+                resourceManager = handles.getFirst().getService();
                 Collection<Resource> resources = ConnectorsUtil.getAllSystemRAResourcesAndPools(domain.getResources());
                 resourceManager.undeployResources(resources);
-
-                resources = null;
                 Collection<ConnectorRuntimeExtension> extensions = serviceLocator.getAllServices(ConnectorRuntimeExtension.class);
                 for (ConnectorRuntimeExtension extension : extensions) {
                     resources = extension.getAllSystemRAResourcesAndPools();
@@ -1011,7 +985,7 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
 
     @Override
     public ResourcePool getConnectionPoolConfig(PoolInfo poolInfo) {
-        _logger.log(Level.FINEST, "getConnectionPoolConfig(poolInfo={0})", poolInfo);
+        LOG.log(TRACE, "getConnectionPoolConfig(poolInfo={0})", poolInfo);
         ResourcePool pool = ResourcesUtil.createInstance().getPoolConfig(poolInfo);
         if (pool != null) {
             return pool;
@@ -1093,7 +1067,7 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     }
 
     public ResourceDeployer getResourceDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     /**
@@ -1446,10 +1420,6 @@ public class ConnectorRuntime implements com.sun.appserv.connectors.internal.api
     @Override
     public void associateResourceAdapter(String rarName, ResourceAdapterAssociation raa) throws ResourceException {
         resourceAdapterAdmService.associateResourceAdapter(rarName, raa);
-    }
-
-    public org.glassfish.resourcebase.resources.listener.ResourceManager getGlobalResourceManager() {
-        return getResourceManager();
     }
 
     @Override

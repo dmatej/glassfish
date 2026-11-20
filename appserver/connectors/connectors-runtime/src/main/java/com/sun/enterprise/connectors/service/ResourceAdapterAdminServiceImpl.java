@@ -52,9 +52,11 @@ import javax.naming.NamingException;
 import org.glassfish.api.naming.SimpleJndiName;
 import org.glassfish.connectors.config.ResourceAdapterConfig;
 import org.glassfish.deployment.common.ModuleDescriptor;
+import org.glassfish.resourcebase.resources.listener.ResourceManager;
 import org.jvnet.hk2.config.types.Property;
 
 import static com.sun.enterprise.connectors.service.ConnectorAdminServiceUtils.getReservePrefixedJNDINameForDescriptor;
+import static org.glassfish.internal.api.Globals.getDefaultBaseServiceLocator;
 
 
 /**
@@ -282,6 +284,24 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
 
     }
 
+    private void recreateActiveResourceAdapter(String moduleName, ClassLoader loader) throws ConnectorRuntimeException {
+        stopAndRemoveActiveResourceAdapter(moduleName);
+        createActiveResourceAdapter(moduleName, loader);
+    }
+
+    /**
+     * Creates Active resource Adapter which abstracts the rar module. During
+     * the creation of ActiveResourceAdapter, default pools and resources also
+     * are created.
+     *
+     * @param moduleName Name of the module
+     * @throws ConnectorRuntimeException if creation fails.
+     */
+    public void createActiveResourceAdapter(String moduleName, ClassLoader loader) throws ConnectorRuntimeException {
+        final String moduleDir = ConnectorsUtil.getLocation(moduleName);
+        createActiveResourceAdapter(moduleDir, moduleName, loader);
+    }
+
 
     /**
      * Creates Active resource Adapter which abstracts the rar module. During
@@ -293,15 +313,12 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
      * @throws ConnectorRuntimeException if creation fails.
      */
     public void createActiveResourceAdapter(String moduleDir, String moduleName, ClassLoader loader)
-            throws ConnectorRuntimeException {
+        throws ConnectorRuntimeException {
 
         synchronized (_registry.getLockObject(moduleName)){
-            ActiveResourceAdapter activeResourceAdapter =
-                    _registry.getActiveResourceAdapter(moduleName);
+            ActiveResourceAdapter activeResourceAdapter = _registry.getActiveResourceAdapter(moduleName);
             if (activeResourceAdapter != null) {
-                if(_logger.isLoggable(Level.FINE)) {
-                    _logger.log(Level.FINE, "rardeployment.resourceadapter.already.started", moduleName);
-                }
+                _logger.log(Level.FINE, "rardeployment.resourceadapter.already.started", moduleName);
                 return;
             }
 
@@ -453,7 +470,7 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
         throws ConnectorRuntimeException {
         if (rarName != null && raConfig != null) {
             _registry.addResourceAdapterConfig(rarName, raConfig);
-            reCreateActiveResourceAdapter(rarName);
+            recreateActiveResourceAdapter(rarName);
         }
     }
 
@@ -465,7 +482,7 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
     public void deleteResourceAdapterConfig(String rarName) throws ConnectorRuntimeException {
         if (rarName != null) {
             _registry.removeResourceAdapterConfig(rarName);
-            reCreateActiveResourceAdapter(rarName);
+            recreateActiveResourceAdapter(rarName);
         }
     }
 
@@ -480,30 +497,25 @@ public class ResourceAdapterAdminServiceImpl extends ConnectorService {
      * @throws ConnectorRuntimeException
      *                      if recreation fails.
      */
-
-    public void reCreateActiveResourceAdapter(String moduleName)
-            throws ConnectorRuntimeException {
-
-        ConnectorRuntime runtime = ConnectorRuntime.getRuntime();
-
-        if (isRarDeployed(moduleName)) {
-            if(!ConnectorsUtil.belongsToSystemRA(moduleName)){
-                ConnectorApplication app = _registry.getConnectorApplication(moduleName);
-                app.undeployResources();
-                stopAndRemoveActiveResourceAdapter(moduleName);
-                String moduleDir = ConnectorsUtil.getLocation(moduleName);
-                createActiveResourceAdapter(moduleDir, moduleName, app.getClassLoader());
-                _registry.getConnectorApplication(moduleName).deployResources();
-            }else{
-             Collection<Resource> resources =
-                     getResourcesUtil().filterConnectorResources(getResourcesUtil().getGlobalResources(), moduleName, true);
-                runtime.getGlobalResourceManager().undeployResources(resources);
-                stopAndRemoveActiveResourceAdapter(moduleName);
-                String moduleDir = ConnectorsUtil.getLocation(moduleName);
-                createActiveResourceAdapter(moduleDir, moduleName,
-                        runtime.getSystemRARClassLoader(moduleName));
-                runtime.getGlobalResourceManager().deployResources(resources);
+    private void recreateActiveResourceAdapter(String moduleName) throws ConnectorRuntimeException {
+        if (!isRarDeployed(moduleName)) {
+            return;
+        }
+        if (ConnectorsUtil.belongsToSystemRA(moduleName)) {
+            Collection<Resource> resources = getResourcesUtil()
+                .filterConnectorResources(getResourcesUtil().getGlobalResources(), moduleName, true);
+            final ResourceManager resourceManager = getDefaultBaseServiceLocator().getService(ResourceManager.class);
+            if (resourceManager != null) {
+                resourceManager.undeployResources(resources);
+                ClassLoader loader = ConnectorRuntime.getRuntime().getSystemRARClassLoader(moduleName);
+                recreateActiveResourceAdapter(moduleName, loader);
+                resourceManager.deployResources(resources);
             }
+        } else {
+            final ConnectorApplication app = _registry.getConnectorApplication(moduleName);
+            app.undeployResources();
+            recreateActiveResourceAdapter(moduleName, app.getClassLoader());
+            _registry.getConnectorApplication(moduleName).deployResources();
         }
     }
 

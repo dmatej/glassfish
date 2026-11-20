@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -34,9 +34,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ResourceDeployerInfo {
-    @Metadata(org.glassfish.resourcebase.resources.util.ResourceManagerFactory.METADATA_KEY)
+
+    public static final String METADATA_KEY = "ResourceImpl";
+
+    @Metadata(METADATA_KEY)
     Class<?> value();
 
     Class<? extends ResourceDeployerValidator> validator()
-    default org.glassfish.resourcebase.resources.api.DefaultResourceDeployerValidator.class;
+    default DefaultResourceDeployerValidator.class;
 }

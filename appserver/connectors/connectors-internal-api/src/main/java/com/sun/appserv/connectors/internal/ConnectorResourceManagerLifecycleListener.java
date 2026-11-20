@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -22,8 +22,6 @@ import com.sun.appserv.connectors.internal.api.ConnectorDescriptorProxy;
 import com.sun.appserv.connectors.internal.api.ConnectorRuntime;
 import com.sun.appserv.connectors.internal.api.ConnectorsUtil;
 import com.sun.enterprise.config.serverbeans.Application;
-import com.sun.enterprise.config.serverbeans.Applications;
-import com.sun.enterprise.config.serverbeans.Domain;
 import com.sun.enterprise.config.serverbeans.Module;
 import com.sun.enterprise.config.serverbeans.Resource;
 import com.sun.enterprise.config.serverbeans.ResourcePool;
@@ -94,18 +92,7 @@ public class ConnectorResourceManagerLifecycleListener implements org.glassfish.
     private Provider<ActionReport> actionReportProvider;
 
     @Inject
-    private Provider<ConnectorRuntime> connectorRuntimeProvider;
-
-    @Inject
-    private Domain domain;
-
-    @Inject
-    private Applications applications;
-
-    @Inject
-    private ServiceLocator connectorRuntimeHabitat;
-
-    private ConnectorRuntime runtime;
+    private ServiceLocator locator;
 
     @Inject
     private ClassLoaderHierarchy clh;
@@ -138,20 +125,12 @@ public class ConnectorResourceManagerLifecycleListener implements org.glassfish.
         }
     }
 
-    private ConnectorRuntime getConnectorRuntime() {
-        if(runtime == null){
-            runtime = connectorRuntimeProvider.get();
-        }
-        return runtime;
-    }
-
     /**
      * Check whether connector-runtime is initialized.
      * @return boolean representing connector-runtime initialization status.
      */
     public boolean isConnectorRuntimeInitialized() {
-        List<ServiceHandle<ConnectorRuntime>> serviceHandles =
-                connectorRuntimeHabitat.getAllServiceHandles(ConnectorRuntime.class);
+        List<ServiceHandle<ConnectorRuntime>> serviceHandles = locator.getAllServiceHandles(ConnectorRuntime.class);
         for(ServiceHandle<ConnectorRuntime> inhabitant : serviceHandles){
             // there will be only one implementation of connector-runtime
             return inhabitant.isActive();
@@ -174,7 +153,7 @@ public class ConnectorResourceManagerLifecycleListener implements org.glassfish.
 
     public void resourceManagerShutdown() {
         if (isConnectorRuntimeInitialized()) {
-            ConnectorRuntime cr = getConnectorRuntime();
+            ConnectorRuntime cr = locator.getService(ConnectorRuntime.class);
             if (cr != null) {
                 // clean up will take care of any system RA resources, pools
                 // (including pools via datasource-definition)
