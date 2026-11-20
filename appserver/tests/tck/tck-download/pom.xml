@@ -48,11 +48,11 @@
         <module>expression-language</module>
         <module>faces</module>
         <module>pages</module>
+        <module>websocket</module>
 
         <module>jakarta-pages-tags-tck</module>
         <module>jakarta-security-tck</module>
         <module>jakarta-servlet-tck</module>
-        <module>jakarta-websocket-tck</module>
     </modules>
 
     <build>

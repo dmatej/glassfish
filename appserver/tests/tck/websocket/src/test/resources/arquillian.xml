@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian https://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+    <engine>
+        <property name="deploymentExportPath">${project.build.directory}/deployments</property>
+    </engine>
+    <group qualifier="glassfish" default="true">
+        <container qualifier="http" default="true">
+            <property name="trace">true</property>
+        </container>
+        <container qualifier="https">
+            <property name="trace">true</property>
+        </container>
+    </group>
+</arquillian>

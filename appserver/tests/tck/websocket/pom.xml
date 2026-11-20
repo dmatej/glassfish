@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2021, 2024 Contributors to the Eclipse Foundation. All rights reserved.
+    Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -53,19 +53,10 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
     </parent>
 
    <artifactId>tck-websocket</artifactId>
-
    <name>Jakarta WebSocket TCK run on glassfish</name>
-   <description>This verifies the compliance of Eclipse Glassfish using the Jakarta WebSocket standalone TCK</description>
 
    <properties>
-        <maven.compiler.release>17</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
         <tck.version>2.2.0</tck.version>
-
-        <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
-
         <port.admin>14848</port.admin>
         <port.derby>11527</port.derby>
         <port.http>18080</port.http>
@@ -80,14 +71,43 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
 
     <dependencies>
         <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-client-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>websocket-tck-common</artifactId>
             <version>${tck.version}</version>
         </dependency>
+        <!-- FIXME: has to be downloaded, the maven central release is missing resource files!!! -->
         <dependency>
-            <groupId>jakarta.tck</groupId>
-            <artifactId>websocket-tck-spec-tests</artifactId>
-            <version>${tck.version}</version>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>tck-websocket-download</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -103,20 +123,48 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
             <groupId>ee.omnifish.arquillian</groupId>
             <artifactId>glassfish-client-ee11</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>sigtest-maven-plugin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>signaturetest</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
         </dependency>
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -130,6 +178,14 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
+                                    <groupId>jakarta.tck</groupId>
+                                    <artifactId>common</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <includes>**/**cts_cert,**/**clientcert.p12</includes>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.glassfish.main.distributions</groupId>
                                     <artifactId>${glassfish.artifactId}</artifactId>
                                     <version>${glassfish.version}</version>
@@ -142,8 +198,6 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Configuring and running the TCK -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
@@ -154,16 +208,35 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
                             <goal>verify</goal>
                         </goals>
                         <configuration>
-                            <dependenciesToScan>jakarta.tck:websocket-tck-spec-tests</dependenciesToScan>
+                            <dependenciesToScan>
+                                <!-- 737 tests -->
+                                <dependency>org.glassfish.main.tests.tck:tck-websocket-download</dependency>
+                            </dependenciesToScan>
                             <test>${run.test}</test>
                             <systemPropertyVariables>
                                 <glassfish.home>${glassfish.home}</glassfish.home>
-                                <ws_wait>5</ws_wait>
-                                <lib.name>websockettck</lib.name>
+                                <glassfish.postBootCommands>
+                                    --passwordfile ${project.basedir}/j2ee.pass create-file-user --groups staff:mgr j2ee
+                                    --passwordfile ${project.basedir}/javajoe.pass create-file-user --groups guest javajoe
+                                </glassfish.postBootCommands>
+
+                                <java.protocol.handler.pkgs>javax.net.ssl</java.protocol.handler.pkgs>
+                                <javax.net.ssl.keyStore>${project.build.directory}/certificates/clientcert.p12</javax.net.ssl.keyStore>
+                                <javax.net.ssl.keyStorePassword>changeit</javax.net.ssl.keyStorePassword>
+                                <javax.net.ssl.trustStore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.p12</javax.net.ssl.trustStore>
+                                <javax.net.ssl.trustStorePassword>changeit</javax.net.ssl.trustStorePassword>
+
                                 <junit.log.traceflag>true</junit.log.traceflag>
-                                <porting.ts.url.class.1>com.sun.ts.tests.websocket.lib.implementation.sun.common.SunRIURL</porting.ts.url.class.1>
-                                <sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.websocket-api.jar:${glassfish.home}/glassfish/modules/jakarta.websocket-client-api.jar:${project.build.directory}/jdk-bundle/java.base:${project.build.directory}/jdk-bundle/java.rmi:${project.build.directory}/jdk-bundle/java.sql:${project.build.directory}/jdk-bundle/java.naming</sigTestClasspath>
-                                <jimage.dir>${project.build.directory}/jdk-bundle</jimage.dir>
+                                <lib.name>websockettck</lib.name>
+
+                                <user>j2ee</user>
+                                <password>j2ee</password>
+                                <authuser>javajoe</authuser>
+                                <authpassword>javajoe</authpassword>
+                                <securedWebServicePort>8181</securedWebServicePort>
+                                <ws_wait>5</ws_wait>
+
+                                <sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.websocket-api.jar:${glassfish.home}/glassfish/modules/jakarta.websocket-client-api.jar</sigTestClasspath>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
@@ -171,23 +244,4 @@ mvn clean install -Drun.test="WebSocketSigTestIT#signatureTest" -Dglassfish.susp
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <glassfish.artifactId>glassfish</glassfish.artifactId>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>web</id>
-            <properties>
-                <glassfish.artifactId>web</glassfish.artifactId>
-            </properties>
-        </profile>
-    </profiles>
 </project>
