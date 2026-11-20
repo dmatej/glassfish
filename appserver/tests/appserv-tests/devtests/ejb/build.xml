@@ -112,6 +112,9 @@
     <run-ejb-test path="ejb32" target="all" />
     <run-ejb-test path="ejb31" target="all" />
 
+    <!-- We have to stop the server to avoid port conflicts -->
+    <antcall target="unsetup" />
+
     <!-- ejb31 must be the last set of tests because embedded test might stop database -->
     <run-ejb-test path="ejb32/embedded" target="all" />
     <run-ejb-test path="ejb31/embedded" target="all" />
