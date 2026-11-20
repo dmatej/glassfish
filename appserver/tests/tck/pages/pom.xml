@@ -63,13 +63,11 @@ mvn clean install -Ptck -pl :tck-pages-download,:tck-pages
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>common</artifactId>
-            <version>11.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.tck</groupId>
             <artifactId>signaturetest</artifactId>
-            <version>11.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -149,7 +147,7 @@ mvn clean install -Ptck -pl :tck-pages-download,:tck-pages
                         <porting.ts.url.class.1>ee.jakarta.tck.pages.lib.implementation.sun.common.SunRIURL</porting.ts.url.class.1>
 
                         <!-- Set the properties for the API signature test -->
-                        <sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.servlet.jsp-api.jar:${glassfish.root}/glassfish8/glassfish/modules/jakarta.servlet-api.jar:${glassfish.root}/glassfish8/glassfish/modules/jakarta.el-api.jar</sigTestClasspath>
+                        <sigTestClasspath>${glassfish.home}/glassfish/modules/jakarta.servlet.jsp-api.jar:${glassfish.home}/glassfish/modules/jakarta.servlet-api.jar:${glassfish.home}/glassfish/modules/jakarta.el-api.jar</sigTestClasspath>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

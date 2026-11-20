@@ -52,20 +52,20 @@
         <module>json</module>
         <module>mail</module>
         <module>messaging</module>
+        <module>microprofile</module>
+        <module>mvc</module>
+        <module>pages</module>
+        <module>pages-extra</module>
+        <module>tags</module>
+        <module>validation</module>
+        <module>websocket</module>
 
         <module>platform-tck-runner</module>
 
         <module>rest</module>
         <module>rest_cdi</module>
-        <module>pages</module>
-        <module>pages-extra</module>
-        <module>pages_tags</module>
         <module>servlet</module>
         <module>security</module>
-        <module>microprofile</module>
-        <module>mvc</module>
-        <module>validation</module>
-        <module>websocket</module>
     </modules>
 
     <properties>

@@ -259,6 +259,7 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <mainClass>com.sun.ts.tests.javamail.ee.util.fpopulate</mainClass>
+                            <classpathScope>test</classpathScope>
                             <arguments>
                                 <argument>-s</argument>
                                 <argument>${mailboxes.dir}</argument>
@@ -307,22 +308,6 @@ create-mail-resource --mailhost ${mail.host} --mailuser ${mail.user} --fromaddre
                 </configuration>
                 <executions>
                     <execution>
-                        <id>mail-tests-appclient</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*EJB*.*</include>
-                                <include>**/*AppClient*.*</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>mail-tests-javatest</id>
                         <goals>
                             <goal>integration-test</goal>
@@ -335,6 +320,22 @@ create-mail-resource --mailhost ${mail.host} --mailuser ${mail.user} --fromaddre
                             </includes>
                             <systemPropertyVariables>
                                 <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>mail-tests-appclient</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*EJB*.*</include>
+                                <include>**/*AppClient*.*</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
