@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,7 +20,6 @@ package com.sun.enterprise.resource.deployer;
 import com.sun.enterprise.config.serverbeans.Application;
 import com.sun.enterprise.config.serverbeans.Resource;
 import com.sun.enterprise.config.serverbeans.Resources;
-import com.sun.enterprise.connectors.ConnectorRuntime;
 import com.sun.enterprise.deployment.BundleDescriptor;
 import com.sun.enterprise.deployment.EjbBundleDescriptor;
 import com.sun.enterprise.deployment.EjbDescriptor;
@@ -71,13 +70,11 @@ public class MailSessionDeployer implements ResourceDeployer<MailSessionDescript
     private static final Logger LOG = LogDomains.getLogger(MailSessionDeployer.class, LogDomains.RSR_LOGGER);
 
     @Inject
-    private Provider<org.glassfish.resourcebase.resources.util.ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<org.glassfish.resourcebase.resources.util.ResourceDeployerFactory> resourcedeployerFactoryProvider;
     @Inject
     private Provider<CommonResourceProxy> mailSessionProxyProvider;
     @Inject
     private Provider<org.glassfish.resourcebase.resources.naming.ResourceNamingService> resourceNamingServiceProvider;
-    @Inject
-    private ConnectorRuntime runtime;
 
 
     @Override
@@ -127,7 +124,7 @@ public class MailSessionDeployer implements ResourceDeployer<MailSessionDescript
     }
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourcedeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     public void registerMailSessions(com.sun.enterprise.deployment.Application application) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -36,6 +36,7 @@ import org.glassfish.connectors.config.AdminObjectResource;
 import org.glassfish.resourcebase.resources.api.ResourceConflictException;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceDeployerInfo;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.ConfigBeanProxy;
 import org.jvnet.hk2.config.TransactionFailure;
@@ -48,7 +49,7 @@ import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.deriveResou
 public class JMSDestinationDefinitionDeployer implements ResourceDeployer<JMSDestinationDefinitionDescriptor> {
 
     @Inject
-    private Provider<org.glassfish.resourcebase.resources.util.ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     static final String PROPERTY_PREFIX = "org.glassfish.jms-destination.";
 
@@ -77,7 +78,7 @@ public class JMSDestinationDefinitionDeployer implements ResourceDeployer<JMSDes
 
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private JMSDestinationProperty convertProperty(String name, String value) {

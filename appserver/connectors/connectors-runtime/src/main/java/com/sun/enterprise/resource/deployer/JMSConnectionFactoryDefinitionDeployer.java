@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -40,7 +40,7 @@ import org.glassfish.connectors.config.SecurityMap;
 import org.glassfish.resourcebase.resources.api.ResourceConflictException;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceDeployerInfo;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.ConfigBeanProxy;
 import org.jvnet.hk2.config.TransactionFailure;
@@ -57,7 +57,7 @@ public class JMSConnectionFactoryDefinitionDeployer implements ResourceDeployer<
     static final String PROPERTY_PREFIX = "org.glassfish.connector-connection-pool.";
 
     @Inject
-    private Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     @Override
     public void deployResource(JMSConnectionFactoryDefinitionDescriptor resource, String applicationName, String moduleName) throws Exception {
@@ -88,7 +88,7 @@ public class JMSConnectionFactoryDefinitionDeployer implements ResourceDeployer<
 
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private JMSConnectionFactoryProperty convertProperty(String name, String value) {

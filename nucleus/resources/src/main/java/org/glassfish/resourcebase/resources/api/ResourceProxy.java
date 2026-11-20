@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 
 import org.glassfish.api.naming.NamingObjectProxy;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 
 
@@ -42,7 +43,7 @@ import org.jvnet.hk2.annotations.Service;
 public class ResourceProxy implements NamingObjectProxy.InitializationNamingObjectProxy {
 
     @Inject
-    private Provider<org.glassfish.resourcebase.resources.util.ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     @Inject
     private org.glassfish.resourcebase.resources.naming.ResourceNamingService namingService;
@@ -101,6 +102,6 @@ public class ResourceProxy implements NamingObjectProxy.InitializationNamingObje
      * @return ResourceDeployer
      */
     protected <T> ResourceDeployer<T> getResourceDeployer(T resource){
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 }

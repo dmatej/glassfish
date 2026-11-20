@@ -92,7 +92,7 @@ import org.glassfish.javaee.services.CommonResourceProxy;
 import org.glassfish.javaee.services.JMSCFResourcePMProxy;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.naming.ApplicationScopedResourceBinding;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 
 import static com.sun.appserv.connectors.internal.api.ConnectorsUtil.getPMJndiName;
@@ -429,7 +429,7 @@ public class ComponentEnvManagerImpl implements ComponentEnvManager {
     }
 
     private ResourceDeployer getResourceDeployer(Object resource) {
-        return locator.getService(ResourceManagerFactory.class).getResourceDeployer(resource);
+        return locator.getService(ResourceDeployerFactory.class).getResourceDeployer(resource);
     }
 
     @Override

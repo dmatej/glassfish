@@ -59,7 +59,7 @@ public class BindableResourcesHelper {
     private static final String DOMAIN = "domain";
 
     @Inject
-    ServiceLocator habitat;
+    private ServiceLocator habitat;
 
     @Inject
     private ServerEnvironment environment;

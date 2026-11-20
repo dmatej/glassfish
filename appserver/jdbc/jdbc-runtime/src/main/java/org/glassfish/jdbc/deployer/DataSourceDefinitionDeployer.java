@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2023 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -60,7 +60,7 @@ import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceDeployerInfo;
 import org.glassfish.resourcebase.resources.api.ResourceInfo;
 import org.glassfish.resourcebase.resources.naming.ResourceNamingService;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.ConfigBeanProxy;
 import org.jvnet.hk2.config.TransactionFailure;
@@ -86,7 +86,7 @@ public class DataSourceDefinitionDeployer implements ResourceDeployer<DataSource
     private static final Logger LOG = LogDomains.getLogger(DataSourceDefinitionDeployer.class, LogDomains.RSR_LOGGER);
 
     @Inject
-    private Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
     @Inject
     private Provider<CommonResourceProxy> dataSourceDefinitionProxyProvider;
     @Inject
@@ -116,7 +116,7 @@ public class DataSourceDefinitionDeployer implements ResourceDeployer<DataSource
     }
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private DataSourceProperty convertProperty(String name, String value) {

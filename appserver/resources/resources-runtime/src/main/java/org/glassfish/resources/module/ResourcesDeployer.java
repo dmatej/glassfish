@@ -68,7 +68,7 @@ import org.glassfish.resourcebase.resources.api.ResourceConstants;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceInfo;
 import org.glassfish.resourcebase.resources.api.ResourcesBinder;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.glassfish.resources.admin.cli.ResourceManager;
 import org.glassfish.resources.admin.cli.ResourcesXMLParser;
 import org.glassfish.resources.admin.cli.SunResourcesXML;
@@ -112,7 +112,7 @@ public class ResourcesDeployer extends JavaEEDeployer<ResourcesContainer, Resour
 
     private final ApplicationRegistry appRegistry;
 
-    private final Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private final Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     private final ResourcesBinder resourcesBinder;
 
@@ -132,16 +132,16 @@ public class ResourcesDeployer extends JavaEEDeployer<ResourcesContainer, Resour
     private static final String RESOURCES_XML_WEB_INF = "WEB-INF/glassfish-resources.xml";
 
     @Inject
-    public ResourcesDeployer(org.glassfish.resources.admin.cli.ResourceFactory resourceFactoryParam,
-            ApplicationRegistry appRegistryParam,
-            Provider<ResourceManagerFactory> resourceManagerFactoryProviderParam,
-            ResourcesBinder resourcesBinderParam,
-            Applications applicationsParam) {
-        resourceFactory = resourceFactoryParam;
-        appRegistry = appRegistryParam;
-        resourceManagerFactoryProvider = resourceManagerFactoryProviderParam;
-        resourcesBinder = resourcesBinderParam;
-        applications = applicationsParam;
+    public ResourcesDeployer(org.glassfish.resources.admin.cli.ResourceFactory resourceFactory,
+            ApplicationRegistry appRegistry,
+            Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider,
+            ResourcesBinder resourcesBinder,
+            Applications applications) {
+        this.resourceFactory = resourceFactory;
+        this.appRegistry = appRegistry;
+        this.resourceDeployerFactoryProvider = resourceDeployerFactoryProvider;
+        this.resourcesBinder = resourcesBinder;
+        this.applications = applications;
     }
 
     @Override
@@ -799,7 +799,7 @@ public class ResourcesDeployer extends JavaEEDeployer<ResourcesContainer, Resour
      * @return ResourceDeployer
      */
     private ResourceDeployer getResourceDeployer(Object resource){
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -58,7 +58,7 @@ public class ConnectionFactoryDefinitionDeployer implements ResourceDeployer<Con
     private static final String PROPERTY_PREFIX = "org.glassfish.connector-connection-pool.";
 
     @Inject
-    private Provider<org.glassfish.resourcebase.resources.util.ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<org.glassfish.resourcebase.resources.util.ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
 
     @Override
@@ -90,7 +90,7 @@ public class ConnectionFactoryDefinitionDeployer implements ResourceDeployer<Con
 
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private ConnectionFactoryProperty convertProperty(String name, String value) {

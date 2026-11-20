@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, 2024 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  * Copyright (c) 1997, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -76,12 +76,14 @@ import org.glassfish.connectors.config.ResourceAdapterConfig;
 import org.glassfish.connectors.config.WorkSecurityMap;
 import org.glassfish.hk2.api.PostConstruct;
 import org.glassfish.hk2.api.PreDestroy;
+import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.internal.api.ClassLoaderHierarchy;
 import org.glassfish.internal.api.DelegatingClassLoader;
 import org.glassfish.internal.api.Target;
 import org.glassfish.internal.deployment.Deployment;
 import org.glassfish.javaee.core.deployment.JavaEEDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceConstants;
+import org.glassfish.resourcebase.resources.listener.ResourceManager;
 import org.glassfish.resources.listener.ApplicationScopedResourcesManager;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.ConfigSupport;
@@ -98,13 +100,13 @@ public class ConnectorDeployer extends JavaEEDeployer<ConnectorContainer, Connec
         implements PostConstruct, PreDestroy, EventListener {
 
     @Inject
+    private ServiceLocator locator;
+
+    @Inject
     private ConnectorRuntime runtime;
 
     @Inject
     private ClassLoaderHierarchy clh;
-
-    @Inject
-    private org.glassfish.resourcebase.resources.listener.ResourceManager resourceManager;
 
     @Inject
     private ApplicationScopedResourcesManager asrManager;
@@ -214,8 +216,8 @@ public class ConnectorDeployer extends JavaEEDeployer<ConnectorContainer, Connec
                 throw new RuntimeException(cre.getMessage(), cre);
             }
         }
-        return new ConnectorApplication(moduleName, ConnectorsUtil.getApplicationName(context), resourceManager,
-                asrManager, classLoader, runtime, events, connDesc);
+        return new ConnectorApplication(moduleName, ConnectorsUtil.getApplicationName(context),
+            locator.getService(ResourceManager.class), asrManager, classLoader, runtime, events, connDesc);
     }
 
 
@@ -639,6 +641,7 @@ public class ConnectorDeployer extends JavaEEDeployer<ConnectorContainer, Connec
             boolean isEAR = app.containsSnifferType(EAR);
             String moduleName = appName;
             ResourcesUtil resourcesUtil = ResourcesUtil.createInstance();
+            ResourceManager resourceManager = locator.getService(ResourceManager.class);
             if (isEAR) {
                 List<Module> modules = app.getModule();
                 for (Module module : modules) {

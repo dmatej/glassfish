@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation
  * Copyright (c) 2011, 2018 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -35,8 +35,7 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Singleton
 @Service
-public class ResourceManagerFactory {
-    public static final String METADATA_KEY = "ResourceImpl";
+public class ResourceDeployerFactory {
 
     @Inject
     private ServiceLocator locator;
@@ -49,7 +48,7 @@ public class ResourceManagerFactory {
                 continue;
             }
 
-            final List<String> resourceImpls = desc.getMetadata().get(METADATA_KEY);
+            final List<String> resourceImpls = desc.getMetadata().get(ResourceDeployerInfo.METADATA_KEY);
             if (resourceImpls == null || resourceImpls.isEmpty()) {
                 continue;
             }

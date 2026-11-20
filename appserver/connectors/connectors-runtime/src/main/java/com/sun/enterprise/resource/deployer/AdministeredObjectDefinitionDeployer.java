@@ -38,7 +38,7 @@ import org.glassfish.connectors.config.AdminObjectResource;
 import org.glassfish.resourcebase.resources.api.ResourceConflictException;
 import org.glassfish.resourcebase.resources.api.ResourceDeployer;
 import org.glassfish.resourcebase.resources.api.ResourceDeployerInfo;
-import org.glassfish.resourcebase.resources.util.ResourceManagerFactory;
+import org.glassfish.resourcebase.resources.util.ResourceDeployerFactory;
 import org.jvnet.hk2.annotations.Service;
 import org.jvnet.hk2.config.ConfigBeanProxy;
 import org.jvnet.hk2.config.TransactionFailure;
@@ -56,7 +56,7 @@ public class AdministeredObjectDefinitionDeployer implements ResourceDeployer<Ad
     private static final Logger LOG = LogDomains.getLogger(AdministeredObjectDefinitionDeployer.class, LogDomains.RSR_LOGGER);
 
     @Inject
-    private Provider<ResourceManagerFactory> resourceManagerFactoryProvider;
+    private Provider<ResourceDeployerFactory> resourceDeployerFactoryProvider;
 
     @Override
     public void deployResource(AdministeredObjectDefinitionDescriptor resource, String applicationName, String moduleName) throws Exception {
@@ -82,7 +82,7 @@ public class AdministeredObjectDefinitionDeployer implements ResourceDeployer<Ad
 
 
     private ResourceDeployer getDeployer(Object resource) {
-        return resourceManagerFactoryProvider.get().getResourceDeployer(resource);
+        return resourceDeployerFactoryProvider.get().getResourceDeployer(resource);
     }
 
     private AdministeredObjectProperty convertProperty(String name, String value) {
