@@ -30,10 +30,7 @@
     <name>TCK: Connectors</name>
 
     <properties>
-        <glassfish.major>8</glassfish.major>
-        <glassfish.home>${project.build.directory}/glassfish${glassfish.major}</glassfish.home>
         <glassfish.domain.dir>${glassfish.home}/glassfish/domains/domain1</glassfish.domain.dir>
-        <glassfish.lib.dir>${glassfish.home}/glassfish/lib</glassfish.lib.dir>
         <whitebox.directory>${project.build.directory}/whiteboxes</whitebox.directory>
 
         <tck.version>11.0.3</tck.version>
@@ -385,43 +382,79 @@
                         </glassfish.postBootCommands>
                     </systemPropertyVariables>
                 </configuration>
-
                 <executions>
                     <execution>
-                        <id>tck-javatest</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <groups>tck-javatest</groups>
-                            <includes>
-                                <include>**/ClientTest.class</include>
-                                <include>**/*Servlet*.class</include>
-                                <include>**/*Jsp**.class</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <arquillian.xml>arquillian.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>tck-appclient</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <groups>tck-appclient</groups>
-                            <includes>
-                                <include>**/ClientTest.*</include>
-                                <include>**/*EjbTest.*</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <arquillian.xml>arquillian-client.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
+                        <id>integration-test</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>javatest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tck-javatest</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>tck-javatest</groups>
+                                    <includes>
+                                        <include>**/ClientTest.class</include>
+                                        <include>**/*Servlet*.class</include>
+                                        <include>**/*Jsp**.class</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.xml>arquillian.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>appclient</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tck-appclient</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>tck-appclient</groups>
+                                    <includes>
+                                        <include>**/ClientTest.*</include>
+                                        <include>**/*EjbTest.*</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.xml>arquillian-client.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
