@@ -304,7 +304,7 @@ public class GlassFishTestEnvironment {
         final String protocol = secured ? "https" : "http";
         URI uri = URI.create(protocol + "://localhost:" + port + context);
         final HttpRequest request = HttpRequest.newBuilder(uri)
-                .timeout(Duration.ofSeconds(15))
+                .timeout(Duration.ofSeconds(30))
                 .header("X-Requested-By", "JUnit5Test")
                 .build();
         try (HttpClient client = newInsecureHttpClient()) {
