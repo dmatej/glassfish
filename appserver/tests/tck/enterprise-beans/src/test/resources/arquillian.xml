@@ -56,8 +56,13 @@
                 </property>
                 <property name="cmdLineArgSeparator">\\</property>
                 <!-- Pass ENV vars here -->
-                <property name="clientEnvString">PATH=${env.PATH};LD_LIBRARY_PATH=${glassfish.lib.dir};AS_DEBUG=true;
-                    APPCPATH=${clientEarLibClasspath}:${glassfish.home}/glassfish/modules/security.jar</property>
+                <property name="clientEnvString">
+                    AS_JAVA=${java.home};
+                    PATH=${env.PATH};
+                    LD_LIBRARY_PATH=${glassfish.lib.dir};
+                    AS_DEBUG=true;
+                    APPCPATH=${clientEarLibClasspath}:${glassfish.home}/glassfish/modules/security.jar
+                </property>
                 <property name="clientDir">${project.basedir}</property>
                 <property name="clientStubsCmdLine">${glassfish.home}/bin/asadmin \
                     get-client-stubs \
@@ -114,8 +119,13 @@
                 </property>
                 <property name="cmdLineArgSeparator">\\</property>
                 <!-- Pass ENV vars here -->
-                <property name="clientEnvString">PATH=${env.PATH};LD_LIBRARY_PATH=${glassfish.lib.dir};AS_DEBUG=true;
-                   APPCPATH=${clientEarLibClasspath}:${glassfish.home}/glassfish/modules/security.jar</property>
+                <property name="clientEnvString">
+                    AS_JAVA=${java.home};
+                    PATH=${env.PATH};
+                    LD_LIBRARY_PATH=${glassfish.lib.dir};
+                    AS_DEBUG=true;
+                    APPCPATH=${clientEarLibClasspath}:${glassfish.home}/glassfish/modules/security.jar
+               </property>
                 <property name="clientDir">${project.basedir}</property>
                 <property name="workDir">${tck.workDirectory}</property>
                 <property name="tsJteFile">${tck.tsjte}</property>

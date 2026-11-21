@@ -175,7 +175,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <phase>pre-integration-test</phase>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
@@ -189,7 +189,7 @@
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>initialize</phase>
+                        <phase>generate-test-resources</phase>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>

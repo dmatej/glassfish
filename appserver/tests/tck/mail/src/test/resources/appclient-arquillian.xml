@@ -56,7 +56,10 @@
 
             <!-- Pass ENV vars here -->
             <property name="clientEnvString">
-                PATH=${env.PATH};LD_LIBRARY_PATH=${glassfish.home}/lib;AS_DEBUG=true;
+                AS_JAVA=${java.home};
+                PATH=${env.PATH};
+                LD_LIBRARY_PATH=${glassfish.lib.dir};
+                AS_DEBUG=true;
                 APPCPATH=${glassfish.home}/glassfish/lib/arquillian-protocol-lib.jar:target/appclient/lib/arquillian-core.jar:target/appclient/lib/arquillian-junit5.jar:${glassfish.home}/glassfish/modules/security.jar
             </property>
 

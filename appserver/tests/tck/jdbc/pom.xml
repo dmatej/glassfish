@@ -321,40 +321,72 @@ CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.classpath', 'CTS1.CS
                         <ts.home>${ts.home}</ts.home>
                     </systemPropertyVariables>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>jdbc-tests-javatest</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*Servlet*.*</include>
-                                <include>**/*JSP*.*</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <arquillian.xml>arquillian.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                    <!-- FIXME: Same tests, same results, just need much more time. -->
-<!--                    <execution>-->
-<!--                        <id>jdbc-tests-appclient</id>-->
-<!--                        <goals>-->
-<!--                            <goal>integration-test</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <includes>-->
-<!--                                <include>**/*EJB*.*</include>-->
-<!--                                <include>**/*AppClient*.*</include>-->
-<!--                            </includes>-->
-<!--                            <systemPropertyVariables>-->
-<!--                                <arquillian.xml>appclient-arquillian.xml</arquillian.xml>-->
-<!--                            </systemPropertyVariables>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-                </executions>
             </plugin>
         </plugins>
     </build>
+
+
+    <profiles>
+        <profile>
+            <id>javatest</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>tck-javatest</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*Servlet*.*</include>
+                                        <include>**/*JSP*.*</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.xml>arquillian.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>appclient</id>
+            <activation>
+                <!-- Same tests -->
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>appclient</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*EJB*.*</include>
+                                        <include>**/*AppClient*.*</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
