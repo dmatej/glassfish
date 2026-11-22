@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.main.tests.tck</groupId>
-            <artifactId>jakarta-security-tck</artifactId>
+            <artifactId>tck-security-download</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
@@ -69,7 +69,7 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>jakarta-security-tck</includeArtifactIds>
+                            <includeArtifactIds>tck-security-download</includeArtifactIds>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>

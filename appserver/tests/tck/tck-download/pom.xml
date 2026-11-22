@@ -48,9 +48,9 @@
         <module>expression-language</module>
         <module>faces</module>
         <module>pages</module>
+        <module>security</module>
         <module>websocket</module>
 
-        <module>jakarta-security-tck</module>
         <module>jakarta-servlet-tck</module>
     </modules>
 
