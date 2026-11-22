@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2021, 2025 Contributors to the Eclipse Foundation. All rights reserved.
+    Copyright (c) 2021, 2026 Contributors to the Eclipse Foundation.
 
     This program and the accompanying materials are made available under the
     terms of the Eclipse Public License v. 2.0, which is available at
@@ -39,7 +39,7 @@
     <dependencies>
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
@@ -60,14 +60,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>glassfish</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                        </configuration>
+                        <phase>generate-test-resources</phase>
                     </execution>
                     <execution>
                         <id>unpack-tck</id>
@@ -93,9 +86,11 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <environmentVariables>
+                                <HOME>${project.build.directory}</HOME>
+                            </environmentVariables>
                             <executable>${maven.executable}</executable>
                             <arguments>
-                                <argument>-B</argument>
                                 <argument>-e</argument>
                                 <argument>-s</argument>
                                 <argument>${maven.settings.xml}</argument>
@@ -104,12 +99,14 @@
                                 <argument>clean</argument>
                                 <argument>install</argument>
                                 <argument>-Pglassfish-ci-managed</argument>
+                                <argument>-Darquillian.version=${jboss.arquillian.version}</argument>
+                                <argument>-Dsecurity-api.version=${jakarta.security-api.version}</argument>
+                                <argument>-Dsoteria.version=${soteria.version}</argument>
                                 <argument>-Dglassfish.home=${glassfish.home}</argument>
                                 <argument>-Dglassfish.version=${glassfish.version}</argument>
                                 <argument>-Dglassfish.arquillian.version=${omnifish.arquillian.version}</argument>
                                 <argument>-DtrustStore.suffix=p12</argument>
                             </arguments>
-                            <commandlineArgs>${tck.args}</commandlineArgs>
                         </configuration>
                     </execution>
                     <!-- TCK old doesn't properly stop -->
@@ -137,6 +134,21 @@
                             <executable>${tck.old.glassfish.home}/bin/asadmin</executable>
                             <arguments>
                                 <argument>stop-database</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!-- See DatabaseSetup in the TCK, the DataSourceDefinition declares url="jdbc:h2:~/SoteriaTestDB -->
+                    <execution>
+                        <id>delete-garbage-from-user-home</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/bin/bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>rm -f ${user.home}/SoteriaTestDB.mv.db</argument>
                             </arguments>
                         </configuration>
                     </execution>

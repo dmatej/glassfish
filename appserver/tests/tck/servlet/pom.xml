@@ -68,7 +68,7 @@
         <!-- Jakarta EE APIs -->
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>

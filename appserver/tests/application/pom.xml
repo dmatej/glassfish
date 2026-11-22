@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
             <version>${glassfish.version}</version>
             <scope>test</scope>
@@ -172,14 +172,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>glassfish</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                        </configuration>
+                        <phase>generate-test-resources</phase>
                     </execution>
                 </executions>
             </plugin>

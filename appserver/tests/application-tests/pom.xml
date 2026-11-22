@@ -29,27 +29,22 @@
 
     <artifactId>application-tests-individual</artifactId>
     <packaging>pom</packaging>
-
     <name>Individual Application Tests: Parent</name>
+
+    <properties>
+        <glassfish.root>${project.build.testOutputDirectory}</glassfish.root>
+    </properties>
 
     <modules>
         <module>security</module>
     </modules>
-
-    <properties>
-        <glassfish.root>${project.build.directory}</glassfish.root>
-        <glassfish.directoryName>glassfish8</glassfish.directoryName>
-        <glassfish.home>${glassfish.root}/${glassfish.directoryName}</glassfish.home>
-
-        <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- Glassfish used for testing -->
             <dependency>
                 <groupId>org.glassfish.main.distributions</groupId>
-                <artifactId>glassfish</artifactId>
+                <artifactId>${glassfish.artifactId}</artifactId>
                 <version>${glassfish.version}</version>
                 <type>zip</type>
                 <scope>test</scope>
@@ -109,25 +104,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <!-- To disable checking extracted sources -->
-                <plugin>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>checkstyle</id>
-                            <phase>disabled</phase>
-                        </execution>
-                        <execution>
-                            <id>checkstyle-poms</id>
-                            <phase>disabled</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <!-- To disable bringing license files -->
             <plugin>

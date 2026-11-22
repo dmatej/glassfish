@@ -25,7 +25,7 @@
 
     <parent>
         <groupId>org.glassfish.main.tests.security</groupId>
-        <artifactId>security</artifactId>
+        <artifactId>security-tests</artifactId>
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
@@ -44,43 +44,48 @@
     </description>
 
     <dependencies>
-         <!-- Jakarta EE APIs-->
-         <dependency>
-             <groupId>jakarta.servlet</groupId>
-             <artifactId>jakarta.servlet-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
-             <groupId>jakarta.ws.rs</groupId>
-             <artifactId>jakarta.ws.rs-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
-             <groupId>jakarta.enterprise</groupId>
-             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
-             <groupId>jakarta.annotation</groupId>
-             <artifactId>jakarta.annotation-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
-             <groupId>jakarta.ejb</groupId>
-             <artifactId>jakarta.ejb-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
-             <groupId>jakarta.security.enterprise</groupId>
-             <artifactId>jakarta.security.enterprise-api</artifactId>
-             <scope>provided</scope>
-         </dependency>
-         <dependency>
+        <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <!-- Jakarta EE APIs-->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.security.enterprise</groupId>
+            <artifactId>jakarta.security.enterprise-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.authentication</groupId>
             <artifactId>jakarta.authentication-api</artifactId>
             <scope>provided</scope>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>jakarta.authorization</groupId>
             <artifactId>jakarta.authorization-api</artifactId>
             <scope>provided</scope>
@@ -124,22 +129,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>glassfish</artifactId>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
+                        <phase>generate-test-resources</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -157,7 +147,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <finalName>${project.build.finalName}</finalName>
-                        <glassfish.home>${glassfish.root}/glassfish8</glassfish.home>
+                        <glassfish.home>${glassfish.home}</glassfish.home>
 
                         <!-- Create the users for the various security (authentication tests) -->
                         <glassfish.postBootCommands>

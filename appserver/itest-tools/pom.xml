@@ -16,6 +16,7 @@
         <test.logManager>org.glassfish.main.jul.GlassFishLogManager</test.logManager>
         <!-- Slowed down processing on Jenkins and as everything is also printed to console, we don't need them. -->
         <enableOutErrElements>false</enableOutErrElements>
+        <glassfish.artifactId>glassfish</glassfish.artifactId>
     </properties>
     <dependencies>
         <dependency>
@@ -57,7 +58,7 @@
 
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
             <!-- You can try also other versions just overriding this property-->
             <version>${glassfish.version}</version>
@@ -100,14 +101,18 @@
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <skip>${skipITs}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>glassfish</includeArtifactIds>
+                            <includeArtifactIds>${glassfish.artifactId}</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -116,4 +121,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>web</id>
+            <properties>
+                <glassfish.artifactId>web</glassfish.artifactId>
+            </properties>
+        </profile>
+    </profiles>
 </project>

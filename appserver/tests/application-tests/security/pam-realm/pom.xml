@@ -25,13 +25,12 @@
 
     <parent>
         <groupId>org.glassfish.main.tests.security</groupId>
-        <artifactId>security</artifactId>
+        <artifactId>security-tests</artifactId>
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
-    <name>PAM Authentication Test</name>
-
     <artifactId>security-pam-realm</artifactId>
+    <name>PAM Authentication Test</name>
 
     <dependencies>
         <dependency>
@@ -62,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
@@ -80,7 +79,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <outputDirectory>${glassfish.root}</outputDirectory>
                             <includeArtifactIds>glassfish</includeArtifactIds>
                             <includeTypes>zip</includeTypes>
                             <stripVersion>true</stripVersion>
@@ -90,5 +89,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

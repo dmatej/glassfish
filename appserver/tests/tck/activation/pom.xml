@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
@@ -84,12 +84,16 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>unpack-tck</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>glassfish,${tck.artifactId}</includeArtifactIds>
+                            <includeArtifactIds>${tck.artifactId}</includeArtifactIds>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
@@ -138,8 +142,6 @@
                             </target>
                         </configuration>
                     </execution>
-
-
                     <execution>
                         <id>run-tck-tests</id>
                         <phase>integration-test</phase>
@@ -149,7 +151,6 @@
                         <configuration>
                             <target xmlns:if="ant:if" xmlns:unless="ant:unless">
                                 <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-
                                 <echo level="info" message="Start running all tests" />
                                 <exec executable="${ant.home}/bin/ant" dir="${tck.home}" resultproperty="testResult">
                                     <arg value="run" />
@@ -159,7 +160,6 @@
                                     <env key="JAVA_HOME" value="${java.home}"/>
                                     <env key="LC_ALL" value="C" />
                                 </exec>
-
                                 <if>
                                     <not>
                                         <equals arg1="${testResult}" arg2="0" />
@@ -168,14 +168,6 @@
                                         <echo message="Running tests failed." />
                                         <loadfile property="contents" srcFile="${glassfish.home}/glassfish/domains/domain1/logs/server.log" />
                                         <echo message="${contents}" />
-                                    </then>
-                                </if>
-
-                                <if>
-                                    <not>
-                                        <equals arg1="${testResult}" arg2="0" />
-                                    </not>
-                                    <then>
                                         <fail/>
                                     </then>
                                 </if>

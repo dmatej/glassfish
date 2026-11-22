@@ -28,7 +28,7 @@
                 -Djdk.tls.client.enableSessionTicketExtension=false \
                 -Djdk.tls.server.enableSessionTicketExtension=false \
                 -Djava.security.policy=${glassfish.home}/glassfish/lib/appclient/client.policy \
-                -Dcts.tmp=${ts.work.dir}/tmp \
+                -Dcts.tmp=${ts.workDirectory}/tmp \
                 -Djava.security.auth.login.config=${glassfish.home}/glassfish/lib/appclient/appclientlogin.conf \
                 -Djavax.net.ssl.keyStore=${ts.home}/certificates/clientcert.jks \
                 -Djavax.net.ssl.keyStorePassword=changeit \

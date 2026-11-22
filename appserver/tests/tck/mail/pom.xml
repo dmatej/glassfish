@@ -114,6 +114,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
         </dependency>
@@ -151,23 +156,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
                         <phase>generate-test-resources</phase>
-                        <configuration>
-                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish.artifactId}</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>install-arquillian-libs</id>
@@ -196,7 +185,16 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fix-get-client-stubs-executed-by-AppClientMethodExecutor</id>
+                        <phase>process-test-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -303,7 +301,7 @@ create-mail-resource --mailhost ${mail.host} --mailuser ${mail.user} --fromaddre
                         <java.naming.factory.initial>com.sun.enterprise.naming.impl.SerialInitContextFactory</java.naming.factory.initial>
                         <project.basedir>${project.basedir}</project.basedir>
                         <ts.home>${ts.home}</ts.home>
-                        <ts.work.dir>${project.build.directory}</ts.work.dir>
+                        <ts.workDirectory>${tck.workDirectory}</ts.workDirectory>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

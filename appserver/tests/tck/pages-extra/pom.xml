@@ -75,6 +75,11 @@
             <artifactId>arquillian-glassfish-server-managed</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.main</groupId>
             <artifactId>glassfish-jul-extension</artifactId>
             <scope>test</scope>
@@ -85,26 +90,13 @@
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <skip>${skipITs}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
                         <phase>generate-test-resources</phase>
-                        <configuration>
-                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish.artifactId}</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -168,14 +160,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish.artifactId>glassfish</glassfish.artifactId>
                 <testGroups>platform</testGroups>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish.artifactId>web</glassfish.artifactId>
                 <testGroups>web</testGroups>
             </properties>
         </profile>

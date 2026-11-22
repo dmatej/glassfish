@@ -33,9 +33,6 @@
     <description>This verifies the compliance of Eclipse Glassfish using the Jakarta Authorization Standalone TCK</description>
 
     <properties>
-        <maven.executable>${maven.home}/bin/mvn</maven.executable>
-        <maven.settings.xml>${user.home}/.m2/settings.xml</maven.settings.xml>
-
         <tck.version>3.0.0</tck.version>
         <tck.artifactId>tck-authorization-download</tck.artifactId>
         <tck.home>${project.build.directory}/authorization-tck-${tck.version}</tck.home>
@@ -47,7 +44,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.glassfish.main.distributions</groupId>
-                <artifactId>glassfish</artifactId>
+                <artifactId>${glassfish.artifactId}</artifactId>
                 <type>zip</type>
             </dependency>
             <dependency>
@@ -105,13 +102,11 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -179,7 +174,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>glassfish</artifactId>
+                                    <artifactId>${glassfish.artifactId}</artifactId>
                                     <version>${glassfish.version}</version>
                                     <type>zip</type>
                                     <overWrite>false</overWrite>

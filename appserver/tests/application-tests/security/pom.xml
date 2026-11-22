@@ -29,7 +29,7 @@
     </parent>
 
     <groupId>org.glassfish.main.tests.security</groupId>
-    <artifactId>security</artifactId>
+    <artifactId>security-tests</artifactId>
     <packaging>pom</packaging>
 
     <name>Individual Application Tests: Security Parent</name>

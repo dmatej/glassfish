@@ -51,10 +51,22 @@
                 <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
+            <!-- See https://github.com/jakartaee/faces/pull/2279#pullrequestreview-5904516724 -->
+            <dependency>
+                <groupId>org.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>4.13.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
         <dependency>
             <groupId>ee.omnifish.arquillian</groupId>
             <artifactId>arquillian-glassfish-server-managed</artifactId>
@@ -85,6 +97,10 @@
                 <inherited>false</inherited>
                 <executions>
                     <execution>
+                        <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <execution>
                         <id>unpack-tck</id>
                         <phase>pre-integration-test</phase>
                         <goals>
@@ -99,14 +115,6 @@
                                     <version>${project.version}</version>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${tck.root}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>glassfish</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

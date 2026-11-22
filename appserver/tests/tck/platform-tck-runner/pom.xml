@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
             <scope>runtime</scope>
         </dependency>

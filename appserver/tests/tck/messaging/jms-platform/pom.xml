@@ -147,6 +147,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.main</groupId>
             <artifactId>glassfish-jul-extension</artifactId>
             <scope>test</scope>
@@ -174,23 +179,8 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>01-unpack</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
+                        <id>unpack-glassfish</id>
                         <phase>generate-resources</phase>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish.artifactId}</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>02-copy-lib</id>
@@ -227,6 +217,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fix-get-client-stubs-executed-by-AppClientMethodExecutor</id>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -236,7 +236,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <delete failonerror="false" file="${admin.pass.file}"></delete>
@@ -252,7 +252,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <echo message="Encode admin password in JMS RI or OpenMQ via (imqusermgr) ......"></echo>
@@ -270,7 +270,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <echo message="List JMS objects in JMS RI or OpenMQ object store via (imgobjmgr) ......"></echo>
@@ -287,7 +287,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <echo message="Start JMS RI or OpenMQ Broker via (imqbrokerd) ....."></echo>
@@ -305,7 +305,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <echo message="Create user j2ee, javajoe in JMS RI or OpenMQ via (imqusermgr) ......"></echo>
@@ -327,7 +327,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <phase>pre-integration-test</phase>
+                        <phase>process-test-resources</phase>
                         <configuration>
                             <target>
                                 <copy file="${s1as.imq.share.lib}/imq.jar" overwrite="yes" todir="${s1as.lib}"></copy>

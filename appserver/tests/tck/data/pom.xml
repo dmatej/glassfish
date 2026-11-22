@@ -74,30 +74,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>unpack-glassfish</id>
-                            <goals>
-                                <goal>unpack</goal>
-                            </goals>
-                            <configuration>
-                                <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                                <artifactItems>
-                                    <artifactItem>
-                                        <groupId>org.glassfish.main.distributions</groupId>
-                                        <artifactId>${glassfish.artifactId}</artifactId>
-                                        <version>${glassfish.version}</version>
-                                        <type>zip</type>
-                                        <overWrite>false</overWrite>
-                                        <outputDirectory>${glassfish.root}</outputDirectory>
-                                    </artifactItem>
-                                </artifactItems>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <dependenciesToScan>

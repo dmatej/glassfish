@@ -81,7 +81,7 @@
 
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
-            <artifactId>glassfish</artifactId>
+            <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
             <version>${glassfish.version}</version>
             <scope>test</scope>
@@ -124,14 +124,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>glassfish</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                        </configuration>
+                        <phase>generate-test-resources</phase>
                     </execution>
                     <execution>
                         <id>copy-addon</id>
@@ -141,7 +134,7 @@
                         <configuration>
                             <includeArtifactIds>test-progress-admin-extension</includeArtifactIds>
                             <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>${project.build.directory}/glassfish8/glassfish/modules</outputDirectory>
+                            <outputDirectory>${glassfish.home}/glassfish/modules</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

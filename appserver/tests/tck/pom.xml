@@ -72,13 +72,6 @@
         <maven.executable>${maven.home}/bin/mvn${file.executable.suffix}</maven.executable>
         <maven.settings.xml>${user.home}/.m2/settings.xml</maven.settings.xml>
 
-        <glassfish.root>${project.build.directory}</glassfish.root>
-        <glassfish.directoryName>glassfish8</glassfish.directoryName>
-        <glassfish.home>${glassfish.root}/${glassfish.directoryName}</glassfish.home>
-        <glassfish.asadmin>${glassfish.home}/glassfish/bin/asadmin</glassfish.asadmin>
-        <glassfish.lib.dir>${glassfish.home}/glassfish/lib</glassfish.lib.dir>
-        <glassfish.domain.dir>${glassfish.home}/glassfish/domains/domain1</glassfish.domain.dir>
-
         <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
         <jakarta.arquillian.version>11.1.3</jakarta.arquillian.version>
 
@@ -102,7 +95,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.glassfish.main.distributions</groupId>
-                <artifactId>glassfish</artifactId>
+                <artifactId>${glassfish.artifactId}</artifactId>
                 <version>${glassfish.version}</version>
                 <type>zip</type>
                 <scope>test</scope>
@@ -322,59 +315,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish.artifactId>glassfish</glassfish.artifactId>
                 <excluded.groups>se</excluded.groups>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish.artifactId>web</glassfish.artifactId>
                 <excluded.groups>javaee-full,se</excluded.groups>
             </properties>
-        </profile>
-        <profile>
-            <id>appclient</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.gmavenplus</groupId>
-                        <artifactId>gmavenplus-plugin</artifactId>
-                        <version>5.1.0</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.groovy</groupId>
-                                <artifactId>groovy</artifactId>
-                                <version>6.0.0</version>
-                                <scope>runtime</scope>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <!-- See https://github.com/eclipse-ee4j/jakartaee-tck-tools/pull/195 -->
-                                <!-- This can be removed after upgrade of arquillian-protocol-appclient from 11.1.3 to fixed version -->
-                                <id>hack-java-for-get-client-stubs-without-env-executed-by-AppClientMethodExecutor</id>
-                                <phase>process-test-resources</phase>
-                                <goals>
-                                    <goal>execute</goal>
-                                </goals>
-                                <configuration>
-                                    <includeClasspath>PLUGIN_ONLY</includeClasspath>
-                                    <scripts>
-                                        <script>
-                                        def asenv = new File('${glassfish.home}/glassfish/config/asenv.conf')
-                                        def javaHome = System.getProperty('java.home')
-                                        if (!(asenv.text =~ /(?m)^\s*AS_JAVA=/)) {
-                                            asenv &lt;&lt; "\nexport AS_JAVA=\"${javaHome}\"\n"
-                                        }
-                                        </script>
-                                    </scripts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>
