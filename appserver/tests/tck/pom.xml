@@ -56,6 +56,7 @@
         <module>mvc</module>
         <module>pages</module>
         <module>pages-extra</module>
+        <module>persistence</module>
         <module>rest</module>
         <module>rest_cdi</module>
         <module>security</module>

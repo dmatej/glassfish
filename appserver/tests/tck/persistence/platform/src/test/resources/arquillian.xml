@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian https://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+  <engine>
+        <property name="deploymentExportPath">target/deployments</property>
+  </engine>
+  <extension qualifier="glassfish-descriptors">
+      <property name="descriptorDir">${project.build.directory}</property>
+  </extension>
+
+  <group qualifier="glassfish-servers" default="true">
+    <container qualifier="tck-javatest" default="true">
+        <configuration>
+            <property name="glassFishHome">${glassfish.home}</property>
+            <property name="debug">true</property>
+            <property name="suspend">false</property>
+        </configuration>
+        <protocol type="javatest">
+            <property name="trace">true</property>
+            <property name="workDir">${tck.workDirectory}</property>
+            <property name="tsJteFile">${tck.tsjte}</property>
+            <property name="tsSqlStmtFile">${tck.tssql}</property>
+        </protocol>
+    </container>
+  </group>
+
+</arquillian>
