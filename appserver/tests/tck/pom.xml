@@ -56,16 +56,15 @@
         <module>mvc</module>
         <module>pages</module>
         <module>pages-extra</module>
+        <module>rest</module>
+        <module>rest_cdi</module>
+        <module>security</module>
         <module>servlet</module>
         <module>tags</module>
         <module>validation</module>
         <module>websocket</module>
 
         <module>platform-tck-runner</module>
-
-        <module>rest</module>
-        <module>rest_cdi</module>
-        <module>security</module>
     </modules>
 
     <properties>
