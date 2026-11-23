@@ -26,13 +26,12 @@
         <version>8.0.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>glassfish-nosql-tck-runner</artifactId>
-
+    <artifactId>tck-nosql</artifactId>
     <name>Jakarta NoSQL TCK Web Runner for GlassFish</name>
     <description>Runs the Jakarta NoSQL TCK on GlassFish using JNoSQL MongoDB</description>
 
     <properties>
-        <jakarta.nosql.tck.version>1.0.1</jakarta.nosql.tck.version>
+        <jakarta.nosql.tck.version>${jakarta.nosql-api.version}</jakarta.nosql.tck.version>
     </properties>
 
     <dependencies>
@@ -45,7 +44,6 @@
         <dependency>
             <groupId>jakarta.nosql</groupId>
             <artifactId>jakarta.nosql-api</artifactId>
-            <version>${jakarta.nosql.tck.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -96,7 +94,8 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>1.20.1</version>  <!-- Ensure it matches testcontainers version or let bom resolve if any -->
+            <!-- Ensure it matches testcontainers version or let bom resolve if any -->
+            <version>1.20.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,18 +120,22 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.11.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <scope>test</scope>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.glassfish.main</groupId>
             <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -150,23 +153,7 @@
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish-artifact-id}</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
+                        <phase>generate-test-resources</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -182,7 +169,7 @@
                         </goals>
                         <configuration>
                             <finalName>jnosql</finalName>
-                            <outputDirectory>target</outputDirectory>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
                             <descriptors>
                                 <descriptor>src/test/assembly/jnosql-mongo-deps.xml</descriptor>
                             </descriptors>
@@ -192,7 +179,7 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
                         <glassfish.home>${glassfish.home}</glassfish.home>

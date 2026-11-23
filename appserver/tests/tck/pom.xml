@@ -35,7 +35,6 @@
 
     <modules>
         <module>glassfish-runner</module>
-        <module>nosql</module>
         <module>tck-download</module>
         <module>activation</module>
         <module>authentication</module>
@@ -54,6 +53,7 @@
         <module>messaging</module>
         <module>microprofile</module>
         <module>mvc</module>
+        <module>nosql</module>
         <module>pages</module>
         <module>pages-extra</module>
         <module>persistence</module>
