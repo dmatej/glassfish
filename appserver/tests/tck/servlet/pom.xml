@@ -71,11 +71,6 @@
             <artifactId>slf4j-jdk14</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
 
         <!-- Dependency for the API signature test -->
         <dependency>
@@ -162,7 +157,7 @@
                         <configuration>
                             <includeArtifactIds>servlet-tck-runtime</includeArtifactIds>
                             <outputDirectory>${project.build.testOutputDirectory}/</outputDirectory>
-                            <includes>**/**cts_cert,**/**clientcert.p12</includes>
+                            <includes>**/**cts_cert,**/**clientcert.*</includes>
                         </configuration>
                     </execution>
                     <execution>
@@ -220,9 +215,11 @@
 
                         <arquillian.xml>arquillian.xml</arquillian.xml>
 
-                        <javax.net.ssl.keyStore>${project.build.testOutputDirectory}/certificates/clientcert.p12</javax.net.ssl.keyStore>
+                        <!-- Note: the p12 cannot be used, test doesn't open it correctly -->
+                        <javax.net.ssl.keyStore>${project.build.testOutputDirectory}/certificates/clientcert.jks</javax.net.ssl.keyStore>
                         <javax.net.ssl.keyStorePassword>changeit</javax.net.ssl.keyStorePassword>
                         <javax.net.ssl.trustStore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.p12</javax.net.ssl.trustStore>
+                        <javax.net.ssl.trustStorePassword>changeit</javax.net.ssl.trustStorePassword>
 
                         <!-- Uncomment to debug client-side SSL
                         <javax.net.debug>ssl:handshake</javax.net.debug>
