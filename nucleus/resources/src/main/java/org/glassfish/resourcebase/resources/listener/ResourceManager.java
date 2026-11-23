@@ -118,7 +118,6 @@ public class ResourceManager implements PostConstruct, PreDestroy, ConfigListene
 
     @Override
     public void postConstruct() {
-        Thread.dumpStack();
         notifyListeners(ResourceManagerLifecycleListener.EVENT.STARTUP);
         deployResources(resourceTypeOrderProcessor.getOrderedResources(domain.getResources().getResources()));
         LOG.log(Level.FINEST, "Adding me as listener ...");
