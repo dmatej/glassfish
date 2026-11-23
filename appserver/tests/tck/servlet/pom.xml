@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  /*
- * Copyright (c) 2022, 2025 Contributors to the Eclipse Foundation.
+ * Copyright (c) 2022, 2026 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -30,56 +30,51 @@
     </parent>
 
     <artifactId>tck-servlet</artifactId>
-
     <name>TCK: Servlet</name>
-    <description>Aggregates dependencies and runs the Servlet TCK on GlassFish</description>
 
     <properties>
-        <tck.home>${project.build.directory}/servlet-tck</tck.home>
-        <tck.tests.home>${tck.home}/src/com/sun/ts/tests</tck.tests.home>
-
-        <jacoco.includes>org/glassfish/**\:com/sun/enterprise/**</jacoco.includes>
-
-        <port.admin>14848</port.admin>
-        <port.derby>11527</port.derby>
-        <port.http>18080</port.http>
-        <port.https>18181</port.https>
-        <port.jms>17676</port.jms>
-        <port.jmx>18686</port.jmx>
-        <port.orb>13700</port.orb>
-        <port.orb.mutual>13920</port.orb.mutual>
-        <port.orb.ssl>13820</port.orb.ssl>
-        <port.harness.log>12000</port.harness.log>
+        <tck.servlet.version>6.1.2</tck.servlet.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.9.1.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-        <!-- Jakarta EE APIs -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet.tck</groupId>
+            <artifactId>servlet-tck-runtime</artifactId>
+            <version>${tck.servlet.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet.tck</groupId>
+            <artifactId>servlet-tck-util</artifactId>
+            <version>${tck.servlet.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
             <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Dependency for the API signature test -->
@@ -88,67 +83,98 @@
             <artifactId>sigtest-maven-plugin</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-impl-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ee.omnifish.arquillian</groupId>
+            <artifactId>arquillian-glassfish-server-managed</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <execution>
                         <id>unpack-glassfish-and-certs</id>
                         <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>unpack</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <markersDirectory>${glassfish.root}/dependency-maven-plugin-markers</markersDirectory>
-                            <artifactItems>
-
-                                <!-- Extract GlassFish -->
-                                <artifactItem>
-                                    <groupId>org.glassfish.main.distributions</groupId>
-                                    <artifactId>${glassfish.artifactId}</artifactId>
-                                    <version>${glassfish.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${glassfish.root}</outputDirectory>
-                                </artifactItem>
-
-                                <!-- Extract certificates -->
-                                <artifactItem>
-                                    <groupId>jakarta.tck</groupId>
-                                    <artifactId>servlet-tck-runtime</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.testOutputDirectory}/</outputDirectory>
-                                    <includes>**/**cts_cert,**/**clientcert.jks,**/**clientcert.p12</includes>
-                                </artifactItem>
-                            </artifactItems>
+                            <includeArtifactIds>servlet-tck-runtime</includeArtifactIds>
+                            <outputDirectory>${project.build.testOutputDirectory}/</outputDirectory>
+                            <includes>**/**cts_cert,**/**clientcert.p12</includes>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>copy-api</id>
                         <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <!--
-                                    The main Servlet API artefact to test. This must match exactly the jar
-                                    that's also included in the GlassFish build we're testing.
-                                -->
-                                <artifactItem>
-                                    <groupId>jakarta.servlet</groupId>
-                                    <artifactId>jakarta.servlet-api</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/</outputDirectory>
-                                    <destFileName>jakarta.servlet-api.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
+                            <includeArtifactIds>jakarta.servlet-api</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/</outputDirectory>
+                            <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
                 </executions>
@@ -158,7 +184,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>2.1.0</version>
                 <executions>
                     <execution>
                         <phase>process-test-resources</phase>
@@ -168,7 +194,7 @@
                         <configuration>
                             <file>${project.build.testOutputDirectory}/certificates/cts_cert</file>
                             <alias>cts</alias>
-                            <keystore>${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks</keystore>
+                            <keystore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.p12</keystore>
                             <storepass>changeit</storepass>
                             <keypass>changeit</keypass>
                             <noprompt>true</noprompt>
@@ -180,27 +206,23 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <argLine>
-                          -Duser.language=en
-                          -Duser.country=US
-                          -Djava.locale.providers=COMPAT,CLDR
-                    </argLine>
-
                     <dependenciesToScan>
-                        <dependenciesToScan>jakarta.tck:servlet-tck-runtime</dependenciesToScan>
+                        <dependenciesToScan>jakarta.servlet.tck:servlet-tck-runtime</dependenciesToScan>
                     </dependenciesToScan>
+                    <includes>**/*Test,**/*Tests</includes>
+                    <systemPropertyVariables>
+                        <glassfish.home>${glassfish.home}</glassfish.home>
 
-                    <systemProperties>
-                        <glassfish.home>${glassfish.root}/glassfish8</glassfish.home>
+                        <user.country>US</user.country>
+                        <java.locale.providers>CLDR</java.locale.providers>
 
-                        <arquillian.xml>${project.basedir}/arquillian.xml</arquillian.xml>
+                        <arquillian.xml>arquillian.xml</arquillian.xml>
 
-                        <javax.net.ssl.keyStore>${project.build.testOutputDirectory}/certificates/clientcert.jks</javax.net.ssl.keyStore>
+                        <javax.net.ssl.keyStore>${project.build.testOutputDirectory}/certificates/clientcert.p12</javax.net.ssl.keyStore>
                         <javax.net.ssl.keyStorePassword>changeit</javax.net.ssl.keyStorePassword>
-                        <javax.net.ssl.trustStore>${glassfish.root}/glassfish8/glassfish/domains/domain1/config/cacerts.jks</javax.net.ssl.trustStore>
+                        <javax.net.ssl.trustStore>${glassfish.home}/glassfish/domains/domain1/config/cacerts.p12</javax.net.ssl.trustStore>
 
                         <!-- Uncomment to debug client-side SSL
                         <javax.net.debug>ssl:handshake</javax.net.debug>
@@ -225,14 +247,14 @@
 
                         <!-- Create the users for the various security (authentication tests) -->
                         <glassfish.postBootCommands>
-                            create-file-user --groups Manager:Employee --passwordfile ${project.basedir}/javajoe.pass javajoe
-                            create-file-user --groups Administrator:Employee --passwordfile ${project.basedir}/j2ee.pass j2ee
+                            --passwordfile ${project.basedir}/javajoe.pass create-file-user --groups Manager:Employee javajoe
+                            --passwordfile ${project.basedir}/j2ee.pass create-file-user --groups Administrator:Employee j2ee
                         </glassfish.postBootCommands>
 
                         <!-- Set the properties for the API signature test -->
                         <jimage.dir>${project.build.directory}/jdk-bundle</jimage.dir>
                         <sigTestClasspath>${project.build.directory}/jakarta.servlet-api.jar:${project.build.directory}/jdk-bundle/java.base:${project.build.directory}/jdk-bundle/java.rmi:${project.build.directory}/jdk-bundle/java.sql:${project.build.directory}/jdk-bundle/java.naming</sigTestClasspath>
-                    </systemProperties>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
@@ -245,14 +267,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <glassfish.artifactId>glassfish</glassfish.artifactId>
                 <jakarta.tck.platform>full</jakarta.tck.platform>
             </properties>
         </profile>
         <profile>
             <id>web</id>
             <properties>
-                <glassfish.artifactId>web</glassfish.artifactId>
                 <jakarta.tck.platform.tck.platform>web</jakarta.tck.platform.tck.platform>
             </properties>
         </profile>

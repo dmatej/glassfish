@@ -50,8 +50,6 @@
         <module>pages</module>
         <module>security</module>
         <module>websocket</module>
-
-        <module>jakarta-servlet-tck</module>
     </modules>
 
     <build>
