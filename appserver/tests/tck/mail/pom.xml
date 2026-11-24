@@ -202,7 +202,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>greenmail/standalone:2.1.15</name>
+                            <name>greenmail/standalone:latest</name>
                             <alias>mail</alias>
                             <run>
                                 <env>
