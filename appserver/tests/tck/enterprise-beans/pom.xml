@@ -30,11 +30,6 @@
     <name>TCK: Enterprise Beans</name>
 
     <properties>
-        <glassfish.major>8</glassfish.major>
-        <glassfish.root>${project.build.directory}</glassfish.root>
-        <glassfish.home>${project.build.directory}/glassfish${glassfish.major}</glassfish.home>
-        <glassfish.lib.dir>${glassfish.home}/glassfish/lib</glassfish.lib.dir>
-        <glassfish.domain.dir>${glassfish.home}/glassfish/domains/domain1</glassfish.domain.dir>
         <whitebox.directory>${project.build.directory}/whitebox</whitebox.directory>
         <derby.lib>${glassfish.home}/javadb/lib</derby.lib>
 
@@ -1059,6 +1054,7 @@
         </profile>
 
         <!-- mvn clean install -Ptck -pl :tck-enterprise-beans -Pfull,custom -Dit.test=com.sun.ts.tests.ejb30.timer.basic.concurrency.ClientEjbliteservletTest -->
+        <!-- As failsafe ignores -Dit.test in combination with dependenciesToScan, we need a special profile to run individual tests. -->
         <profile>
             <id>custom</id>
             <build>
