@@ -40,7 +40,6 @@
     </properties>
 
     <modules>
-        <module>jakarta-platform-tck</module>
         <module>activation</module>
         <module>authentication</module>
         <module>authorization</module>

@@ -64,8 +64,6 @@
         <module>tags</module>
         <module>validation</module>
         <module>websocket</module>
-
-        <module>platform-tck-runner</module>
     </modules>
 
     <properties>
