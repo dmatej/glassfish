@@ -32,9 +32,32 @@
     <name>TCK: Security</name>
 
     <properties>
-        <tck.home>${project.build.directory}/security-tck-4.0.1/tck</tck.home>
+        <tck.version>4.0.1</tck.version>
+        <tck.home>${project.build.directory}/security-tck-${tck.version}/tck</tck.home>
         <tck.old.glassfish.home>${tck.home}/old-tck/run/target/glassfish8</tck.old.glassfish.home>
+        <tck.parentPomFile>${tck.home}/pom.xml</tck.parentPomFile>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>2.3.232</version>
+            </dependency>
+            <dependency>
+                <groupId>com.unboundid</groupId>
+                <artifactId>unboundid-ldapsdk</artifactId>
+                <version>7.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-depchain</artifactId>
+                <version>3.3.7</version>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -64,7 +87,7 @@
                     </execution>
                     <execution>
                         <id>unpack-tck</id>
-                        <phase>pre-integration-test</phase>
+                        <phase>generate-test-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
@@ -75,6 +98,74 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>${skipITs}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-tck-and-glassfish</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target xmlns:if="ant:if" xmlns:unless="ant:unless">
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                     classpathref="maven.plugin.classpath" />
+
+                                <macrodef name="pom-replace">
+                                    <attribute name="file" />
+                                    <attribute name="element" />
+                                    <attribute name="value" />
+                                    <attribute name="replacement" />
+                                    <sequential>
+                                      <replace file="@{file}">
+                                          <replacetoken><![CDATA[<@{element}>@{value}</@{element}]]></replacetoken>
+                                          <replacevalue><![CDATA[<@{element}>@{replacement}</@{element}]]></replacevalue>
+                                      </replace>
+                                    </sequential>
+                                </macrodef>
+
+                                <pom-replace file="${tck.parentPomFile}"
+                                    element="groupId" value="org.eclipse.ee4j" replacement="${project.groupId}" />
+                                <pom-replace file="${tck.parentPomFile}"
+                                    element="artifactId" value="project" replacement="${project.artifactId}" />
+                                <pom-replace file="${tck.parentPomFile}"
+                                    element="version" value="1.0.9" replacement="${project.version}" />
+                                <pom-replace file="${tck.parentPomFile}"
+                                    element="version" value="${tck.version}" replacement="${project.version}" />
+                                <replace file="${tck.parentPomFile}">
+                                    <replacetoken><![CDATA[<relativePath/>]]></replacetoken>
+                                    <replacevalue><![CDATA[<relativePath>../../..</relativePath>]]></replacevalue>
+                                </replace>
+                                <replaceregexp
+                                    flags="gs"
+                                    file="${tck.parentPomFile}"
+                                    match="\s*&lt;dependencyManagement&gt;.*?&lt;/dependencyManagement&gt;"
+                                    replace="">
+                                </replaceregexp>
+                                <replaceregexp
+                                    flags="gs"
+                                    file="${tck.parentPomFile}"
+                                    match="\s*&lt;dependencies&gt;.*?&lt;/dependencies&gt;"
+                                    replace="">
+                                </replaceregexp>
+                                <replaceregexp
+                                    flags="gs"
+                                    file="${tck.parentPomFile}"
+                                    match="\s*&lt;rerunFailingTestsCount&gt;.*?&lt;/rerunFailingTestsCount&gt;"
+                                    replace="">
+                                </replaceregexp>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -95,7 +186,7 @@
                                 <argument>-s</argument>
                                 <argument>${maven.settings.xml}</argument>
                                 <argument>-f</argument>
-                                <argument>${tck.home}/pom.xml</argument>
+                                <argument>${tck.parentPomFile}</argument>
                                 <argument>clean</argument>
                                 <argument>install</argument>
                                 <argument>-Pglassfish-ci-managed</argument>
@@ -106,6 +197,7 @@
                                 <argument>-Dglassfish.version=${glassfish.version}</argument>
                                 <argument>-Dglassfish.arquillian.version=${omnifish.arquillian.version}</argument>
                                 <argument>-DtrustStore.suffix=p12</argument>
+                                <argument>-Dcyclonedx.skip=true</argument>
                             </arguments>
                         </configuration>
                     </execution>
