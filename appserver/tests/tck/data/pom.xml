@@ -96,6 +96,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <phase />
+                        <inherited>false</inherited>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <phase />
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
