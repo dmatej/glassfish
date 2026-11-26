@@ -43,25 +43,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--
-                In 1.10.x ArquillianExtension lost handleTestExecutionException method,
-                however StandaloneExtension in the data-tck depends on it.
-                Note that until some test fails, you will not experience it.
-            -->
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.9.5.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.jboss.shrinkwrap</groupId>
                 <artifactId>shrinkwrap-api</artifactId>
                 <version>1.2.6</version>
             </dependency>
-
             <dependency>
                 <groupId>jakarta.data</groupId>
                 <artifactId>jakarta.data-tck</artifactId>
@@ -74,11 +60,14 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
                     <configuration>
                         <dependenciesToScan>
                             <dependency>jakarta.data:jakarta.data-tck</dependency>
                         </dependenciesToScan>
+                        <includes>
+                            <include>*</include>
+                        </includes>
                         <!-- If running back-to-back tests at different levels use this to distinguish the results -->
                         <reportNameSuffix>core</reportNameSuffix>
                         <systemPropertyVariables>
@@ -102,9 +91,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>integration-test</id>
+                        <id>test-default</id>
                         <phase />
-                        <inherited>false</inherited>
                     </execution>
                 </executions>
             </plugin>
@@ -138,7 +126,7 @@
                 <pluginManagement>
                     <plugins>
                         <plugin>
-                            <artifactId>maven-surefire-plugin</artifactId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
                             <configuration>
                                 <systemPropertyVariables>
                                     <org.glassfish.data.tck.global-transaction>true</org.glassfish.data.tck.global-transaction>
