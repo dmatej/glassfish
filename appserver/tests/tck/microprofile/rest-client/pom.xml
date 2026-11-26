@@ -162,14 +162,38 @@
                         <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
                     </dependenciesToScan>
                     <includes>org/eclipse/microprofile/rest/client/tck/**/*</includes>
-                    <!-- See https://github.com/microprofile/microprofile-rest-client/issues/402 -->
-                    <excludes>org/eclipse/microprofile/rest/client/tck/cditests/ClientClosedTest.*</excludes>
                     <systemPropertyVariables>
                         <!-- A workaround for the ConfigKeyForMultipleInterfacesTest -->
                         <ee.omnifish.arquillian.prependDeploySequence>true</ee.omnifish.arquillian.prependDeploySequence>
                         <project.build.directory>${project.build.directory}</project.build.directory>
                     </systemPropertyVariables>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                        <configuration>
+                            <!-- See https://github.com/microprofile/microprofile-rest-client/issues/402 -->
+                            <excludes>
+                                org/eclipse/microprofile/rest/client/tck/cditests/ClientClosedTest,
+                                org/eclipse/microprofile/rest/client/tck/asynctests/AsyncMethodTest
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>AsyncMethodTest</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                        <configuration>
+                            <test>org.eclipse.microprofile.rest.client.tck.asynctests.AsyncMethodTest</test>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
