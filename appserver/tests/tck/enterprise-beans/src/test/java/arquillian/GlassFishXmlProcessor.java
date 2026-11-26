@@ -5,6 +5,8 @@ import com.sun.ts.tests.ejb30.bb.session.stateless.annotation.enventry.Client;
 import java.lang.System.Logger;
 import java.net.URL;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -16,6 +18,14 @@ import static java.lang.System.Logger.Level.INFO;
 public class GlassFishXmlProcessor extends AbstractTestArchiveProcessor {
 
     private static final Logger LOG = System.getLogger(GlassFishXmlProcessor.class.getName());
+
+    /**
+     * Called on completion of the Arquillian configuration.
+     */
+    @Override
+    public void initalize(@Observes ArquillianDescriptor descriptor) {
+        super.initalize(descriptor);
+    }
 
     @Override
     public void processClientArchive(JavaArchive clientArchive, Class<?> testClass, URL sunXmlURL) {
