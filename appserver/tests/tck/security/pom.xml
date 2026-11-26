@@ -56,20 +56,142 @@
                 <version>3.3.7</version>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>4.21.0</version>
+                <scope>compile</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>tck-security-download</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.main.distributions</groupId>
             <artifactId>${glassfish.artifactId}</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.main.tests.tck</groupId>
-            <artifactId>tck-security-download</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.security.enterprise</groupId>
+            <artifactId>jakarta.security.enterprise-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.authentication</groupId>
+            <artifactId>jakarta.authentication-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.authorization</groupId>
+            <artifactId>jakarta.authorization-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.interceptor</groupId>
+            <artifactId>jakarta.interceptor-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.faces</groupId>
+            <artifactId>jakarta.faces-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ee.omnifish.arquillian</groupId>
+            <artifactId>arquillian-glassfish-server-managed</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.23.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -80,6 +202,7 @@
                 <configuration>
                     <skip>${skipITs}</skip>
                 </configuration>
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>unpack-glassfish</id>
@@ -145,6 +268,12 @@
                                 <replaceregexp
                                     flags="gs"
                                     file="${tck.parentPomFile}"
+                                    match="\s*&lt;pluginManagement&gt;.*?&lt;/pluginManagement&gt;"
+                                    replace="">
+                                </replaceregexp>
+                                <replaceregexp
+                                    flags="gs"
+                                    file="${tck.parentPomFile}"
                                     match="\s*&lt;dependencyManagement&gt;.*?&lt;/dependencyManagement&gt;"
                                     replace="">
                                 </replaceregexp>
@@ -160,8 +289,33 @@
                                     match="\s*&lt;rerunFailingTestsCount&gt;.*?&lt;/rerunFailingTestsCount&gt;"
                                     replace="">
                                 </replaceregexp>
+                                <replaceregexp
+                                    match="&lt;version&gt;${tck.version}&lt;/version&gt;"
+                                    replace="&lt;version&gt;${project.version}&lt;/version&gt;"
+                                    flags=""
+                                    byline="false">
+                                    <fileset dir="${tck.home}">
+                                        <include name="**/pom.xml" />
+                                    </fileset>
+                                </replaceregexp>
                             </target>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Signature test is executed in id=default execution -->
+                        <id>integration-test</id>
+                        <phase />
+                    </execution>
+                    <execution>
+                        <!-- Signature test is executed in id=default execution -->
+                        <id>verify</id>
+                        <phase />
                     </execution>
                 </executions>
             </plugin>
@@ -196,6 +350,8 @@
                                 <argument>-Dglassfish.home=${glassfish.home}</argument>
                                 <argument>-Dglassfish.version=${glassfish.version}</argument>
                                 <argument>-Dglassfish.arquillian.version=${omnifish.arquillian.version}</argument>
+                                <argument>-Dsigtest.plugin.version=${signaturetest.maven.version}</argument>
+                                <argument>-Djunit.jupiter.version=${junit.version}</argument>
                                 <argument>-DtrustStore.suffix=p12</argument>
                                 <argument>-Dcyclonedx.skip=true</argument>
                             </arguments>
@@ -214,6 +370,10 @@
                                 <argument>stop-domain</argument>
                                 <argument>--kill</argument>
                             </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
                         </configuration>
                     </execution>
                     <execution>
@@ -223,10 +383,14 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${tck.old.glassfish.home}/bin/asadmin</executable>
+                            <executable>${glassfish.home}/bin/asadmin</executable>
                             <arguments>
                                 <argument>stop-database</argument>
                             </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode>
+                            </successCodes>
                         </configuration>
                     </execution>
                     <!-- See DatabaseSetup in the TCK, the DataSourceDefinition declares url="jdbc:h2:~/SoteriaTestDB -->
