@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2025 Contributors to Eclipse Foundation.
+ * Copyright (c) 2023, 2026 Contributors to Eclipse Foundation.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.test.spi.TestClass;
@@ -58,6 +59,11 @@ public class WireMockLibraryIncluder implements ApplicationArchiveProcessor {
         for (String coordinate : DIRECT_DEPENDENCIES) {
             dependencies.addAll(List.of(stageOne.resolve(coordinate).withTransitivity().asFile()));
         }
-        return dependencies.toArray(File[]::new);
+        Predicate<File> exclusionFilter = file -> {
+            String name = file.getName();
+            return (name.startsWith("jakarta.") || name.startsWith("jackson-"))
+                && !name.contains("jsr310");
+        };
+        return dependencies.stream().filter(Predicate.not(exclusionFilter)).toArray(File[]::new);
     }
 }
