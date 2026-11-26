@@ -234,6 +234,7 @@
                         <!-- Print the content of the deployed archives -->
                         <servlet.tck.archive.print>true</servlet.tck.archive.print>
 
+                        <servlet.tck.slf4jimpl>org.slf4j:slf4j-jdk14</servlet.tck.slf4jimpl>
                         <!--
                            JDK 11 in TLSv1.3 does not support Post-Handshake Authentication, so TLSv1.2 must be used
                            for client-cert authentication to work.
