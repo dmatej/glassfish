@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0, which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the
+ * Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ * version 2 with the GNU Classpath Exception, which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.tests.tck</groupId>
+        <artifactId>tck</artifactId>
+        <version>8.0.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tck-transactions</artifactId>
+    <name>TCK: Transactions</name>
+
+    <properties>
+        <ts.home>${project.build.directory}</ts.home>
+        <tck.version>11.0.3</tck.version>
+        <tck.transactions.version>${tck.version}</tck.transactions.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>transactions-tck</artifactId>
+            <version>${tck.transactions.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ee.omnifish.arquillian</groupId>
+            <artifactId>arquillian-glassfish-server-managed</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl-base</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-javatest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-appclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-lib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>tck-porting-lib</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>arquillian.xml</include>
+                    <include>appclient-arquillian.xml</include>
+                    <include>ts.jte</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>certificates/**</include>
+                    <include>META-INF/**</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fix-get-client-stubs-executed-by-AppClientMethodExecutor</id>
+                        <phase>process-test-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>jakarta.tck:transactions-tck</dependency>
+                    </dependenciesToScan>
+                    <systemPropertyVariables>
+                        <glassfish.home>${glassfish.home}</glassfish.home>
+                        <glassfish.enableDerby>true</glassfish.enableDerby>
+                        <project.basedir>${project.basedir}</project.basedir>
+                        <ts.home>${ts.home}</ts.home>
+                        <ts.workDirectory>${tck.workDirectory}</ts.workDirectory>
+                        <junit.log.traceflag>true</junit.log.traceflag>
+                        <harness.log.traceflag>true</harness.log.traceflag>
+                        <cts.harness.debug>true</cts.harness.debug>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>full</id>
+            <properties>
+                <javatest-testGroups>tck-javatest</javatest-testGroups>
+            </properties>
+        </profile>
+        <profile>
+            <id>web</id>
+            <properties>
+                <javatest-testGroups>web</javatest-testGroups>
+            </properties>
+        </profile>
+        <profile>
+            <id>javatest</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>javatest</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>${javatest-testGroups}</groups>
+                                    <includes>
+                                        <include>com/sun/ts/tests/jta/ee/**/*</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <glassfish.postBootCommands>
+                                            set server-config.network-config.protocols.protocol.http-listener-1.http.trace-enabled=true
+                                            create-jdbc-connection-pool --restype javax.sql.DataSource --datasourceclassname org.apache.derby.jdbc.ClientDataSource --property databaseName=derbyDB:serverName=localhost:portNumber=1527:user=cts1:password=cts1:connectionAttributes="create=true" --steadypoolsize 32 --maxpoolsize 64 --resourceNames jdbc/DB1 cts-derby-pool
+                                            execute-jdbc-sql --sqlFileName ${project.basedir}/sql/derby/derby.ddl.sql jdbc/DB1
+                                            list-jdbc-connection-pools
+                                            list-jdbc-resources
+                                            list-file-users
+                                        </glassfish.postBootCommands>
+                                        <arquillian.xml>arquillian.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>appclient</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-lib</id>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <phase>generate-test-resources</phase>
+                                <configuration>
+                                    <artifactItems>
+                                        <!-- The application client container needs these two dependencies -->
+                                        <artifactItem>
+                                            <groupId>jakarta.tck.arquillian</groupId>
+                                            <artifactId>tck-porting-lib</artifactId>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                            <destFileName>tck-porting-lib.jar</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>jakarta.tck.arquillian</groupId>
+                                            <artifactId>arquillian-protocol-lib</artifactId>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                            <destFileName>arquillian-protocol-lib.jar</destFileName>
+                                        </artifactItem>
+                                        <!--
+                                            AppClientDeploymentPackager needs this on the Eclipse CI since it can't fully resolve
+                                            jakarta.tck.arquillian:arquillian-protocol-lib in code for some reason.
+                                        -->
+                                        <artifactItem>
+                                            <groupId>jakarta.tck.arquillian</groupId>
+                                            <artifactId>arquillian-protocol-lib</artifactId>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.build.directory}/protocol</outputDirectory>
+                                            <destFileName>protocol.jar</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>appclient</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>tck-appclient</groups>
+                                    <includes>
+                                        <include>com/sun/ts/tests/jta/ee/txpropagationtest/*Ejb*.java</include>
+                                        <include>com/sun/ts/tests/jta/ee/usertransaction/**/*EjbTest*.java</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <glassfish.postBootCommands>
+                                            set server-config.network-config.protocols.protocol.http-listener-1.http.trace-enabled=true
+                                            create-jdbc-connection-pool --restype javax.sql.DataSource --datasourceclassname org.apache.derby.jdbc.ClientDataSource --property databaseName=derbyDB:serverName=localhost:portNumber=1527:user=cts1:password=cts1:connectionAttributes="create=true" --steadypoolsize 32 --maxpoolsize 64 --resourceNames jdbc/DB1 cts-derby-pool
+                                            execute-jdbc-sql --sqlFileName ${project.basedir}/sql/derby/derby.ddl.sql jdbc/DB1
+                                            list-jdbc-connection-pools
+                                            list-jdbc-resources
+                                            list-file-users
+                                        </glassfish.postBootCommands>
+                                        <arquillian.xml>appclient-arquillian.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -62,6 +62,7 @@
         <module>security</module>
         <module>servlet</module>
         <module>tags</module>
+        <module>transactions</module>
         <module>validation</module>
         <module>websocket</module>
     </modules>
