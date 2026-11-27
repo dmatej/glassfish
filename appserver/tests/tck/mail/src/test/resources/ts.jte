@@ -2408,7 +2408,7 @@ javamail.server=${mailHost}
 javamail.protocol=imap
 
 # mail server used to run tests against.
-javamail.transport.server=$javamail.server
+javamail.transport.server=${javamail.server}
 
 # rootpath of test mailboxes
 javamail.root.path=mailboxes
@@ -2420,16 +2420,16 @@ javamail.mailbox=test1
 javamail.listpattern=test
 
 # your own login account name
-smtp.username=$javamail.username
+smtp.username=${javamail.username}
 
 # smtp domain name ; i.e. oracle.com
-smtp.domain=$javamail.server
+smtp.domain=${javamail.server}
 
 # smtp From address
-smtp.from=$smtp.username
+smtp.from=${smtp.username}
 
 # smtp To address
-smtp.to=$smtp.username
+smtp.to=${smtp.username}
 
 # io file
 iofile=MailIOFile.txt

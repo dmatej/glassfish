@@ -33,12 +33,12 @@
     <name>TCK: Java Mail</name>
 
     <properties>
-        <mailboxes.dir>${project.basedir}/src/test/resources/mailboxes</mailboxes.dir>
+        <mailboxes.dir>${project.build.testOutputDirectory}/mailboxes</mailboxes.dir>
         <javamail.mailbox>test1</javamail.mailbox>
         <!-- mail connection properties -->
         <javamail.password>1234</javamail.password>
         <javamail.protocol>imap</javamail.protocol>
-        <javamail.root.path></javamail.root.path>
+        <javamail.root.path>${mailboxes.dir}</javamail.root.path>
         <javamail.server>localhost</javamail.server>
         <javamail.username>user01@james.local</javamail.username>
         <jndiName>mail/Session</jndiName>
@@ -230,7 +230,7 @@
                 <executions>
                     <execution>
                         <id>start-mailserver</id>
-                        <phase>test</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>start</goal>
                         </goals>
@@ -341,4 +341,18 @@ create-mail-resource --mailhost ${mail.host} --mailuser ${mail.user} --fromaddre
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>hostname</id>
+            <activation>
+                <property>
+                    <name>env.HOSTNAME</name>
+                </property>
+            </activation>
+            <properties>
+                <javamail.server>${env.HOSTNAME}</javamail.server>
+            </properties>
+        </profile>
+    </profiles>
 </project>
