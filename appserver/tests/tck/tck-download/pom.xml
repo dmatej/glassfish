@@ -48,6 +48,7 @@
         <module>faces</module>
         <module>pages</module>
         <module>security</module>
+        <module>soap</module>
         <module>websocket</module>
     </modules>
 

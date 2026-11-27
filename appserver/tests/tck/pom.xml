@@ -62,6 +62,7 @@
         <module>rest_cdi</module>
         <module>security</module>
         <module>servlet</module>
+        <module>soap</module>
         <module>tags</module>
         <module>transactions</module>
         <module>validation</module>

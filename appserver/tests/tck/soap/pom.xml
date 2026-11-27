@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0, which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the
+ * Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ * version 2 with the GNU Classpath Exception, which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.tests.tck</groupId>
+        <artifactId>tck</artifactId>
+        <version>8.0.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tck-soap</artifactId>
+    <name>TCK: SOAP Webservices</name>
+
+    <properties>
+        <tck.version>11.0.3</tck.version>
+        <tck.transactions.version>${tck.version}</tck.transactions.version>
+
+        <tck.name>xml-ws-tck</tck.name>
+        <tck.home>${project.build.directory}/${tck.name}</tck.home>
+        <tck.tsjte>${tck.home}/bin/ts.jte</tck.tsjte>
+        <jdk.home>${java.home}</jdk.home>
+        <ts.home>${tck.home}</ts.home>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>tck-soap-download</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.external</groupId>
+            <artifactId>ant-osgi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>ts.jte</include>
+                </includes>
+                <targetPath>${tck.home}/bin</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>client.policy</include>
+                </includes>
+                <targetPath>${glassfish.home}/glassfish/lib/appclient</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>server.policy</include>
+                </includes>
+                <targetPath>${glassfish.domain.dir}/config</targetPath>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <skip>${skipITs}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>unpack-tck</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <includeArtifactIds>tck-soap-download</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <changeDetection>always</changeDetection>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.glassfish.external</groupId>
+                        <artifactId>ant-osgi</artifactId>
+                        <version>${ant-osgi.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>configure-ant</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                        <configuration>
+                            <target>
+                                <exec executable="${glassfish.asadmin}" dir="${glassfish.home}/glassfish/bin" failonerror="true">
+                                    <arg value="start-domain"/>
+                                    <env key="AS_JAVA" value="${java.home}"/>
+                                </exec>
+                                <ant dir="${tck.home}" antfile="${tck.home}/bin/build.xml" target="config.vi" inheritAll="true">
+                                    <property name="ts.home" value="${tck.home}"/>
+                                </ant>
+                                <ant dir="${tck.home}/src/com/sun/ts/tests/jaxws" antfile="build.xml" target="build" inheritAll="true">
+                                    <property name="ts.home" value="${tck.home}"/>
+                                    <property name="keywords" value="all"/>
+                                    <property name="build.vi" value="true"/>
+                                </ant>
+                                <ant dir="${tck.home}/src/com/sun/ts/tests/jws" antfile="build.xml" target="build" inheritAll="true">
+                                    <property name="ts.home" value="${tck.home}"/>
+                                    <property name="keywords" value="all"/>
+                                    <property name="build.vi" value="true"/>
+                                </ant>
+                                <ant dir="${tck.home}/bin" antfile="build.xml" target="deploy.all" inheritAll="true">
+                                    <property name="ts.home" value="${tck.home}"/>
+                                    <property name="keywords" value="all"/>
+                                </ant>
+                                <ant dir="${tck.home}/bin" antfile="build.xml" target="run.all" inheritAll="true">
+                                    <property name="ts.home" value="${tck.home}"/>
+                                    <property name="keywords" value="all"/>
+                                </ant>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>stop-domain</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>stop-domain</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
