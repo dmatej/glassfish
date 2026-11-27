@@ -334,10 +334,6 @@
                             <arguments>
                                 <argument>start-domain</argument>
                             </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
                         </configuration>
                     </execution>
                     <execution>
@@ -362,10 +358,6 @@
                                 <argument>${propName}</argument>
                                 <argument>jmsra</argument>
                             </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
                         </configuration>
                     </execution>
                     <execution>
@@ -389,10 +381,6 @@
                                 <argument>--file</argument>
                                 <argument>${project.basedir}/create.jms.template</argument>
                             </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
                         </configuration>
                     </execution>
                     <execution>
@@ -415,10 +403,6 @@
                                 <argument>--file</argument>
                                 <argument>${project.basedir}/create.jmsra.template</argument>
                             </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>1</successCode>
-                            </successCodes>
                         </configuration>
                     </execution>
                     <execution>
