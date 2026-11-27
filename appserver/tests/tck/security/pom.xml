@@ -161,6 +161,12 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -337,6 +343,7 @@
                             <executable>${maven.executable}</executable>
                             <arguments>
                                 <argument>-e</argument>
+                                <argument>-ntp</argument>
                                 <argument>-s</argument>
                                 <argument>${maven.settings.xml}</argument>
                                 <argument>-f</argument>
