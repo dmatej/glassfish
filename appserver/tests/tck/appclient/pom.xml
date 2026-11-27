@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /*
+ * Copyright (c) 2026 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0, which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the
+ * Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+ * version 2 with the GNU Classpath Exception, which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.tests.tck</groupId>
+        <artifactId>tck</artifactId>
+        <version>8.0.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tck-appclient</artifactId>
+    <name>TCK: Application Client</name>
+
+    <properties>
+        <admin.pass>admin</admin.pass>
+        <admin.pass.file>${project.build.directory}/ripassword</admin.pass.file>
+        <admin.pass.file.encoded>${admin.pass.file}.encoded</admin.pass.file.encoded>
+        <admin.user>admin</admin.user>
+
+        <ri.home>${glassfish.home}/mq</ri.home>
+
+        <exec.imqbrokerd>${ri.home}/bin/imqbrokerd</exec.imqbrokerd>
+        <exec.imqcmd>${ri.home}/bin/imqcmd</exec.imqcmd>
+        <exec.imqobjmgr>${ri.home}/bin/imqobjmgr</exec.imqobjmgr>
+        <exec.imqusermgr>${ri.home}/bin/imqusermgr</exec.imqusermgr>
+
+        <glassfish.module.dir>${glassfish.home}/glassfish/modules</glassfish.module.dir>
+
+        <!-- mail connection properties -->
+        <javamail.password>1234</javamail.password>
+        <javamail.protocol>imap</javamail.protocol>
+        <javamail.root.path></javamail.root.path>
+        <javamail.server>localhost</javamail.server>
+        <javamail.username>user01@james.local</javamail.username>
+
+
+        <jndi.factory.initial>java.naming.factory.initial=com.sun.enterprise.naming.impl.SerialInitContextFactory</jndi.factory.initial>
+        <jndi.fs.dir>${project.build.directory}/ri_admin_objects</jndi.fs.dir>
+        <jndi.provider.url>java.naming.provider.url=file:///${jndi.fs.dir}</jndi.provider.url>
+
+        <tck.version>11.0.3</tck.version>
+        <tck.tssql>${project.build.testOutputDirectory}/tssql.stmt</tck.tssql>
+        <tck.libdir>${project.build.directory}/lib</tck.libdir>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>common</artifactId>
+            <version>11.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>appclient</artifactId>
+            <version>${tck.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>assembly-tck</artifactId>
+            <version>${tck.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-appclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-javatest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-lib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>tck-porting-lib</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ee.omnifish.arquillian</groupId>
+            <artifactId>arquillian-glassfish-server-managed</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.core</groupId>
+            <artifactId>arquillian-core-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.test</groupId>
+            <artifactId>arquillian-test-impl-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.distributions</groupId>
+            <artifactId>${glassfish.artifactId}</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main</groupId>
+            <artifactId>glassfish-jul-extension</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>arquillian.xml</include>
+                    <include>appclient-arquillian.xml</include>
+                    <include>ts.jte</include>
+                    <include>jndi.properties</include>
+                </includes>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>certificates/**</include>
+                    <include>META-INF/**</include>
+                    <include>tssql.stmt</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-glassfish</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>2-copy-lib</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>jakarta.tck.arquillian</groupId>
+                                    <artifactId>arquillian-protocol-lib</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${tck.libdir}</outputDirectory>
+                                    <destFileName>arquillian-protocol-lib.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jakarta.tck</groupId>
+                                    <artifactId>common</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${tck.libdir}</outputDirectory>
+                                    <destFileName>common.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jakarta.tck.arquillian</groupId>
+                                    <artifactId>tck-porting-lib</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${tck.libdir}</outputDirectory>
+                                    <destFileName>tck-porting-lib.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>jakarta.tck.arquillian</groupId>
+                                    <artifactId>arquillian-protocol-lib</artifactId>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${tck.libdir}/protocol</outputDirectory>
+                                    <destFileName>protocol.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>1-startbkr</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Start JMS RI or OpenMQ Broker via (imqbrokerd) ....."></echo>
+                                <exec executable="${exec.imqbrokerd}" spawn="true">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line=" -reset store"></arg>
+                                </exec>
+                                <echo message="Sleeping 10 seconds ....."></echo>
+                                <sleep seconds="10"></sleep>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>2-init</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <delete failonerror="false" file="${admin.pass.file}"></delete>
+                                <delete dir="${jndi.fs.dir}" failonerror="false"></delete>
+                                <mkdir dir="${jndi.fs.dir}"></mkdir>
+                                <echo message="Echoing: imq.imqcmd.password=${admin.pass} &gt;${admin.pass.file}"></echo>
+                                <echo file="${admin.pass.file}" message="imq.imqcmd.password=${admin.pass}"></echo>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>3-encodeAdminPassword</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Encode admin password in JMS RI or OpenMQ via (imqusermgr) ......"></echo>
+                                <exec executable="${exec.imqusermgr}">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line="encode -f -src ${admin.pass.file} -target ${admin.pass.file.encoded}"></arg>
+                                </exec>
+                                <move failonerror="false" file="${admin.pass.file.encoded}" overwrite="true" tofile="${admin.pass.file}"></move>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>4-create.tck.users</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Create user j2ee in JMS RI or OpenMQ via (imqusermgr) ......"></echo>
+                                <exec executable="${exec.imqusermgr}">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line="add -f -u j2ee -p j2ee -g ${admin.user}"></arg>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>5-create.tck.jms.objects</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Create JMS ConnectionFactory QueueConnectionFactory in JMS RI or OpenMQ object store via (imqobjmgr) ....."></echo>
+                                <exec executable="${exec.imqobjmgr}">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line="-f add -l jms/QueueConnectionFactory -t qf"></arg>
+                                    <arg line="-j ${jndi.factory.initial} -j ${jndi.provider.url}"></arg>
+                                </exec>
+                                <echo message="Create JMS ConnectionFactory TopicConnectionFactory in JMS RI or OpenMQ object store via (imqobjmgr) ....."></echo>
+                                <exec executable="${exec.imqobjmgr}">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line="-f add -l jms/TopicConnectionFactory -t tf"></arg>
+                                    <arg line="-j ${jndi.factory.initial} -j ${jndi.provider.url}"></arg>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>6-list.tck.jms.objects</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <target>
+                                <echo message="List JMS objects in JMS RI or OpenMQ object store via (imgobjmgr) ......"></echo>
+                                <exec executable="${exec.imqobjmgr}">
+                                    <env key="IMQ_JAVAHOME" value="${java.home}"></env>
+                                    <arg line="list -j ${jndi.factory.initial} -j ${jndi.provider.url}"></arg>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>2-start-database</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>start-database</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>11-start-domain</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>start-domain</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>12-create-mail-resource</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-mail-resource</argument>
+                                <argument>--mailhost</argument>
+                                <argument>${mail.host}</argument>
+                                <argument>--mailuser</argument>
+                                <argument>${mail.user}</argument>
+                                <argument>--fromaddress</argument>
+                                <argument>${mail.from}</argument>
+                                <argument>--property</argument>
+                                <argument>mail.smtp.port=${smtp.port}</argument>
+                                <argument>mail/Session</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>13-create-jms-resource</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-jms-resource</argument>
+                                <argument>--restype</argument>
+                                <argument>jakarta.jms.QueueConnectionFactory</argument>
+                                <argument>jms/QueueConnectionFactory</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>14-create-jms-resource</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-jms-resource</argument>
+                                <argument>--restype</argument>
+                                <argument>jakarta.jms.TopicConnectionFactory</argument>
+                                <argument>jms/TopicConnectionFactory</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>15-create-jdbc-connection-pool</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-jdbc-connection-pool</argument>
+                                <argument>--restype</argument>
+                                <argument>javax.sql.DataSource</argument>
+                                <argument>--datasourceclassname</argument>
+                                <argument>org.apache.derby.jdbc.ClientDataSource</argument>
+                                <argument>--property</argument>
+                                <argument>databaseName=derbyDB:serverName=localhost:portNumber=1527:user=cts1:password=cts1:createDatabase=create</argument>
+                                <argument>cts-derby-pool</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>16-create-jdbc-resource</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-jdbc-resource</argument>
+                                <argument>--connectionpoolid</argument>
+                                <argument>cts-derby-pool</argument>
+                                <argument>jdbc/DB1</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>18-list-jms-resources</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>list-jms-resources</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>19-list-jdbc-resources</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>list-jdbc-resources</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>20-list-mail-resources</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>list-mail-resources</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>21-create-file-user</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>create-file-user</argument>
+                                <argument>--groups</argument>
+                                <argument>staff:mgr</argument>
+                                <argument>--passwordfile</argument>
+                                <argument>j2ee.pass</argument>
+                                <argument>j2ee</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>22-stop-domain</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>stop-domain</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>tests-appclient</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <dependenciesToScan>jakarta.tck:appclient</dependenciesToScan>
+                            <includes>
+                                <include>com.sun.ts.tests.appclient.**.Client</include>
+                            </includes>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${glassfish.module.dir}/angus-mail.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/jakarta.mail-api.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/mail-connector.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/mail-runtime.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/glassfish-naming.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/glassfish-api.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/jakarta.jms-api.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/glassfish-corba-omgapi.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.module.dir}/glassfish-corba-orb.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.home}/javadb/lib/derbyclient.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.home}/javadb/lib/derby.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.home}/mq/lib/imq.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.home}/mq/lib/jms.jar</additionalClasspathElement>
+                                <additionalClasspathElement>${glassfish.home}/mq/lib/fscontext.jar</additionalClasspathElement>
+                            </additionalClasspathElements>
+                            <systemPropertyVariables>
+                                <glassfish.home>${glassfish.home}</glassfish.home>
+                                <ts.home>${project.basedir}/jakartaeetck</ts.home>
+                                <project.basedir>${project.basedir}</project.basedir>
+                                <junit.log.traceflag>true</junit.log.traceflag>
+                                <harness.log.traceflag>true</harness.log.traceflag>
+                                <arquillian.xml>arquillian.xml</arquillian.xml>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

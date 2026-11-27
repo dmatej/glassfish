@@ -37,6 +37,7 @@
         <module>glassfish-runner</module>
         <module>tck-download</module>
         <module>activation</module>
+        <module>appclient</module>
         <module>authentication</module>
         <module>authorization</module>
         <module>cdi</module>
