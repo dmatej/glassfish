@@ -172,6 +172,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.glassfish.main.tests.tck</groupId>
+            <artifactId>glassfish-tck-runner</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.main</groupId>
             <artifactId>glassfish-jul-extension</artifactId>
             <scope>test</scope>
@@ -386,6 +392,7 @@
         </profile>
 
         <profile>
+            <!-- 586 tests -->
             <id>ejb30bb</id>
             <build>
                 <plugins>
@@ -405,16 +412,11 @@
                                         <include>com.sun.ts.tests.ejb30.bb.**.*Test</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjblitejspTest</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjbliteservletTest</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjbliteservlet2Test</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.JsfClientEjblitejsfTest</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjblitejspTest</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjbliteservletTest</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjbliteservlet2Test</exclude>
-                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.JsfClientEjblitejsfTest</exclude>
+                                        <exclude>com.sun.ts.tests.ejb30.bb.mdb.**</exclude>
+                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.**</exclude>
                                         <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.timeout.annotated.ClientEjblitejspTest</exclude>
                                         <exclude>com.sun.ts.tests.ejb30.bb.session.stateful.timeout.descriptor.ClientEjblitejspTest</exclude>
+                                        <exclude>com.sun.ts.tests.ejb30.bb.session.stateless.**</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
@@ -424,14 +426,66 @@
             </build>
         </profile>
         <profile>
-            <id>ejb30bbEjbLiteJspTimeoutAnnotated</id>
+            <!-- 91 tests -->
+            <id>ejb30bbMdb</id>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>ejb30bbEjbLiteJspTimeoutAnnotated</id>
+                                <id>ejb30bbMdb</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <dependenciesToScan>jakarta.tck:ejb30</dependenciesToScan>
+                                    <groups>${tck.groups}</groups>
+                                    <includes>
+                                        <include>com.sun.ts.tests.ejb30.bb.mdb.**</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- 40 tests -->
+            <id>ejb30bbSessionStatefulConcurrency</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>ejb30bbSessionStatefulConcurrency</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <dependenciesToScan>jakarta.tck:ejb30</dependenciesToScan>
+                                    <groups>${tck.groups}</groups>
+                                    <test>com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.**</test>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ejb30bbSessionStatefulTimeoutAnnotated</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>ejb30bbSessionStatefulTimeoutAnnotated</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                 </goals>
@@ -448,14 +502,14 @@
             </build>
         </profile>
         <profile>
-            <id>ejb30bbEjbLiteJspTimeoutDescriptor</id>
+            <id>ejb30bbSessionStatefulTimeoutDescriptor</id>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>ejb30bbEjbLiteJspTimeoutDescriptor</id>
+                                <id>ejb30bbSessionStatefulTimeoutDescriptor</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                 </goals>
@@ -475,14 +529,15 @@
             </build>
         </profile>
         <profile>
-            <id>ejb30bbEjbLiteConcurrencyTimeout</id>
+            <!-- 352 tests -->
+            <id>ejb30bbSessionStateless</id>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>ejb30bbEjbLiteConcurrencyTimeout</id>
+                                <id>ejb30bbSessionStateless</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                 </goals>
@@ -490,16 +545,10 @@
                                 <configuration>
                                     <dependenciesToScan>jakarta.tck:ejb30</dependenciesToScan>
                                     <groups>${tck.groups}</groups>
-                                    <test>
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjblitejspTest,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjbliteservletTest
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.ClientEjbliteservlet2Test,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.accesstimeout.annotated.JsfClientEjblitejsfTest,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjblitejspTest,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjbliteservletTest,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.ClientEjbliteservlet2Test,
-                                        com.sun.ts.tests.ejb30.bb.session.stateful.concurrency.metadata.annotated.JsfClientEjblitejsfTest
-                                    </test>
+                                    <test>com.sun.ts.tests.ejb30.bb.session.stateless.**</test>
+                                    <systemPropertyVariables>
+                                        <glassfish.enableDerby>false</glassfish.enableDerby>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
