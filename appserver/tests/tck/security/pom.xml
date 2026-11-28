@@ -36,6 +36,8 @@
         <tck.home>${project.build.directory}/security-tck-${tck.version}/tck</tck.home>
         <tck.old.glassfish.home>${tck.home}/old-tck/run/target/glassfish8</tck.old.glassfish.home>
         <tck.parentPomFile>${tck.home}/pom.xml</tck.parentPomFile>
+        <!-- ShrinkWrap uses this -->
+        <org.apache.maven.user-settings>${session.request.userSettingsFile}</org.apache.maven.user-settings>
     </properties>
 
     <dependencyManagement>
@@ -361,6 +363,7 @@
                                 <argument>-Djunit.jupiter.version=${junit.version}</argument>
                                 <argument>-DtrustStore.suffix=p12</argument>
                                 <argument>-Dcyclonedx.skip=true</argument>
+                                <argument>-Dorg.apache.maven.user-settings=${org.apache.maven.user-settings}</argument>
                             </arguments>
                         </configuration>
                     </execution>
