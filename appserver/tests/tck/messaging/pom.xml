@@ -324,19 +324,6 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>14-StartDomain1</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <phase>pre-integration-test</phase>
-                        <configuration>
-                            <executable>${glassfish.asadmin}</executable>
-                            <arguments>
-                                <argument>start-domain</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>15-create-resource-adapter-config</id>
                         <goals>
                             <goal>exec</goal>
@@ -416,6 +403,19 @@
                             <arguments>
                                 <argument>stop-domain</argument>
                             </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>50-StopDomain1</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <executable>${glassfish.asadmin}</executable>
+                            <arguments>
+                                <argument>stop-domain</argument>
+                            </arguments>
                             <successCodes>
                                 <successCode>0</successCode>
                                 <successCode>1</successCode>
@@ -423,7 +423,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>50-StopBroker</id>
+                        <id>51-StopBroker</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
