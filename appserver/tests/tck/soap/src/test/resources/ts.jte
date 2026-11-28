@@ -51,8 +51,8 @@ webServerPort.2=
 #      or tomcat) so we default this value to @webcontainer.home.ri.
 #      See this property below.
 #################################################################################
-jaxws.home=${webcontainer.home}
-jaxws.home.ri=${webcontainer.home.ri}
+jaxws.home=${glassfish.home}/glassfish
+jaxws.home.ri=${glassfish.home}/glassfish
 jaxws.lib=${jaxws.home}/modules
 jaxws.lib.ri=${jaxws.home.ri}/modules
 
@@ -115,31 +115,31 @@ catalog.path=${src.dir}/com/sun/ts/tests/jaxws/common/xml/catalog
 #                           appclient container.
 ####################################################################
 ts.harness.classpath=\
-${ts.home}/lib/javatest.jar\
-${pathsep}${ts.home}/lib/tsharness.jar\
-${pathsep}${ts.home}/lib/jaxwstck.jar\
-${pathsep}${ant.home}/lib/ant.jar\
-${pathsep}${ts.home}/lib/jakarta.xml.bind-api.jar\
-${pathsep}${ts.home}/lib/jaxb-xjc.jar\
-${pathsep}${ts.home}/lib/jaxb-libs.jar\
-${pathsep}${ts.home}/lib/jaxb-impl.jar
+${tck.home}/lib/javatest.jar\
+${pathsep}${tck.home}/lib/tsharness.jar\
+${pathsep}${tck.home}/lib/jaxwstck.jar\
+${pathsep}${project.build.directory}/ant-osgi.jar\
+${pathsep}${tck.home}/lib/jakarta.xml.bind-api.jar\
+${pathsep}${tck.home}/lib/jaxb-xjc.jar\
+${pathsep}${tck.home}/lib/jaxb-libs.jar\
+${pathsep}${tck.home}/lib/jaxb-impl.jar
 
 ts.classpath=${jaxws.classes}\
-${pathsep}${ts.home}/lib/javatest.jar\
-${pathsep}${ts.home}/lib/tsharness.jar\
-${pathsep}${ts.home}/lib/jaxwstck.jar
+${pathsep}${tck.home}/lib/javatest.jar\
+${pathsep}${tck.home}/lib/tsharness.jar\
+${pathsep}${tck.home}/lib/jaxwstck.jar
 
-ts.run.classpath=${ts.home}/lib/tsharness.jar\
-${pathsep}${ts.home}/lib/sigtest.jar\
-${pathsep}${ts.home}/lib/jaxwstck.jar\
-${pathsep}${ts.home}/classes\
+ts.run.classpath=${tck.home}/lib/tsharness.jar\
+${pathsep}${tck.home}/lib/sigtest.jar\
+${pathsep}${tck.home}/lib/jaxwstck.jar\
+${pathsep}${tck.home}/classes\
 ${pathsep}${jaxws.classes}\
 ${pathsep}${catalog.path}
 
-ts.run.classpath.ri=${ts.home}/lib/tsharness.jar\
-${pathsep}${ts.home}/lib/sigtest.jar\
-${pathsep}${ts.home}/lib/jaxwstck.jar\
-${pathsep}${ts.home}/classes\
+ts.run.classpath.ri=${tck.home}/lib/tsharness.jar\
+${pathsep}${tck.home}/lib/sigtest.jar\
+${pathsep}${tck.home}/lib/jaxwstck.jar\
+${pathsep}${tck.home}/classes\
 ${pathsep}${jaxws.classes.ri}\
 ${pathsep}${catalog.path}
 
@@ -237,12 +237,12 @@ webcontainer.home=${glassfish.home}/glassfish
 webcontainer.home.ri=${glassfish.home}/glassfish
 
 impl.vi=glassfish
-impl.vi.deploy.dir=${webcontainer.home}/domains/domain1/autodeploy
+impl.vi.deploy.dir=${glassfish.home}/glassfish/domains/domain1/autodeploy
 impl.vi.host=${webServerHost}
 impl.vi.port=${webServerPort}
 
 impl.ri=glassfish
-impl.ri.deploy.dir=${webcontainer.home.ri}/domains/domain1/autodeploy
+impl.ri.deploy.dir=${glassfish.home}/glassfish/domains/domain1/autodeploy
 impl.ri.host=localhost
 impl.ri.port=8080
 
@@ -254,7 +254,7 @@ impl.deploy.timeout.multiplier=120
 # be set for use with configuration setup.
 ####################################################################
 # For glassfish as Vendor set the following:
-glassfish.instance.home=${webcontainer.home}/domains/domain1
+glassfish.instance.home=${glassfish.home}/glassfish/domains/domain1
 glassfish.admin.host=localhost
 glassfish.admin.port=4848
 glassfish.admin.user=admin
@@ -264,7 +264,7 @@ glassfish.server.instance=server
 glassfish.domain.name=domain1
 
 # For glassfish as RI set the following:
-glassfish.instance.home.ri=${webcontainer.home.ri}/domains/domain1
+glassfish.instance.home.ri=${glassfish.home}/glassfish/domains/domain1
 glassfish.admin.host.ri=localhost
 glassfish.admin.port.ri=4848
 glassfish.admin.user.ri=admin
@@ -359,7 +359,7 @@ authpassword=javajoe
 #           attempt to create a server socket when intilizing a test
 #           client.  The socket is used for logging purposes.
 ########################################################################
-harness.temp.directory=${ts.home}/tmp
+harness.temp.directory=${tck.home}/tmp
 harness.log.port=2000
 harness.log.traceflag=false
 harness.log.delayseconds=1
@@ -458,7 +458,7 @@ env.ts_win32.menu=true
 #                    separated by the appropriate path separator
 #                    (';' windows, ':' Unixes).
 #########################################################################
-jimage.dir=${ts.home}/tmp/jdk-bundles
+jimage.dir=${tck.home}/tmp/jdk-bundles
 
 sigTestClasspath=${jaxws.classes}\
 ${pathsep}${jimage.dir}/java.base\
@@ -547,13 +547,13 @@ client.delay=1
 # The CTS config.vi target will copy the CTS library
 # jars to this location, used only for RI.
 ###############################################################
-extension.dir=${webcontainer.home}/domains/domain1/lib
-extension.dir.ri=${webcontainer.home.ri}/domains/domain1/lib
+extension.dir=${glassfish.home}/glassfish/domains/domain1/lib
+extension.dir.ri=${glassfish.home}/glassfish/domains/domain1/lib
 
 #################################################################
 # To Configure config.vi with security manager
 #################################################################
-javaee.home=${webcontainer.home}
+javaee.home=${glassfish.home}/glassfish
 ###############################################################
 ## Config params needed for Sun Java System Application Server
 ## (SJSAS) asadmin. You must change these values as needed
